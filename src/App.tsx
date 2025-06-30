@@ -1,9 +1,8 @@
 import "./index.css";
+import MainPage from "./pages/MainPage";
 
 export default function App() {
   return (
-    <div>
-      <header>123</header>
-    </div>
+    <MainPage />
   );
 }
