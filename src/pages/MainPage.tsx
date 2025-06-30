@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Header from "../components/header/Header";
 
 const NAV = [
   { id: "main", label: "Главная" },
@@ -6,6 +7,19 @@ const NAV = [
   { id: "chart", label: "График" },
   { id: "faq", label: "FAQ" },
 ];
+
+interface HeaderProps {
+  scrolled: boolean;
+  palette: any;
+  theme: string;
+  NAV: { id: string; label: string }[];
+  setSearchPos: (pos: { top: number; left: number }) => void;
+  setTheme: (t: string) => void;
+  activeSection: string;
+  headerVisible: boolean;
+  setSearchOpen: (open: boolean) => void;
+  searchOpen: boolean;
+}
 
 export default function MainPage() {
   const [theme, setTheme] = useState('dark');
@@ -15,7 +29,7 @@ export default function MainPage() {
   const [headerVisible, setHeaderVisible] = useState(false);
   const [heroVisible, setHeroVisible] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const searchBtnRef = useRef<HTMLButtonElement>(null);
+  
   const [searchPos, setSearchPos] = useState<{top: number, left: number} | null>(null);
 
   useEffect(() => {
@@ -51,14 +65,8 @@ export default function MainPage() {
     setTimeout(() => setHeroVisible(true), 400);
   }, []);
 
-  const handleNavClick = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
+  
 
-  const handleAuth = () => alert("Переход на страницу авторизации");
   const handleStart = () => alert(`Введён email: ${email}`);
 
   const currencyRates = [
@@ -87,15 +95,15 @@ export default function MainPage() {
     bg: '#000000',
     fg: '#DFDEDC',
     accent: '#00ACAC',
-    card: '#464545',
-    border: '#A6A7A2',
+    card: '#6B7A8F',
+    border: '#6B7A8F',
     brown: '#A6A7A2',
     shadow: '#000000AA',
     navActive: '#00ACAC',
     navText: '#000000',
-    navInactive: '#DFDEDC',
+    navInactive: '#6B7A8F',
     chartStroke: '#00ACAC',
-    chartFill: '#464545',
+    chartFill: '#6B7A8F',
 
     //третий вариант 
     // bg: '#9AE4F5',
@@ -128,24 +136,24 @@ export default function MainPage() {
 
 
     // второй светлый вариант
-    bg: '#9AE4F5',
-    fg: '#1F1E23',
-    accent: '#0E9A7A',
-    card: 'rgba(92,123,163,0.85)',
-    border: '#0E9A7A',
-    brown: '#494589',
-    shadow: '#145089AA',
-    navActive: '#0E9A7A',
-    navText: '#fff',
-    navInactive: '#4A4D52',
-    chartStroke: '#0E9A7A',
-    chartFill: '#A9C1D5',
+    bg: '#edede9',
+    fg: '#d5bdaf',
+    accent: '#d6ccc2',
+    card: '#6B7A8F',
+    border: '#6B7A8F',
+    brown: '#d5bdaf',
+    shadow: '#e3d5ca55',
+    navActive: '#d6ccc2',
+    navText: '#d5bdaf',
+    navInactive: '#6B7A8F',
+    chartStroke: '#d6ccc2',
+    chartFill: '#f5ebe0',
   };
 
   return (
     <div style={{ minHeight: '100vh', width: '100%', fontFamily: 'sans-serif', background: palette.bg, color: palette.fg }}>
       {/* Header */}
-      <header
+      {/* <header
         style={{
           position: 'fixed',
           top: 0,
@@ -155,7 +163,7 @@ export default function MainPage() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '16px 64px',
+          padding: '8px 40px',
           background: scrolled ? (theme === 'dark' ? 'rgba(6,9,12,0.95)' : '#fff') : 'transparent',
           boxShadow: scrolled ? `0 2px 16px ${palette.card}` : 'none',
           transition: 'all 0.3s',
@@ -164,22 +172,23 @@ export default function MainPage() {
           transitionProperty: 'transform, opacity, box-shadow, background',
           transitionDuration: '0.7s',
           transitionTimingFunction: 'cubic-bezier(.4,0,.2,1)',
+          minHeight: 56,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ fontSize: 32, position: 'relative', display: 'inline-block', width: 48, height: 48 }}>
+          <span style={{ fontSize: 40, position: 'relative', display: 'inline-block', width: 64, height: 64 }}>
             <span style={{
               position: 'absolute',
               left: 0,
               top: 0,
-              width: 48,
-              height: 48,
+              width: 64,
+              height: 64,
               borderRadius: '50%',
-              background: theme === 'dark' ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.7)',
-              filter: 'blur(6px)',
+              background: 'rgba(255,255,255,0.85)',
+              filter: 'blur(16px)',
               zIndex: 0,
             }} />
-            <img src="/src/image/wolf_logo.svg" alt="logo" style={{ width: 48, height: 48, position: 'relative', zIndex: 1 }} />
+            <img src="/src/image/wolf_logo.svg" alt="logo" style={{ width: 64, height: 64, position: 'relative', zIndex: 1 }} />
           </span>
           <span style={{ fontSize: 28, fontWeight: 800, color: palette.accent, letterSpacing: '-1px' }}>Wolf Street</span>
         </div>
@@ -234,8 +243,18 @@ export default function MainPage() {
           </button>
           <ThemeToggle theme={theme} setTheme={setTheme} />
         </div>
-      </header>
-
+      </header> */}
+      <Header palette={palette} 
+              theme={theme} 
+              NAV={NAV} 
+              setSearchPos={setSearchPos}
+              scrolled={scrolled}
+              setTheme={setTheme}
+              activeSection={activeSection}
+              headerVisible={headerVisible}
+              setSearchOpen={setSearchOpen}
+              searchOpen={searchOpen}
+      />
       {/* Модальное окно поиска */}
       {searchOpen && searchPos && (
         <div
@@ -338,27 +357,20 @@ export default function MainPage() {
             </form>
             <span style={{ color: palette.brown, fontSize: 16, opacity: 0.7 }}>* Мы не рассылаем спам. Только важные новости и инсайты.</span>
           </div>
-          {/* Курс валют */}
+          {/* Курс валют заменён на анимированный линейный график */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 32 }}>
-            <div style={{ background: palette.card, borderRadius: 32, boxShadow: `0 4px 24px ${palette.shadow}`, padding: 40, minWidth: 300, border: `1px solid ${palette.accent}`, display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20, color: palette.accent, letterSpacing: 1 }}>
-                <span style={{ fontFamily: 'Material Icons', verticalAlign: 'middle', marginRight: 8 }}>show_chart</span> Курс валют
+            <div style={{ background: palette.card, borderRadius: 32, boxShadow: `0 4px 24px ${palette.shadow}`, padding: 40, minWidth: 300, border: `1px solid ${palette.accent}`, display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', justifyContent: 'center' }}>
+              <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20, color: palette.accent, letterSpacing: 1, textAlign: 'center' }}>
+                <span style={{ fontFamily: 'Material Icons', verticalAlign: 'middle', marginRight: 8 }}>show_chart</span> Динамика роста
               </h2>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {currencyRates.map(rate => (
-                  <li key={rate.code} style={{ display: 'flex', justifyContent: 'space-between', color: palette.fg, fontSize: 20 }}>
-                    <span>{rate.code}</span>
-                    <span style={{ fontWeight: 600, color: palette.accent }}>{rate.rate}</span>
-                  </li>
-                ))}
-              </ul>
+              <AnimatedLineChart accent={palette.accent} />
             </div>
           </div>
         </div>
       </section>
 
       {/* О проекте */}
-      <section id="about" style={{ maxWidth: '100vw', minHeight: '100vh', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 0, background: palette.bg, borderBottom: `1px solid ${palette.border}`, margin: 0 }}>
+      <section id="about" style={{ maxWidth: '100vw', minHeight: '100vh', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 0, background: palette.bg, borderBottom: `1px solid ${palette.border}`, margin: 0, paddingTop: 80 }}>
         <div style={{ maxWidth: 900, margin: '0 auto', width: '100%', padding: 48 }}>
           <h2 style={{ fontSize: 36, fontWeight: 800, color: palette.accent, marginBottom: 40, textAlign: 'center', letterSpacing: 1 }}>О проекте</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 32 }}>
@@ -460,17 +472,7 @@ export default function MainPage() {
   );
 }
 
-function ThemeToggle({ theme, setTheme }: { theme: string; setTheme: (t: string) => void }) {
-  return (
-    <button
-      style={{ width: 48, height: 28, display: 'flex', alignItems: 'center', background: theme === 'dark' ? '#23232a' : '#fff', borderRadius: 999, padding: 4, border: `2px solid #40BFAF`, marginLeft: 8, cursor: 'pointer', transition: 'all 0.2s' }}
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      aria-label="Сменить тему"
-    >
-      <span style={{ width: 20, height: 20, borderRadius: '50%', background: theme === "dark" ? '#40BFAF' : '#75787D', marginLeft: theme === "dark" ? 20 : 0, transition: 'all 0.3s' }}></span>
-    </button>
-  );
-}
+
 
 function CandlestickChartStub({ theme }: { theme?: string }) {
   const stroke = theme === 'light' ? '#40BFAF' : '#40BFAF';
@@ -590,5 +592,109 @@ function Footer() {
         <div style={{ marginTop: 2 }}>Настройки cookie</div>
       </div>
     </footer>
+  );
+}
+
+function AnimatedLineChart({ accent }: { accent: string }) {
+  const [length, setLength] = React.useState(0);
+  const pathRef = React.useRef<SVGPathElement>(null);
+
+  // Повторяющаяся анимация
+  React.useEffect(() => {
+    let interval: number;
+    function animate() {
+      if (pathRef.current) {
+        const totalLength = pathRef.current.getTotalLength();
+        setLength(totalLength);
+        setTimeout(() => {
+          pathRef.current && (pathRef.current.style.transition = 'stroke-dashoffset 2.2s cubic-bezier(.4,0,.2,1)');
+          setLength(0);
+        }, 200);
+      }
+    }
+    animate();
+    interval = window.setInterval(() => {
+      if (pathRef.current) {
+        pathRef.current.style.transition = 'none';
+        animate();
+      }
+    }, 10000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Ломаная линия с резкими перепадами (примерно как на картинке)
+  const width = 520;
+  const height = 320;
+  const minY = 40;
+  const maxY = height - 40;
+  const xOffset = 20;
+  const points = [
+    { x: 40 + xOffset, y: maxY },
+    { x: 100 + xOffset, y: maxY - 60 },
+    { x: 160 + xOffset, y: maxY - 20 },
+    { x: 220 + xOffset, y: maxY - 120 },
+    { x: 280 + xOffset, y: maxY - 60 },
+    { x: 340 + xOffset, y: maxY - 100 },
+    { x: 400 + xOffset, y: maxY - 40 },
+    { x: 460 + xOffset, y: minY + 30 },
+    { x: 500 + xOffset, y: minY },
+  ];
+  const d = points.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(' ');
+  // Для стрелки на конце
+  const last = points[points.length - 1];
+  const prev = points[points.length - 2];
+  const angle = Math.atan2(last.y - prev.y, last.x - prev.x);
+  const arrowLength = 28;
+  const arrowAngle = Math.PI / 6;
+  const arrowX1 = last.x - arrowLength * Math.cos(angle - arrowAngle);
+  const arrowY1 = last.y - arrowLength * Math.sin(angle - arrowAngle);
+  const arrowX2 = last.x - arrowLength * Math.cos(angle + arrowAngle);
+  const arrowY2 = last.y - arrowLength * Math.sin(angle + arrowAngle);
+
+  // Сетка (grid) — делаю более заметной
+  const gridLines = [];
+  const gridCountX = 8;
+  const gridCountY = 6;
+  for (let i = 0; i <= gridCountX; i++) {
+    const x = 40 + xOffset + ((width - 60) / gridCountX) * i;
+    gridLines.push(<line key={'vx' + i} x1={x} y1={minY - 20} x2={x} y2={maxY} stroke="#B4B4BC66" strokeWidth={2} />);
+  }
+  for (let i = 0; i <= gridCountY; i++) {
+    const y = minY - 20 + ((maxY - (minY - 20)) / gridCountY) * i;
+    gridLines.push(<line key={'hy' + i} x1={40 + xOffset} y1={y} x2={width - 10 + xOffset} y2={y} stroke="#B4B4BC66" strokeWidth={2} />);
+  }
+
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}>
+      {/* Сетка */}
+      {gridLines}
+      {/* Ось X */}
+      <line x1={40 + xOffset} y1={maxY} x2={width - 10 + xOffset} y2={maxY} stroke="#B4B4BC" strokeWidth={2.5} markerEnd="url(#arrow-x)" />
+      {/* Ось Y (стрелка строго вверх) */}
+      <line x1={40 + xOffset} y1={maxY} x2={40 + xOffset} y2={minY - 20} stroke="#B4B4BC" strokeWidth={2.5} markerEnd="url(#arrow-y)" />
+      {/* Линия графика */}
+      <path
+        ref={pathRef}
+        d={d}
+        fill="none"
+        stroke={accent}
+        strokeWidth={6}
+        strokeDasharray={pathRef.current ? pathRef.current.getTotalLength() : 0}
+        strokeDashoffset={length}
+        style={{ filter: 'drop-shadow(0 4px 16px ' + accent + '44)' }}
+      />
+      {/* Стрелка на конце линии графика */}
+      <polygon
+        points={`${last.x},${last.y} ${arrowX1},${arrowY1} ${arrowX2},${arrowY2}`}
+        fill={accent}
+        style={{ opacity: 0.98 }}
+      />
+      {/* Точки графика (кроме последней) */}
+      {points.slice(0, -1).map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={7} fill={accent} style={{ opacity: 0.85 }} />
+      ))}
+    </svg>
   );
 }
