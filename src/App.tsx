@@ -1,4 +1,11 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import RegisterPage from "./pages/auth/RegisterPage";
+import LoginPage from "./pages/auth/LoginPage";
 import "./index.css";
 import MainPage from "./pages/main/MainPage";
 import LoginPage from "./pages/auth/LoginPage";
@@ -18,10 +25,17 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </ThemeProvider>
+    <Router>
+      <Routes>
+      <AppRoutes />
+        <Route path="/" element={<Navigate to="/register" replace />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<MainPage palette={palette} theme={theme} setTheme={setTheme} />} />
+        <Route path="/login" element={<LoginPage />} />
+      <Route path="/portfolio" element={<PortfolioPage palette={palette} theme={theme} setTheme={setTheme} />} />
+
+      </Routes>
+    </Router>
   );
 }
