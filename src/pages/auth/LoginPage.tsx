@@ -1,18 +1,8 @@
-<<<<<<< HEAD
-
-
-export default function LoginPage() {
-  return (
-    <div>
-      <h1>Login</h1>
-    </div>
-  );
-}
-=======
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser, saveTokens } from "../../services/auth/Login";
 import type { LoginRequest } from "../../services/auth/TypesAuth";
+import Header from "../../components/header/Header";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -102,6 +92,7 @@ const LoginPage: React.FC = () => {
 
   if (success) {
     return (
+      
       <div className="min-h-screen flex items-center justify-center px-4 bg-custom-primary">
         <div className="max-w-md w-full rounded-2xl shadow-2xl p-8 text-center border-2 border-custom-accent bg-custom-secondary">
           <div className="mb-6">
@@ -324,4 +315,3 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
->>>>>>> origin/authorization
