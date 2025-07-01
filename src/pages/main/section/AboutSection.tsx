@@ -1,26 +1,27 @@
 import FeatureCard from "../../../components/ui/FeatureCard";
 import SectionContainer from "../../../components/ui/SectionContainer";
-import type { Palette } from "../../../context/ThemeContext";
 
-interface AboutSectionProps {
-  palette: Palette;
-}
-
-export default function AboutSection({ palette }: AboutSectionProps) {
+export default function AboutSection() {
   const features = [
     {
       icon: (
-        <svg width="48" height="48" fill="none" viewBox="0 0 32 32">
+        <svg
+          width="48"
+          height="48"
+          fill="none"
+          viewBox="0 0 32 32"
+          className="text-light-accent dark:text-dark-accent"
+        >
           <circle
             cx="16"
             cy="16"
             r="15"
-            stroke={palette.accent}
+            className="stroke-current"
             strokeWidth="2"
           />
           <path
             d="M10 16l4 4 8-8"
-            stroke={palette.accent}
+            className="stroke-current"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -32,19 +33,25 @@ export default function AboutSection({ palette }: AboutSectionProps) {
     },
     {
       icon: (
-        <svg width="48" height="48" fill="none" viewBox="0 0 32 32">
+        <svg
+          width="48"
+          height="48"
+          fill="none"
+          viewBox="0 0 32 32"
+          className="text-light-accent dark:text-dark-accent"
+        >
           <rect
             x="4"
             y="8"
             width="24"
             height="16"
             rx="4"
-            stroke={palette.accent}
+            className="stroke-current"
             strokeWidth="2"
           />
           <path
             d="M8 16h16M16 12v8"
-            stroke={palette.accent}
+            className="stroke-current"
             strokeWidth="2"
             strokeLinecap="round"
           />
@@ -55,12 +62,17 @@ export default function AboutSection({ palette }: AboutSectionProps) {
     },
     {
       icon: (
-        <svg width="48" height="48" fill="none" viewBox="0 0 32 32">
+        <svg
+          width="48"
+          height="48"
+          fill="none"
+          viewBox="0 0 32 32"
+          className="text-light-accent dark:text-dark-accent"
+        >
           <path
             d="M16 4l4 8 8 1-6 6 2 9-8-4-8 4 2-9-6-6 8-1 4-8z"
-            stroke={palette.accent}
+            className="stroke-current fill-light-card dark:fill-dark-card"
             strokeWidth="2"
-            fill={palette.card}
           />
         </svg>
       ),
@@ -69,24 +81,30 @@ export default function AboutSection({ palette }: AboutSectionProps) {
     },
     {
       icon: (
-        <svg width="48" height="48" fill="none" viewBox="0 0 32 32">
+        <svg
+          width="48"
+          height="48"
+          fill="none"
+          viewBox="0 0 32 32"
+          className="text-light-accent dark:text-dark-accent"
+        >
           <circle
             cx="16"
             cy="16"
             r="14"
-            stroke={palette.accent}
+            className="stroke-current"
             strokeWidth="2"
           />
           <path
             d="M10 22v-2a4 4 0 014-4h4a4 4 0 014 4v2"
-            stroke={palette.accent}
+            className="stroke-current"
             strokeWidth="2"
           />
           <circle
             cx="16"
             cy="13"
             r="3"
-            stroke={palette.accent}
+            className="stroke-current"
             strokeWidth="2"
           />
         </svg>
@@ -97,33 +115,17 @@ export default function AboutSection({ palette }: AboutSectionProps) {
   ];
 
   return (
-    <SectionContainer id="about" palette={palette}>
-      <h2
-        style={{
-          fontSize: 36,
-          fontWeight: 800,
-          color: palette.accent,
-          marginBottom: 40,
-          textAlign: "center",
-          letterSpacing: 1,
-        }}
-      >
+    <SectionContainer id="about">
+      <h2 className="text-3xl font-extrabold text-light-accent dark:text-dark-accent mb-8 text-center tracking-wide">
         О проекте
       </h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: 32,
-        }}
-      >
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
         {features.map((feature, idx) => (
           <FeatureCard
             key={idx}
             icon={feature.icon}
             title={feature.title}
             text={feature.text}
-            palette={palette}
           />
         ))}
       </div>

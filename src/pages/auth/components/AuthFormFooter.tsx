@@ -12,12 +12,12 @@ export default function AuthFormFooter({
   linkTo,
 }: AuthFormFooterProps) {
   return (
-    <div className="mt-6 text-center">
-      <p className="text-sm text-custom-secondary">
+    <div className="px-8 py-3 border-t border-light-border dark:border-dark-border text-center">
+      <p className="text-sm text-light-nav-inactive dark:text-dark-nav-inactive">
         {text}{" "}
         <Link
           to={linkTo}
-          className="font-medium text-custom-accent hover-text-accent-dark transition-colors duration-300 ease-in-out"
+          className="font-medium text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown transition-colors duration-300 ease-in-out hover:underline"
         >
           {linkText}
         </Link>

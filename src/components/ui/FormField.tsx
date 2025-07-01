@@ -1,4 +1,4 @@
-import { useTheme } from "../../context/ThemeContext";
+import { useState } from "react";
 
 interface FormFieldProps {
   label: string;
@@ -23,46 +23,99 @@ export default function FormField({
   error,
   className = "",
 }: FormFieldProps) {
-  const { palette } = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Определяем, является ли поле паролем
+  const isPasswordField = type === "password";
+  // Используем фактический тип поля
+  const inputType = isPasswordField && showPassword ? "text" : type;
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className={className}>
       <label
         htmlFor={name}
-        className="block text-sm font-medium mb-1"
-        style={{ color: palette.fg }}
+        className="block text-sm font-medium mb-1 text-light-fg dark:text-dark-fg"
       >
         {label} {required && "*"}
       </label>
-      <input
-        type={type}
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full px-4 py-3 rounded-lg focus:outline-none transition-all duration-300 ease-in-out placeholder-gray-400"
-        style={{
-          backgroundColor: palette.card,
-          border: error ? "2px solid #ef4444" : `2px solid ${palette.border}`,
-          color: palette.fg,
-          ...(error && { backgroundColor: "#7f1d1d20" }),
-        }}
-        onFocus={(e) => {
-          if (!error) {
-            e.target.style.borderColor = palette.accent;
-            e.target.style.boxShadow = `0 0 0 3px ${palette.accent}33`;
-          }
-        }}
-        onBlur={(e) => {
-          if (!error) {
-            e.target.style.borderColor = palette.border;
-            e.target.style.boxShadow = "none";
-          }
-        }}
-        placeholder={placeholder}
-      />
+      <div className="relative">
+        <input
+          type={inputType}
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          className={`w-full px-3 py-2.5 rounded-lg focus:outline-none transition-all duration-300 ease-in-out placeholder-gray-400
+            ${isPasswordField ? "pr-12" : "pr-3"}
+            bg-light-card dark:bg-dark-card 
+            text-light-fg dark:text-dark-fg
+            border-2 
+            ${
+              error
+                ? "border-error bg-red-900/10 dark:bg-red-900/20"
+                : "border-light-border dark:border-dark-border hover:border-light-accent dark:hover:border-dark-accent"
+            }
+            focus:border-light-accent dark:focus:border-dark-accent 
+            focus:shadow-[0_0_0_3px_rgba(197,107,98,0.2)] dark:focus:shadow-[0_0_0_3px_rgba(129,199,132,0.2)]
+          `}
+          placeholder={placeholder}
+        />
+
+        {/* Кнопка показать/скрыть пароль */}
+        {isPasswordField && (
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-light-fg dark:text-dark-fg opacity-60 hover:opacity-100 transition-opacity duration-200 focus:outline-none focus:opacity-100"
+            aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+          >
+            {showPassword ? (
+              // Иконка "скрыть" (зачеркнутый глаз)
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L12 12m0 0l3.121 3.121M12 12l-3.121-3.121m0 0l-1.414-1.414M12 12l3.121 3.121m0 0l1.414 1.414"
+                />
+              </svg>
+            ) : (
+              // Иконка "показать" (открытый глаз)
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+            )}
+          </button>
+        )}
+      </div>
+
       {error && (
-        <p className="mt-1 text-sm text-red-400 transition-all duration-300 ease-in-out transform translate-y-0 opacity-100">
+        <p className="mt-1 text-sm text-error transition-all duration-300 ease-in-out">
           {error}
         </p>
       )}

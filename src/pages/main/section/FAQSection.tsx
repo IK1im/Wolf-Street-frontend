@@ -1,12 +1,7 @@
 import AccordionItem from "../../../components/ui/AccordionItem";
-import type { Palette } from "../../../context/ThemeContext";
+import SectionContainer from "../../../components/ui/SectionContainer";
 
-interface FAQSectionProps {
-  palette: Palette;
-  theme?: string;
-}
-
-export default function FAQSection({ palette, theme }: FAQSectionProps) {
+export default function FAQSection() {
   const faqItems = [
     {
       question: "Что такое Wolf Street?",
@@ -30,58 +25,15 @@ export default function FAQSection({ palette, theme }: FAQSectionProps) {
   ];
 
   return (
-    <section
-      id="faq"
-      style={{
-        maxWidth: "100vw",
-        minHeight: "100vh",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: 0,
-        background: palette.bg,
-        color: palette.fg,
-        margin: 0,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 700,
-          margin: "0 auto",
-          width: "100%",
-          padding: 48,
-        }}
-      >
-        <h2
-          style={{
-            fontSize: 36,
-            fontWeight: 800,
-            color: palette.accent,
-            marginBottom: 40,
-            textAlign: "center",
-            letterSpacing: 1,
-          }}
-        >
-          FAQ
-        </h2>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 32,
-          }}
-        >
-          {faqItems.map((item, idx) => (
-            <AccordionItem
-              key={idx}
-              title={item.question}
-              text={item.answer}
-              theme={theme}
-            />
-          ))}
-        </div>
+    <SectionContainer id="faq" maxWidth={700}>
+      <h2 className="text-4xl font-extrabold text-light-accent dark:text-dark-accent mb-10 text-center tracking-wide">
+        FAQ
+      </h2>
+      <div className="flex flex-col gap-8">
+        {faqItems.map((item, idx) => (
+          <AccordionItem key={idx} title={item.question} text={item.answer} />
+        ))}
       </div>
-    </section>
+    </SectionContainer>
   );
 }

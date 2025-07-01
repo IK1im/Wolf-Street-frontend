@@ -8,11 +8,13 @@ export default function AuthFormHeader({
   subtitle,
 }: AuthFormHeaderProps) {
   return (
-    <div className="px-8 py-6">
-      <h2 className="text-2xl font-bold text-center text-custom-accent">
+    <div className="px-8 pt-4 pb-2 border-b border-light-border dark:border-dark-border">
+      <h1 className="text-2xl font-bold text-center mb-1 text-light-accent dark:text-dark-accent">
         {title}
-      </h2>
-      <p className="text-center mt-2 text-custom-primary">{subtitle}</p>
+      </h1>
+      <p className="text-center text-sm text-light-fg dark:text-dark-fg">
+        {subtitle}
+      </p>
     </div>
   );
 }

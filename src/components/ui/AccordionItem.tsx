@@ -3,59 +3,31 @@ import { useState } from "react";
 interface AccordionItemProps {
   title: string;
   text: string;
-  theme?: string;
 }
 
-export default function AccordionItem({
-  title,
-  text,
-  theme,
-}: AccordionItemProps) {
+export default function AccordionItem({ title, text }: AccordionItemProps) {
   const [open, setOpen] = useState(false);
 
-  const palette =
-    theme === "light"
-      ? {
-          card: "#D9A69F",
-          border: "#6C739C",
-          fg: "#424658",
-          accent: "#C56B62",
-          shadow: "#BABBB155",
-        }
-      : {
-          card: "#494C51",
-          border: "#40BFAF",
-          fg: "#B4B4BC",
-          accent: "#40BFAF",
-          shadow: "#06090C88",
-        };
-
   return (
-    <div
-      style={{
-        background: palette.card,
-        borderRadius: 24,
-        boxShadow: `0 4px 24px ${palette.shadow}`,
-        padding: 24,
-        border: `1px solid ${palette.border}`,
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-      }}
-    >
+    <div className="bg-light-card dark:bg-dark-card rounded-3xl shadow-lg p-6 border border-light-border dark:border-dark-border flex flex-col gap-2 transition-all duration-300">
       <span
-        style={{
-          fontSize: 18,
-          fontWeight: 700,
-          color: palette.accent,
-          marginBottom: 8,
-          cursor: "pointer",
-        }}
+        className="text-lg font-bold text-light-accent dark:text-dark-accent mb-2 cursor-pointer hover:opacity-80 transition-opacity select-none"
         onClick={() => setOpen((o) => !o)}
       >
         {title}
+        <span
+          className={`ml-2 transform transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+        >
+          ▼
+        </span>
       </span>
-      {open && <div style={{ color: palette.fg, fontSize: 16 }}>{text}</div>}
+      {open && (
+        <div className="text-light-fg dark:text-dark-fg text-base leading-relaxed animate-[fadeIn_0.3s_ease-out]">
+          {text}
+        </div>
+      )}
     </div>
   );
 }

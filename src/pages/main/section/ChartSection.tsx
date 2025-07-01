@@ -1,49 +1,15 @@
 import CandlestickChart from "../../../components/ui/CandlestickChart";
 import SectionContainer from "../../../components/ui/SectionContainer";
-import type { Palette } from "../../../context/ThemeContext";
 
-interface ChartSectionProps {
-  palette: Palette;
-}
-
-export default function ChartSection({ palette }: ChartSectionProps) {
+export default function ChartSection() {
   return (
-    <SectionContainer id="chart" palette={palette}>
-      <h2
-        style={{
-          fontSize: 36,
-          fontWeight: 800,
-          color: palette.accent,
-          marginBottom: 40,
-          textAlign: "center",
-          letterSpacing: 1,
-        }}
-      >
+    <SectionContainer id="chart">
+      <h2 className="text-4xl font-extrabold text-light-accent dark:text-dark-accent mb-10 text-center tracking-wide">
         График рынка
       </h2>
-      <div
-        style={{
-          background: palette.card,
-          borderRadius: 32,
-          boxShadow: `0 4px 24px ${palette.shadow}`,
-          padding: 40,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: 380,
-        }}
-      >
-        <CandlestickChart palette={palette} />
-        <span
-          style={{
-            marginTop: 32,
-            color: palette.fg,
-            fontSize: 20,
-            fontWeight: 500,
-            opacity: 0.8,
-          }}
-        >
+      <div className="bg-light-card dark:bg-dark-card rounded-[32px] shadow-2xl p-10 flex flex-col items-center justify-center min-h-[380px]">
+        <CandlestickChart />
+        <span className="mt-8 text-light-fg dark:text-dark-fg text-xl font-medium opacity-80">
           Данные скоро будут поступать из ClickHouse
         </span>
       </div>

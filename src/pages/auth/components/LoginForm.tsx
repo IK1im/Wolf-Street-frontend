@@ -3,14 +3,12 @@ import LoadingButton from "../../../components/ui/LoadingButton";
 import ErrorAlert from "../../../components/ui/ErrorAlert";
 import RememberMeSection from "./RememberMeSection";
 import { useLoginForm } from "../../../hooks/useLoginForm";
-import { useTheme } from "../../../context/ThemeContext";
 
 interface LoginFormProps {
   onSuccess: () => void;
 }
 
 export default function LoginForm({ onSuccess }: LoginFormProps) {
-  const { palette } = useTheme();
   const {
     formData,
     rememberMe,
@@ -23,63 +21,55 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   } = useLoginForm({ onSuccess });
 
   return (
-    <div
-      className="lg:col-span-2 p-8 flex flex-col auth-form-section"
-      style={{
-        backgroundColor: palette.card,
-        borderRight: `1px solid ${palette.border}`,
-      }}
-    >
-      <div className="flex-1 flex flex-col justify-between">
-        <div>
-          {/* Заголовок */}
-          <div className="mb-12">
-            <h1
-              className="text-3xl font-bold mb-2"
-              style={{ color: palette.accent }}
-            >
-              Вход в систему
-            </h1>
-            <p style={{ color: palette.fg }}>Добро пожаловать в Wolf Street</p>
-          </div>
+    <div className="lg:col-span-2 p-8 flex flex-col min-h-[600px] bg-light-card dark:bg-neutral-950 border-r border-light-border dark:border-dark-border">
+      {/* Заголовок */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2 text-light-accent dark:text-dark-accent">
+          Вход в систему
+        </h1>
+        <p className="text-light-fg dark:text-dark-fg">
+          Добро пожаловать в Wolf Street
+        </p>
+      </div>
 
-          <ErrorAlert error={error} />
+      {/* Компактная зона для ошибок */}
+      <ErrorAlert error={error} />
 
-          {/* Форма */}
-          <form onSubmit={handleSubmit} className="space-y-8 max-w-md">
-            <FormField
-              label="Имя пользователя"
-              name="username"
-              type="text"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Введите имя пользователя"
-              required
-              error={validation.username}
-              className="login-field"
-            />
+      {/* Форма с кнопкой внутри */}
+      <form onSubmit={handleSubmit} className="flex flex-col flex-1 max-w-md">
+        <div className="space-y-4">
+          <FormField
+            label="Имя пользователя"
+            name="username"
+            type="text"
+            value={formData.username}
+            onChange={handleInputChange}
+            placeholder="Введите имя пользователя"
+            required
+            error={validation.username}
+            className="login-field"
+          />
 
-            <FormField
-              label="Пароль"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Введите пароль"
-              required
-              error={validation.password}
-              className="login-field"
-            />
+          <FormField
+            label="Пароль"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            placeholder="Введите пароль"
+            required
+            error={validation.password}
+            className="login-field"
+          />
 
-            <RememberMeSection
-              rememberMe={rememberMe}
-              onRememberMeChange={handleRememberMeChange}
-            />
-          </form>
+          <RememberMeSection
+            rememberMe={rememberMe}
+            onRememberMeChange={handleRememberMeChange}
+          />
         </div>
 
-        {/* Кнопка входа */}
-        <div className="pt-12">
+        {/* Кнопка с transform для сдвига вверх */}
+        <div className="mt-auto transform -translate-y-1">
           <LoadingButton
             type="submit"
             isLoading={isLoading}
@@ -89,7 +79,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
             Войти
           </LoadingButton>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

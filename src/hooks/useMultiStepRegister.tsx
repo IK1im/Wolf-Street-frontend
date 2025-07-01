@@ -4,12 +4,13 @@ import { registerUser } from "../services/auth/Register";
 import type { RegisterRequest } from "../services/auth/TypesAuth";
 import { useFormValidation } from "./useFormValidation";
 
-interface UseRegisterFormProps {
+interface UseMultiStepRegisterProps {
   onSuccess: () => void;
 }
 
-export function useRegisterForm({ onSuccess }: UseRegisterFormProps) {
+export function useMultiStepRegister({ onSuccess }: UseMultiStepRegisterProps) {
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -63,6 +64,49 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps) {
     [validation.confirmPassword, clearError]
   );
 
+  // Валидация первого шага
+  const validateStep1 = useCallback((): boolean => {
+    const step1Errors = {
+      username: !formData.username.trim() ? "Имя пользователя обязательно" : "",
+      email: !formData.email
+        ? "Email обязателен"
+        : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+        ? "Введите корректный email"
+        : "",
+    };
+
+    // Обновляем только ошибки первого шага
+    Object.entries(step1Errors).forEach(([field, error]) => {
+      if (error) {
+        validateField(
+          field as keyof typeof validation,
+          formData[field as keyof RegisterRequest] as string
+        );
+      }
+    });
+
+    return !Object.values(step1Errors).some((error) => error !== "");
+  }, [formData, validateField]);
+
+  // Переход к следующему шагу
+  const nextStep = useCallback(() => {
+    if (currentStep === 1) {
+      if (validateStep1()) {
+        setCurrentStep(2);
+        clearAllErrors();
+      }
+    }
+  }, [currentStep, validateStep1, clearAllErrors]);
+
+  // Возврат к предыдущему шагу
+  const prevStep = useCallback(() => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      clearAllErrors();
+    }
+  }, [currentStep, clearAllErrors]);
+
+  // Финальная отправка формы
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -75,7 +119,6 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps) {
       setError("");
 
       try {
-        // Создаем объект без пустых опциональных полей
         const registrationData: RegisterRequest = {
           username: formData.username,
           password: formData.password,
@@ -88,7 +131,6 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps) {
         await registerUser(registrationData);
         onSuccess();
 
-        // Перенаправление через 2 секунды
         setTimeout(() => {
           navigate("/login");
         }, 2000);
@@ -107,6 +149,7 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps) {
 
   return {
     // Состояние
+    currentStep,
     formData,
     confirmPassword,
     isLoading,
@@ -117,6 +160,8 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps) {
     handleInputChange,
     handleConfirmPasswordChange,
     handleSubmit,
+    nextStep,
+    prevStep,
 
     // Утилиты
     clearError,

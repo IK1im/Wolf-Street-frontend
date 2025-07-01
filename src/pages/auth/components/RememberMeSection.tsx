@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useTheme } from "../../../context/ThemeContext";
 
 interface RememberMeSectionProps {
   rememberMe: boolean;
@@ -10,42 +9,37 @@ export default function RememberMeSection({
   rememberMe,
   onRememberMeChange,
 }: RememberMeSectionProps) {
-  const { palette } = useTheme();
-
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center">
-        <input
-          id="remember-me"
-          name="remember-me"
-          type="checkbox"
-          checked={rememberMe}
-          onChange={(e) => onRememberMeChange(e.target.checked)}
-          className="h-4 w-4 rounded cursor-pointer"
-          style={{
-            accentColor: palette.accent,
-            backgroundColor: palette.card,
-            borderColor: palette.border,
-          }}
-        />
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => onRememberMeChange(!rememberMe)}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
+            rememberMe
+              ? "bg-light-accent dark:bg-dark-accent"
+              : "bg-light-card dark:bg-dark-card"
+          }`}
+          aria-label="Запомнить меня"
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
+              rememberMe ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </button>
+
         <label
-          htmlFor="remember-me"
-          className="ml-2 block text-sm cursor-pointer"
-          style={{ color: palette.fg }}
+          onClick={() => onRememberMeChange(!rememberMe)}
+          className="text-sm cursor-pointer text-light-fg dark:text-dark-fg select-none hover:text-light-accent dark:hover:text-dark-accent transition-colors duration-200"
         >
           Запомнить меня
         </label>
       </div>
+
       <Link
         to="/forgot-password"
-        className="text-sm hover:underline transition-all duration-200"
-        style={{ color: palette.accent }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = palette.brown;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = palette.accent;
-        }}
+        className="text-sm font-medium hover:underline transition-all duration-200 text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown"
       >
         Забыли пароль?
       </Link>

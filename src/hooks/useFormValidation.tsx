@@ -6,6 +6,7 @@ interface ValidationErrors {
   password: string;
   email: string;
   confirmPassword: string;
+  [key: string]: string;
 }
 
 interface ValidationRules {

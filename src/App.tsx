@@ -4,10 +4,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import "./index.css";
 import MainPage from "./pages/main/MainPage";
 import PortfolioPage from "./pages/portfolio/PortfolioPage";
-import { useTheme } from "./context/ThemeContext";
 
 export default function App() {
-  const { palette, theme, setTheme } = useTheme();
   return (
     <Router>
       <Routes>
@@ -15,23 +13,8 @@ export default function App() {
         {/* <Route path="/" element={<Navigate to="/register" replace />} /> */}
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/"
-          element={
-            <MainPage palette={palette} theme={theme} setTheme={setTheme} />
-          }
-        />
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/portfolio"
-          element={
-            <PortfolioPage
-              palette={palette}
-              theme={theme}
-              setTheme={setTheme}
-            />
-          }
-        />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/portfolio" element={<PortfolioPage />} />
       </Routes>
     </Router>
   );

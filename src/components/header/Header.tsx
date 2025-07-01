@@ -1,14 +1,11 @@
 import { useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import type { Palette } from "../../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 
 interface HeaderProps {
   scrolled: boolean;
-  palette: Palette;
-  theme: string;
   NAV: { id: string; label: string }[];
   setSearchPos: (pos: { top: number; left: number }) => void;
-  setTheme: (t: string) => void;
   activeSection: string;
   headerVisible: boolean;
   setSearchOpen: (open: boolean) => void;
@@ -17,11 +14,8 @@ interface HeaderProps {
 
 export default function Header({
   scrolled,
-  palette,
-  theme,
   NAV,
   setSearchPos,
-  setTheme,
   activeSection,
   headerVisible,
   setSearchOpen,
@@ -47,108 +41,49 @@ export default function Header({
   return (
     <>
       <header
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          zIndex: 30,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "8px 40px",
-          background: scrolled
-            ? theme === "dark"
-              ? "rgba(6,9,12,0.95)"
-              : "#fff"
-            : "transparent",
-          boxShadow: scrolled ? `0 2px 16px ${palette.card}` : "none",
-          transition: "all 0.3s",
-          transform: headerVisible ? "translateY(0)" : "translateY(-60px)",
-          opacity: headerVisible ? 1 : 0,
-          transitionProperty: "transform, opacity, box-shadow, background",
-          transitionDuration: "0.7s",
-          transitionTimingFunction: "cubic-bezier(.4,0,.2,1)",
-          minHeight: 56,
-        }}
+        className={`fixed top-0 left-0 w-full z-30 flex items-center justify-between px-6 py-2 min-h-12 
+          transition-all duration-700 ease-[cubic-bezier(.4,0,.2,1)]
+          ${
+            headerVisible
+              ? "translate-y-0 opacity-100"
+              : "-translate-y-[60px] opacity-0"
+          }
+          ${
+            scrolled
+              ? "bg-white/95 dark:bg-dark-bg/95 shadow-lg backdrop-blur-md"
+              : "bg-transparent"
+          }`}
       >
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-            cursor: isMain ? "default" : "pointer",
-          }}
+          className={`flex items-center gap-3 ${
+            !isMain ? "cursor-pointer" : "cursor-default"
+          }`}
           onClick={() => {
             if (!isMain) navigate("/");
           }}
         >
-          <span
-            style={{
-              fontSize: 40,
-              position: "relative",
-              display: "inline-block",
-              width: 64,
-              height: 64,
-            }}
-          >
-            <span
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                width: 64,
-                height: 64,
-                borderRadius: "50%",
-                background: "rgba(255,255,255,0.85)",
-                filter: "blur(16px)",
-                zIndex: 0,
-              }}
-            />
+          <span className="text-[32px] relative inline-block w-12 h-12">
+            <span className="absolute inset-0 w-12 h-12 rounded-full bg-white/85 blur-lg z-0" />
             <img
               src="/src/image/wolf_logo.svg"
               alt="logo"
-              style={{ width: 64, height: 64, position: "relative", zIndex: 1 }}
+              className="w-12 h-12 relative z-10"
             />
           </span>
-          <span
-            style={{
-              fontSize: 28,
-              fontWeight: 800,
-              color: palette.accent,
-              letterSpacing: "-1px",
-            }}
-          >
+          <span className="text-[22px] font-extrabold text-light-accent dark:text-dark-accent tracking-tight">
             Wolf Street
           </span>
         </div>
-        <nav style={{ display: "flex", gap: 8 }}>
+
+        <nav className="flex gap-1">
           <button
             onClick={() => handleNavClick("main")}
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              padding: "8px 24px",
-              borderRadius: 999,
-              background:
+            className={`text-sm font-bold py-1.5 px-4 rounded-full border-none outline-none cursor-pointer transition-all duration-200
+              ${
                 isMain && activeSection === "main"
-                  ? palette.navActive
-                  : "transparent",
-              color:
-                isMain && activeSection === "main"
-                  ? palette.navText
-                  : palette.navInactive,
-              boxShadow:
-                isMain && activeSection === "main"
-                  ? `0 2px 8px ${palette.accent}55`
-                  : "none",
-              transform:
-                isMain && activeSection === "main" ? "scale(1.05)" : "none",
-              border: "none",
-              outline: "none",
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
+                  ? "bg-light-nav-active dark:bg-dark-nav-active text-light-nav-text dark:text-dark-nav-text scale-105 shadow-[0_2px_8px_rgba(197,107,98,0.33)] dark:shadow-[0_2px_8px_rgba(129,199,132,0.33)]"
+                  : "bg-transparent text-light-nav-inactive dark:text-dark-nav-inactive hover:scale-105"
+              }`}
           >
             Главная
           </button>
@@ -156,38 +91,19 @@ export default function Header({
             <button
               key={section.id}
               onClick={() => handleNavClick(section.id)}
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                padding: "8px 24px",
-                borderRadius: 999,
-                background:
+              className={`text-sm font-bold py-1.5 px-4 rounded-full border-none outline-none cursor-pointer transition-all duration-200
+                ${
                   isMain && activeSection === section.id
-                    ? palette.navActive
-                    : "transparent",
-                color:
-                  isMain && activeSection === section.id
-                    ? palette.navText
-                    : palette.navInactive,
-                boxShadow:
-                  isMain && activeSection === section.id
-                    ? `0 2px 8px ${palette.accent}55`
-                    : "none",
-                transform:
-                  isMain && activeSection === section.id
-                    ? "scale(1.05)"
-                    : "none",
-                border: "none",
-                outline: "none",
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
+                    ? "bg-light-nav-active dark:bg-dark-nav-active text-light-nav-text dark:text-dark-nav-text scale-105 shadow-[0_2px_8px_rgba(197,107,98,0.33)] dark:shadow-[0_2px_8px_rgba(129,199,132,0.33)]"
+                    : "bg-transparent text-light-nav-inactive dark:text-dark-nav-inactive hover:scale-105"
+                }`}
             >
               {section.label}
             </button>
           ))}
         </nav>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+
+        <div className="flex items-center gap-2">
           <button
             ref={searchBtnRef}
             onClick={() => {
@@ -202,22 +118,14 @@ export default function Header({
               }
             }}
             aria-label="Поиск"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 6,
-              marginLeft: 0,
-              display: "flex",
-              alignItems: "center",
-            }}
+            className="bg-transparent border-none cursor-pointer p-1 ml-0 flex items-center hover:scale-110 transition-transform"
           >
             <svg
-              width="26"
-              height="26"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
-              stroke={theme === "dark" ? palette.fg : palette.navInactive}
+              className="stroke-light-fg dark:stroke-dark-fg opacity-70"
               strokeWidth="2.2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -226,64 +134,39 @@ export default function Header({
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </button>
+
           <button
             onClick={() => navigate("/login")}
-            style={{
-              padding: "8px 24px",
-              background: palette.accent,
-              color: palette.navText,
-              borderRadius: 999,
-              fontWeight: 700,
-              fontSize: 16,
-              boxShadow: `0 2px 8px ${palette.accent}55`,
-              border: "none",
-              cursor: "pointer",
-            }}
+            className="py-1.5 px-4 bg-light-accent dark:bg-dark-accent text-light-nav-text dark:text-dark-nav-text rounded-full font-bold text-sm border-none cursor-pointer shadow-[0_2px_8px_rgba(197,107,98,0.33)] dark:shadow-[0_2px_8px_rgba(129,199,132,0.33)] hover:scale-105 transition-transform"
           >
             Войти
           </button>
-          <ThemeToggle theme={theme} setTheme={setTheme} />
+
+          <ThemeToggle />
         </div>
       </header>
     </>
   );
 }
 
-function ThemeToggle({
-  theme,
-  setTheme,
-}: {
-  theme: string;
-  setTheme: (t: string) => void;
-}) {
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+
   return (
     <button
-      style={{
-        width: 48,
-        height: 28,
-        display: "flex",
-        alignItems: "center",
-        background: theme === "dark" ? "#23232a" : "#fff",
-        borderRadius: 999,
-        padding: 4,
-        border: `2px solid ${theme === "dark" ? "#00ACAC" : "#C56B62"}`,
-        marginLeft: 8,
-        cursor: "pointer",
-        transition: "all 0.2s",
-      }}
+      className={`w-10 h-6 flex items-center rounded-full p-0.5 ml-2 cursor-pointer transition-all duration-200 border-2
+        ${
+          theme === "dark"
+            ? "bg-dark-fg border-dark-accent"
+            : "bg-light-bg border-light-accent"
+        }`}
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       aria-label="Сменить тему"
     >
       <span
-        style={{
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          background: theme === "dark" ? "#6B7A8F" : "#75787D",
-          marginLeft: theme === "dark" ? 20 : 0,
-          transition: "all 0.3s",
-        }}
-      ></span>
+        className={`w-4 h-4 rounded-full transition-all duration-300
+          ${theme === "dark" ? "bg-dark-border ml-4" : "bg-light-border ml-0"}`}
+      />
     </button>
   );
 }

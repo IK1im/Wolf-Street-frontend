@@ -1,7 +1,8 @@
-import FormField from "../../../components/ui/FormField";
-import LoadingButton from "../../../components/ui/LoadingButton";
 import ErrorAlert from "../../../components/ui/ErrorAlert";
-import { useRegisterForm } from "../../../hooks/useRegisterForm";
+import StepIndicator from "../../../components/ui/StepIndicator";
+import RegisterStep1 from "./RegisterStep1";
+import RegisterStep2 from "./RegisterStep2";
+import { useMultiStepRegister } from "../../../hooks/useMultiStepRegister";
 
 interface RegisterFormProps {
   onSuccess: () => void;
@@ -9,6 +10,7 @@ interface RegisterFormProps {
 
 export default function RegisterForm({ onSuccess }: RegisterFormProps) {
   const {
+    currentStep,
     formData,
     confirmPassword,
     isLoading,
@@ -17,94 +19,42 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
     handleInputChange,
     handleConfirmPasswordChange,
     handleSubmit,
-  } = useRegisterForm({ onSuccess });
+    nextStep,
+    prevStep,
+  } = useMultiStepRegister({ onSuccess });
+
+  const steps = ["Основные данные", "Безопасность"];
 
   return (
-    <div className="px-8 py-6">
-      <ErrorAlert error={error} />
+    <div className="px-8 pt-4 pb-2">
+      {/* Индикатор прогресса */}
+      <StepIndicator currentStep={currentStep} totalSteps={2} steps={steps} />
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField
-          label="Имя пользователя"
-          name="username"
-          type="text"
-          value={formData.username}
-          onChange={handleInputChange}
-          placeholder="Введите имя пользователя"
-          required
-          error={validation.username}
+      {/* Зона для ошибок */}
+      <div className="mb-2">
+        <ErrorAlert error={error} />
+      </div>
+
+      {/* Рендер текущего шага */}
+      {currentStep === 1 ? (
+        <RegisterStep1
+          formData={formData}
+          validation={validation}
+          handleInputChange={handleInputChange}
+          onNext={nextStep}
         />
-
-        <FormField
-          label="Email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          placeholder="Введите email"
-          required
-          error={validation.email}
-        />
-
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            label="Имя"
-            name="firstname"
-            type="text"
-            value={formData.firstname}
-            onChange={handleInputChange}
-            placeholder="Имя"
-          />
-
-          <FormField
-            label="Фамилия"
-            name="lastname"
-            type="text"
-            value={formData.lastname}
-            onChange={handleInputChange}
-            placeholder="Фамилия"
-          />
-        </div>
-
-        <FormField
-          label="Телефон"
-          name="phone"
-          type="tel"
-          value={formData.phone}
-          onChange={handleInputChange}
-          placeholder="+7 (000) 000-00-00"
-        />
-
-        <FormField
-          label="Пароль"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleInputChange}
-          placeholder="Введите пароль"
-          required
-          error={validation.password}
-        />
-
-        <FormField
-          label="Подтверждение пароля"
-          name="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-          placeholder="Повторите пароль"
-          required
-          error={validation.confirmPassword}
-        />
-
-        <LoadingButton
-          type="submit"
+      ) : (
+        <RegisterStep2
+          formData={formData}
+          confirmPassword={confirmPassword}
+          validation={validation}
           isLoading={isLoading}
-          loadingText="Создание аккаунта..."
-        >
-          Создать аккаунт
-        </LoadingButton>
-      </form>
+          handleInputChange={handleInputChange}
+          handleConfirmPasswordChange={handleConfirmPasswordChange}
+          onSubmit={handleSubmit}
+          onBack={prevStep}
+        />
+      )}
     </div>
   );
 }

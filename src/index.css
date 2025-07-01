@@ -1,65 +1,44 @@
-@import "tailwindcss";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-/* Кастомные CSS переменные для цветовой палитры */
-
-/* Кастомные классы для фонов */
-.bg-custom-primary {
-  background-color: var(--color-bg-primary);
-}
-.bg-custom-secondary {
-  background-color: var(--color-bg-secondary);
-}
-.bg-custom-light {
-  background-color: var(--color-bg-light);
-}
-.bg-custom-accent {
-  background-color: var(--color-accent);
-}
-
-/* Кастомные классы для границ */
-.border-custom {
-  border-color: var(--color-border);
-}
-.border-custom-accent {
-  border-color: var(--color-accent);
-}
-
-/* Кастомные классы для текста */
-.text-custom-primary {
-  color: var(--color-text-primary);
-}
-.text-custom-secondary {
-  color: var(--color-text-secondary);
-}
-.text-custom-accent {
-  color: var(--color-accent);
-}
-.text-custom-black {
-  color: var(--color-bg-primary);
-}
-.text-custom-dark {
-  color: var(--color-text-dark);
-}
-
-/* Дополнительные современные стили */
+/* Специальные эффекты */
 .card-glow {
-  box-shadow: 0 0 0 1px rgba(0, 172, 172, 0.1), 0 4px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 1px rgba(129, 199, 132, 0.1), 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.dark .card-glow {
+  box-shadow: 0 0 0 1px rgba(129, 199, 132, 0.1), 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .input-glow:focus {
-  box-shadow: 0 0 0 2px rgba(0, 172, 172, 0.2), 0 0 20px rgba(0, 172, 172, 0.1);
+  box-shadow: 0 0 0 2px rgba(197, 107, 98, 0.2),
+    0 0 20px rgba(197, 107, 98, 0.1);
+}
+
+.dark .input-glow:focus {
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.2),
+    0 0 20px rgba(129, 199, 132, 0.1);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #00acac 0%, #008b8b 100%);
-  box-shadow: 0 4px 15px rgba(0, 172, 172, 0.3);
+  background-color: #c56b62;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(197, 107, 98, 0.3);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #008b8b 0%, #006666 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 172, 172, 0.4);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(197, 107, 98, 0.4);
+}
+
+.dark .btn-primary {
+  background-color: #81c784;
+  box-shadow: 0 4px 15px rgba(129, 199, 132, 0.3);
+}
+
+.dark .btn-primary:hover {
+  box-shadow: 0 8px 25px rgba(129, 199, 132, 0.4);
 }
 
 /* Анимация появления */
@@ -80,102 +59,72 @@
 
 /* Улучшенные тени для точек */
 .accent-dot {
-  box-shadow: 0 0 8px rgba(0, 172, 172, 0.4);
+  background-color: #c56b62;
+  box-shadow: 0 0 8px rgba(197, 107, 98, 0.4);
 }
 
-/* Градиентный фон для формы аутентификации */
-.auth-form-section {
-  background: linear-gradient(135deg, #464545 0%, #3a3939 100%);
+.dark .accent-dot {
+  background-color: #81c784;
+  box-shadow: 0 0 8px rgba(129, 199, 132, 0.4);
 }
 
-/* Градиентный фон для формы аутентификации */
-.auth-form-section {
-  background: linear-gradient(135deg, #464545 0%, #3a3939 100%);
-}
-
-/* Кастомные классы для hover эффектов */
-.hover-border-secondary:hover {
-  border-color: var(--color-text-secondary);
-}
-.hover-bg-accent-dark:hover {
-  background-color: var(--color-accent-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(0, 172, 172, 0.3);
-}
-.hover-text-accent-dark:hover {
-  color: var(--color-accent-hover);
-}
-
-/* Кастомные классы для focus эффектов */
-.focus-accent:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(0, 172, 172, 0.2);
-}
-
-/* Стили для автозаполнения полей формы - для левой части формы */
-.auth-form-section input:-webkit-autofill,
-.auth-form-section input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid #a6a7a2 !important;
+/* Стили для автозаполнения полей формы - светлая тема */
+input:-webkit-autofill,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #d9a69f inset !important;
+  -webkit-text-fill-color: #424658 !important;
+  border: 1px solid #6c739c !important;
   transition: background-color 5000s ease-in-out 0s,
     border-color 0.3s ease-in-out;
 }
 
-/* Hover для автозаполненных полей - для левой части формы */
-.auth-form-section input:-webkit-autofill:hover {
-  -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid #a6a7a2 !important;
+input:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0 30px #d9a69f inset !important;
+  -webkit-text-fill-color: #424658 !important;
+  border: 1px solid #6c739c !important;
 }
 
-/* Фокус для автозаполненных полей - для левой части формы */
-.auth-form-section input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid #00acac !important;
-  box-shadow: 0 0 0 2px rgba(0, 172, 172, 0.2) !important;
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px #d9a69f inset !important;
+  -webkit-text-fill-color: #424658 !important;
+  border: 1px solid #c56b62 !important;
+  box-shadow: 0 0 0 2px rgba(197, 107, 98, 0.2) !important;
 }
 
 /* Стили для автозаполнения полей формы - темная тема */
-input:-webkit-autofill,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #464545 inset !important;
-  -webkit-text-fill-color: #dfdedc !important;
-  border: 1px solid #a6a7a2 !important;
-  transition: background-color 5000s ease-in-out 0s,
-    border-color 0.3s ease-in-out;
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1a1918 inset !important;
+  -webkit-text-fill-color: #f0f4f0 !important;
+  border: 1px solid #3e3c3a !important;
 }
 
-/* Hover для автозаполненных полей - темная тема */
-input:-webkit-autofill:hover {
-  -webkit-box-shadow: 0 0 0 30px #464545 inset !important;
-  -webkit-text-fill-color: #dfdedc !important;
-  border: 1px solid #a6a7a2 !important;
+.dark input:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0 30px #1a1918 inset !important;
+  -webkit-text-fill-color: #f0f4f0 !important;
+  border: 1px solid #3e3c3a !important;
 }
 
-/* Фокус для автозаполненных полей - темная тема */
-input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 30px #464545 inset !important;
-  -webkit-text-fill-color: #dfdedc !important;
-  border: 1px solid #00acac !important;
-  box-shadow: 0 0 0 2px rgba(0, 172, 172, 0.2) !important;
+.dark input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px #1a1918 inset !important;
+  -webkit-text-fill-color: #f0f4f0 !important;
+  border: 1px solid #81c784 !important;
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.2) !important;
 }
 
-/* Стили для полей с ошибками при автозаполнении - для левой части формы */
-.auth-form-section input.border-red-500:-webkit-autofill,
-.auth-form-section input.border-red-500:-webkit-autofill:hover,
-.auth-form-section input.border-red-500:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 30px rgba(239, 68, 68, 0.2) inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid #ef4444 !important;
-}
-
-/* Стили для полей с ошибками при автозаполнении - темная тема */
+/* Стили для полей с ошибками при автозаполнении */
 input.border-red-500:-webkit-autofill,
 input.border-red-500:-webkit-autofill:hover,
 input.border-red-500:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0 30px rgba(239, 68, 68, 0.1) inset !important;
-  -webkit-text-fill-color: #dfdedc !important;
+  -webkit-text-fill-color: #424658 !important;
+  border: 1px solid #ef4444 !important;
+}
+
+.dark input.border-red-500:-webkit-autofill,
+.dark input.border-red-500:-webkit-autofill:hover,
+.dark input.border-red-500:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px rgba(239, 68, 68, 0.1) inset !important;
+  -webkit-text-fill-color: #f0f4f0 !important;
   border: 1px solid #ef4444 !important;
 }

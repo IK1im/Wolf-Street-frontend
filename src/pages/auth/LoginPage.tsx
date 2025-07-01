@@ -1,12 +1,11 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import AuthPromoBanner from "./components/AuthPromoBanner";
 import AuthSuccessMessage from "../../components/ui/AuthSuccessMessage";
-import { useTheme } from "../../context/ThemeContext";
 
 const LoginPage: React.FC = () => {
   const [success, setSuccess] = useState(false);
-  const { palette } = useTheme();
 
   const promoFeatures = [
     { text: "Реальные котировки" },
@@ -25,18 +24,31 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ backgroundColor: palette.bg }}
-    >
-      <div
-        className="w-full max-w-5xl rounded-2xl card-glow fade-in overflow-hidden"
-        style={{
-          border: `2px solid ${palette.accent}`,
-          boxShadow: `0 8px 32px ${palette.shadow}`,
-        }}
-      >
-        <div className="grid lg:grid-cols-3 min-h-[600px]">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-light-bg dark:bg-dark-bg">
+      <div className="w-full max-w-5xl mb-4 flex justify-start">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown transition-colors duration-200"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Вернуться на главную
+        </Link>
+      </div>
+
+      <div className="w-full max-w-5xl rounded-2xl card-glow fade-in overflow-hidden border-2 border-light-accent dark:border-dark-accent shadow-2xl">
+        <div className="grid lg:grid-cols-3 h-[600px]">
           <LoginForm onSuccess={() => setSuccess(true)} />
 
           <AuthPromoBanner
@@ -44,7 +56,6 @@ const LoginPage: React.FC = () => {
             subtitle="Это не проблема! Присоединяйтесь к Wolf Street и получите доступ к профессиональной торговой платформе."
             features={promoFeatures}
             ctaText="Начните торговать уже сегодня!"
-            ctaSubtext=""
             ctaLink="/register"
             ctaButtonText="Зарегистрироваться"
           />

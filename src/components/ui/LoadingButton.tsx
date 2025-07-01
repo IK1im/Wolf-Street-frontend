@@ -1,5 +1,3 @@
-import { useTheme } from "../../context/ThemeContext";
-
 interface LoadingButtonProps {
   isLoading: boolean;
   loadingText: string;
@@ -19,38 +17,24 @@ export default function LoadingButton({
   className = "",
   onClick,
 }: LoadingButtonProps) {
-  const { palette } = useTheme();
-
   return (
     <button
       type={type}
       disabled={isLoading || disabled}
       onClick={onClick}
-      className={`w-full py-3 px-4 rounded-lg font-medium focus:outline-none transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center ${className}`}
-      style={{
-        backgroundColor: palette.accent,
-        color: palette.bg,
-        boxShadow: `0 0 0 2px ${palette.accent}33`,
-      }}
-      onMouseEnter={(e) => {
-        if (!isLoading && !disabled) {
-          e.currentTarget.style.backgroundColor = palette.brown;
-          e.currentTarget.style.transform = "scale(1.02)";
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isLoading && !disabled) {
-          e.currentTarget.style.backgroundColor = palette.accent;
-          e.currentTarget.style.transform = "scale(1)";
-        }
-      }}
+      className={`w-full py-2.5 px-4 rounded-lg font-medium focus:outline-none transition-all duration-300 ease-in-out 
+        disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center
+        bg-light-accent dark:bg-dark-accent 
+        text-light-bg dark:text-dark-bg
+        hover:bg-light-brown dark:hover:bg-dark-brown
+        hover:scale-105 active:scale-95
+        shadow-[0_0_0_2px_rgba(197,107,98,0.2)] dark:shadow-[0_0_0_2px_rgba(129,199,132,0.2)]
+        focus:shadow-[0_0_0_4px_rgba(197,107,98,0.3)] dark:focus:shadow-[0_0_0_4px_rgba(129,199,132,0.3)]
+        ${className}`}
     >
       {isLoading ? (
         <>
-          <div
-            className="animate-spin rounded-full h-5 w-5 border-b-2 mr-2"
-            style={{ borderColor: palette.bg }}
-          ></div>
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-light-bg dark:border-dark-bg mr-2"></div>
           {loadingText}
         </>
       ) : (
