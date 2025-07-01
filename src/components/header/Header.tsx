@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   scrolled: boolean;
@@ -19,6 +20,7 @@ export default function Header({
 }: HeaderProps) {
 
     const searchBtnRef = useRef<HTMLButtonElement>(null);
+    const navigate = useNavigate();
 
     const handleNavClick = (id: string) => {
     const el = document.getElementById(id);
@@ -27,8 +29,7 @@ export default function Header({
         }
     };
 
-
-    const handleAuth = () => alert("Переход на страницу авторизации");
+    const handleAuth = () => navigate('/login');
 
     return (
         <>
@@ -130,11 +131,11 @@ export default function Header({
 function ThemeToggle({ theme, setTheme }: { theme: string; setTheme: (t: string) => void }) {
   return (
     <button
-      style={{ width: 48, height: 28, display: 'flex', alignItems: 'center', background: theme === 'dark' ? '#23232a' : '#fff', borderRadius: 999, padding: 4, border: `2px solid #40BFAF`, marginLeft: 8, cursor: 'pointer', transition: 'all 0.2s' }}
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      style={{ width: 48, height: 28, display: 'flex', alignItems: 'center', background: theme === 'dark' ? '#23232a' : '#fff', borderRadius: 999, padding: 4, border: `2px solid ${theme === 'dark' ? '#00ACAC' : '#C56B62'}`, marginLeft: 8, cursor: 'pointer', transition: 'all 0.2s' }}
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       aria-label="Сменить тему"
     >
-      <span style={{ width: 20, height: 20, borderRadius: '50%', background: theme === "dark" ? '#40BFAF' : '#75787D', marginLeft: theme === "dark" ? 20 : 0, transition: 'all 0.3s' }}></span>
+      <span style={{ width: 20, height: 20, borderRadius: '50%', background: theme === 'dark' ? '#6B7A8F' : '#75787D', marginLeft: theme === 'dark' ? 20 : 0, transition: 'all 0.3s' }}></span>
     </button>
   );
 }

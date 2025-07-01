@@ -145,7 +145,7 @@ export default function MainPage() {
             top: searchPos.top,
             left: searchPos.left - 260,
             zIndex: 100,
-            background: theme === 'dark' ? palette.card : palette.card,
+            background: palette.card,
             borderRadius: 18,
             boxShadow: `0 8px 32px ${palette.shadow}`,
             padding: 0,
@@ -157,20 +157,20 @@ export default function MainPage() {
             opacity: 1,
             transform: 'translateY(0)',
             transition: 'all 0.4s cubic-bezier(.4,0,.2,1)',
-            border: `1.5px solid ${theme === 'dark' ? palette.accent : palette.accent}`,
+            border: `1.5px solid ${palette.accent}`,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', borderBottom: `1px solid ${theme === 'dark' ? '#23262F' : palette.border}`, padding: '18px 18px 10px 18px', gap: 8 }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={theme === 'dark' ? palette.accent : '#000'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+          <div style={{ display: 'flex', alignItems: 'center', padding: '18px 18px 10px 18px', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={palette.accent} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
             <input
               autoFocus
               type="text"
               placeholder="Поиск..."
               style={{
                 flex: 1,
-                background: theme === 'dark' ? 'transparent' : '#fff',
+                background: 'transparent',
                 border: `1.5px solid ${palette.accent}`,
-                color: theme === 'dark' ? '#DFDEDC' : '#1F1E23',
+                color: palette.fg,
                 fontSize: 17,
                 borderRadius: 8,
                 padding: '8px 12px',
@@ -178,7 +178,8 @@ export default function MainPage() {
                 transition: 'border 0.2s',
                 boxShadow: 'none',
               }}
-              className={theme === 'dark' ? 'search-input-dark' : 'search-input-light'}
+              className={'search-input-dark'}
+              onFocus={e => { e.target.style.outline = 'none'; e.target.style.boxShadow = 'none'; }}
             />
             <button onClick={() => setSearchOpen(false)} style={{ background: 'none', border: 'none', color: palette.fg, fontWeight: 700, fontSize: 15, marginLeft: 8, cursor: 'pointer' }}>Отменить</button>
           </div>
@@ -199,28 +200,28 @@ export default function MainPage() {
             {[
               {
                 icon: (
-                  <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" stroke="#40BFAF" strokeWidth="2"/><path d="M10 16l4 4 8-8" stroke="#40BFAF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" stroke={palette.accent} strokeWidth="2"/><path d="M10 16l4 4 8-8" stroke={palette.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 ),
                 title: 'Гарантия безопасности',
                 text: 'Ваши активы под защитой: многоуровневое шифрование, резервные копии и круглосуточный мониторинг. Мы — ваш цифровой сейф.'
               },
               {
                 icon: (
-                  <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><rect x="4" y="8" width="24" height="16" rx="4" stroke="#40BFAF" strokeWidth="2"/><path d="M8 16h16M16 12v8" stroke="#40BFAF" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><rect x="4" y="8" width="24" height="16" rx="4" stroke={palette.accent} strokeWidth="2"/><path d="M8 16h16M16 12v8" stroke={palette.accent} strokeWidth="2" strokeLinecap="round"/></svg>
                 ),
                 title: 'Технологии будущего',
                 text: 'Интеллектуальные алгоритмы, автоматизация сделок и интеграция с топовыми банками. Всё для вашего роста и удобства.'
               },
               {
                 icon: (
-                  <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><path d="M16 4l4 8 8 1-6 6 2 9-8-4-8 4 2-9-6-6 8-1 4-8z" stroke="#40BFAF" strokeWidth="2" fill="#494C51"/></svg>
+                  <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><path d="M16 4l4 8 8 1-6 6 2 9-8-4-8 4 2-9-6-6 8-1 4-8z" stroke={palette.accent} strokeWidth="2" fill={palette.card}/></svg>
                 ),
                 title: 'Премиальный стиль',
                 text: 'Дизайн, который вдохновляет: минимализм, скорость, внимание к деталям. Управляйте капиталом с удовольствием.'
               },
               {
                 icon: (
-                  <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" stroke="#40BFAF" strokeWidth="2"/><path d="M10 22v-2a4 4 0 014-4h4a4 4 0 014 4v2" stroke="#40BFAF" strokeWidth="2"/><circle cx="16" cy="13" r="3" stroke="#40BFAF" strokeWidth="2"/></svg>
+                  <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" stroke={palette.accent} strokeWidth="2"/><path d="M10 22v-2a4 4 0 014-4h4a4 4 0 014 4v2" stroke={palette.accent} strokeWidth="2"/><circle cx="16" cy="13" r="3" stroke={palette.accent} strokeWidth="2"/></svg>
                 ),
                 title: 'Живое сообщество',
                 text: 'Wolf Street — это не только сервис, но и люди. Форумы, поддержка 24/7, обмен опытом и совместные инвестиции.'
@@ -241,7 +242,7 @@ export default function MainPage() {
         <div style={{ maxWidth: 900, margin: '0 auto', width: '100%', padding: 48 }}>
           <h2 style={{ fontSize: 36, fontWeight: 800, color: palette.accent, marginBottom: 40, textAlign: 'center', letterSpacing: 1 }}>График рынка</h2>
           <div style={{ background: palette.card, borderRadius: 32, boxShadow: `0 4px 24px ${palette.shadow}`, padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 380 }}>
-            <CandlestickChartStub theme={theme} />
+            <CandlestickChartStub palette={palette} />
             <span style={{ marginTop: 32, color: palette.fg, fontSize: 20, fontWeight: 500, opacity: 0.8 }}>Данные скоро будут поступать из ClickHouse</span>
           </div>
         </div>
@@ -296,9 +297,9 @@ export default function MainPage() {
 
 
 
-function CandlestickChartStub({ theme }: { theme?: string }) {
-  const stroke = theme === 'light' ? '#40BFAF' : '#40BFAF';
-  const fill = theme === 'light' ? '#fff' : '#494C51';
+function CandlestickChartStub({ palette }: { palette: any }) {
+  const stroke = palette.accent;
+  const fill = palette.card;
   return (
     <svg width="100%" height="100%" viewBox="0 0 400 200" className="max-w-full max-h-full">
       <line x1="40" y1="10" x2="40" y2="190" stroke={stroke} strokeWidth="2" />

@@ -7,17 +7,17 @@ interface HeroSectionProps {
     email: string;
 }
 
-
-
 export default function HeroSection({palette, heroVisible,
     setEmail, email} : HeroSectionProps) {
 
+    // Восстанавливаем palette через контекст темы
+    const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
     const handleStart = () => alert(`Введён email: ${email}`);
 
     return (
         <>
-           <section id="main" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', height: '100vh', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, borderBottom: `1px solid ${palette.border}`, maxWidth: '100vw', margin: 0 }}>
+           <section id="main" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', height: '100vh', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, borderBottom: `1px solid ${palette.border}`, maxWidth: '100vw', margin: 0, background: palette.bg, color: palette.fg }}>
         {/* Анимированный фон */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
           <div style={{ position: 'absolute', left: '50%', top: '33%', transform: 'translate(-50%, 0)', width: 520, height: 520, background: `${palette.accent}22`, borderRadius: '50%', filter: 'blur(96px)', animation: 'pulse 3s infinite alternate' }} />
@@ -73,7 +73,7 @@ export default function HeroSection({palette, heroVisible,
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 32 }}>
             <div style={{ background: palette.card, borderRadius: 32, boxShadow: `0 4px 24px ${palette.shadow}`, padding: 40, minWidth: 300, border: `1px solid ${palette.accent}`, display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', justifyContent: 'center' }}>
               <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20, color: palette.accent, letterSpacing: 1, textAlign: 'center' }}>
-                <span style={{ fontFamily: 'Material Icons', verticalAlign: 'middle', marginRight: 8 }}>show_chart</span> Динамика роста
+                <span style={{ fontFamily: 'Material Icons', verticalAlign: 'middle', marginRight: 8 }}> Динамика роста</span>
               </h2>
               <AnimatedLineChart accent={palette.accent} />
             </div>
