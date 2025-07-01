@@ -10,8 +10,7 @@ const NAV = [
   { id: "faq", label: "FAQ" },
 ];
 
-export default function MainPage() {
-  const [theme, setTheme] = useState('dark');
+export default function MainPage({palette, theme, setTheme}: {palette: any, theme: string, setTheme: (t: 'dark' | 'light') => void}) {
   const [email, setEmail] = useState("");
   const [activeSection, setActiveSection] = useState("main");
   const [scrolled, setScrolled] = useState(false);
@@ -53,75 +52,11 @@ export default function MainPage() {
     setTimeout(() => setHeroVisible(true), 400);
   }, []);
 
-  
-
-  
-
   const currencyRates = [
     { code: "USD/RUB", rate: "92.15" },
     { code: "EUR/RUB", rate: "99.80" },
     { code: "CNY/RUB", rate: "12.70" },
   ];
-
-  // Цветовые палитры
-  const palette = theme === 'dark' ? {
-    // первый вариант
-    // bg: '#06090C',
-    // fg: '#B4B4BC',
-    // accent: '#40BFAF',
-    // card: '#494C51',
-    // border: '#75787D55',
-    // brown: '#928072',
-    // shadow: '#06090C88',
-    // navActive: '#40BFAF',
-    // navText: '#06090C',
-    // navInactive: '#B4B4BC',
-    // chartStroke: '#40BFAF',
-    // chartFill: '#494C51',
-
-    // второй вариант
-    bg: '#000000',
-    fg: '#DFDEDC',
-    accent: '#00ACAC',
-    card: '#6B7A8F',
-    border: '#6B7A8F',
-    brown: '#A6A7A2',
-    shadow: '#000000AA',
-    navActive: '#00ACAC',
-    navText: '#000000',
-    navInactive: '#6B7A8F',
-    chartStroke: '#00ACAC',
-    chartFill: '#6B7A8F',
-
-    //третий вариант 
-    // bg: '#9AE4F5',
-    // fg: '#303B4B',
-    // accent: '#0E9A7A',
-    // card: '#A9C1D5',
-    // border: '#70BCDB',
-    // brown: '#494589',
-    // shadow: '#145089AA',
-    // navActive: '#0E9A7A',
-    // navText: '#303B4B',
-    // navInactive: '#A9C1D5',
-    // chartStroke: '#0E9A7A',
-    // chartFill: '#A9C1D5',
-
-  } : {
-    // новая светлая палитра
-    bg: '#F0DAD5',        // фон
-    fg: '#424658',        // основной текст
-    accent: '#C56B62',    // акцент/кнопки
-    card: '#D9A69F',      // карточки/контейнеры
-    border: '#6C739C',    // границы
-    brown: '#DEA785',     // дополнительный цвет (например, иконки)
-    shadow: '#BABBB155',  // тень
-    navActive: '#C56B62', // активный пункт навигации
-    navText: '#424658',   // текст навигации
-    navInactive: '#6C739C', // неактивный пункт навигации
-    chartStroke: '#C56B62', // цвет линии графика
-    chartFill: '#D9A69F',   // заливка графика
-  };
 
   return (
     <div className="min-h-screen w-full font-sans bg-light-bg text-light-fg dark:bg-dark-bg dark:text-dark-fg">
@@ -268,7 +203,7 @@ export default function MainPage() {
               },
               {
                 q: 'Как связаться с поддержкой?',
-                a: 'Пишите нам на info@wolfstreet.com или через форму обратной связи на сайте.'
+                a: 'Пишите на support@wolfstreet.ru или в чат поддержки на сайте.'
               },
             ].map((item, idx) => (
               <AccordionItem key={idx} title={item.q} text={item.a} theme={theme} />
@@ -294,8 +229,6 @@ export default function MainPage() {
     </div>
   );
 }
-
-
 
 function CandlestickChartStub({ palette }: { palette: any }) {
   const stroke = palette.accent;

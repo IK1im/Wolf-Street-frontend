@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface HeaderProps {
   scrolled: boolean;
@@ -21,12 +21,19 @@ export default function Header({
 
     const searchBtnRef = useRef<HTMLButtonElement>(null);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isMain = location.pathname === '/';
 
     const handleNavClick = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (isMain) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
+      } else {
+        navigate('/');
+      }
     };
 
     const handleAuth = () => navigate('/login');
@@ -55,7 +62,7 @@ export default function Header({
           minHeight: 56,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, cursor: isMain ? 'default' : 'pointer' }} onClick={() => { if (!isMain) navigate('/'); }}>
           <span style={{ fontSize: 40, position: 'relative', display: 'inline-block', width: 64, height: 64 }}>
             <span style={{
               position: 'absolute',
@@ -73,7 +80,26 @@ export default function Header({
           <span style={{ fontSize: 28, fontWeight: 800, color: palette.accent, letterSpacing: '-1px' }}>Wolf Street</span>
         </div>
         <nav style={{ display: 'flex', gap: 8 }}>
-          {NAV.map((section) => (
+          <button
+            onClick={() => handleNavClick('main')}
+            style={{
+              fontSize: 16,
+              fontWeight: 700,
+              padding: '8px 24px',
+              borderRadius: 999,
+              background: isMain && activeSection === 'main' ? palette.navActive : 'transparent',
+              color: isMain && activeSection === 'main' ? palette.navText : palette.navInactive,
+              boxShadow: isMain && activeSection === 'main' ? `0 2px 8px ${palette.accent}55` : 'none',
+              transform: isMain && activeSection === 'main' ? 'scale(1.05)' : 'none',
+              border: 'none',
+              outline: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            Главная
+          </button>
+          {NAV.filter(section => section.id !== 'main').map((section) => (
             <button
               key={section.id}
               onClick={() => handleNavClick(section.id)}
@@ -82,10 +108,10 @@ export default function Header({
                 fontWeight: 700,
                 padding: '8px 24px',
                 borderRadius: 999,
-                background: activeSection === section.id ? palette.navActive : 'transparent',
-                color: activeSection === section.id ? palette.navText : palette.navInactive,
-                boxShadow: activeSection === section.id ? `0 2px 8px ${palette.accent}55` : 'none',
-                transform: activeSection === section.id ? 'scale(1.05)' : 'none',
+                background: isMain && activeSection === section.id ? palette.navActive : 'transparent',
+                color: isMain && activeSection === section.id ? palette.navText : palette.navInactive,
+                boxShadow: isMain && activeSection === section.id ? `0 2px 8px ${palette.accent}55` : 'none',
+                transform: isMain && activeSection === section.id ? 'scale(1.05)' : 'none',
                 border: 'none',
                 outline: 'none',
                 cursor: 'pointer',
@@ -116,7 +142,7 @@ export default function Header({
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={theme === 'dark' ? palette.fg : palette.navInactive} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
           </button>
           <button
-            onClick={handleAuth}
+            onClick={() => navigate('/login')}
             style={{ padding: '8px 24px', background: palette.accent, color: palette.navText, borderRadius: 999, fontWeight: 700, fontSize: 16, boxShadow: `0 2px 8px ${palette.accent}55`, border: 'none', cursor: 'pointer' }}
           >
             Войти
@@ -137,5 +163,55 @@ function ThemeToggle({ theme, setTheme }: { theme: string; setTheme: (t: string)
     >
       <span style={{ width: 20, height: 20, borderRadius: '50%', background: theme === 'dark' ? '#6B7A8F' : '#75787D', marginLeft: theme === 'dark' ? 20 : 0, transition: 'all 0.3s' }}></span>
     </button>
+  );
+}
+
+function ProfileMenu({ palette }: { palette: any }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: palette.card,
+          border: `2px solid ${palette.border}`,
+          borderRadius: 999,
+          padding: '4px 16px 4px 4px',
+          cursor: 'pointer',
+          color: palette.fg,
+          fontWeight: 600,
+          fontSize: 16,
+        }}
+      >
+        <img src="https://i.imgur.com/0y0y0y0.png" alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%', background: palette.card }} />
+        <span style={{ marginRight: 4 }}>Профиль</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={palette.fg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', right: 0, top: 44, minWidth: 140,
+          background: palette.card,
+          border: `1.5px solid ${palette.border}`,
+          borderRadius: 12,
+          boxShadow: `0 4px 24px ${palette.card}99`,
+          zIndex: 100,
+          padding: 8,
+        }}>
+          <div style={{ padding: '10px 16px', cursor: 'pointer', color: palette.fg, borderRadius: 8, fontWeight: 500 }} onClick={() => { setOpen(false); }}>Профиль</div>
+          <div style={{ padding: '10px 16px', cursor: 'pointer', color: palette.fg, borderRadius: 8, fontWeight: 500 }} onClick={() => { setOpen(false); /* TODO: handle logout */ }}>Выйти</div>
+        </div>
+      )}
+    </div>
   );
 }
