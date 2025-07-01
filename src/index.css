@@ -1,17 +1,6 @@
 @import "tailwindcss";
 
 /* Кастомные CSS переменные для цветовой палитры */
-:root {
-  --color-bg-primary: #000000;
-  --color-bg-secondary: #464545;
-  --color-bg-light: #ffffff;
-  --color-border: #a6a7a2;
-  --color-accent: #00acac;
-  --color-accent-hover: #008888;
-  --color-text-primary: #dfdedc;
-  --color-text-secondary: #a6a7a2;
-  --color-text-dark: #1a1a1a;
-}
 
 /* Кастомные классы для фонов */
 .bg-custom-primary {
