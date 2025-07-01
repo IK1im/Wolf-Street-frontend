@@ -2,18 +2,30 @@ import React, { createContext, useContext, useState, useMemo } from 'react';
 
 const palettes = {
   dark: {
-    bg: '#000000',
-    fg: '#DFDEDC',
-    accent: '#00ACAC',
-    card: '#6B7A8F',
-    border: '#6B7A8F',
-    brown: '#A6A7A2',
-    shadow: '#000000AA',
-    navActive: '#00ACAC',
-    navText: '#000000',
-    navInactive: '#6B7A8F',
-    chartStroke: '#00ACAC',
-    chartFill: '#6B7A8F',
+    // bg: '#000000',
+    // fg: '#DFDEDC',
+    // accent: '#00ACAC',
+    // card: '#ccd0d6',
+    // border: '#6B7A8F',
+    // brown: '#A6A7A2',
+    // shadow: '#000000AA',
+    // navActive: '#00ACAC',
+    // navText: '#000000',
+    // navInactive: '#6B7A8F',
+    // chartStroke: '#00ACAC',
+    // chartFill: '#6B7A8F',
+    bg: "#1c1b1b", // 🖼️  Основной фон
+    fg: "#f0f4f0", // ✏️  Мягкий белый
+    accent: "#81c784", // 🎯  Мягкий зеленый
+    card: "#232120", // 📋  Карточки
+    border: "#3e3c3a", // 🔲  Границы
+    brown: "#558b2f", // 🤎  Темно-зеленый
+    shadow: "#00000080", // 🌫️  Тень
+    navActive: "#81c784", // 🔘  Активная навигация
+    navText: "#f0f4f0", // 📝  Текст навигации
+    navInactive: "#848280", // ⚪  Неактивная навигация
+    chartStroke: "#81c784", // 📈  Графики
+    chartFill: "#232120", // 📊  Заливка
   },
   light: {
     bg: '#F0DAD5',
