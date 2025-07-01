@@ -38,3 +38,17 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// Получить курсы популярных валют к RUB (ЦБ РФ)
+export async function getCurrencyRates() {
+  const url = 'https://www.cbr-xml-daily.ru/daily_json.js';
+  const { data } = await axios.get(url);
+  if (!data || !data.Valute) throw new Error('No rates');
+  const { USD, EUR, CNY } = data.Valute;
+  if (!USD || !EUR || !CNY) throw new Error('No rates');
+  return {
+    USD: USD.Value,
+    EUR: EUR.Value,
+    CNY: CNY.Value,
+  };
+}
