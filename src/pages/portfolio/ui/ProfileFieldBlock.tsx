@@ -71,11 +71,11 @@ const ProfileFieldBlock: React.FC<ProfileFieldBlockProps> = ({
       {editing ? (
         <div className="flex gap-2">
           <button
-            className="bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-white font-bold text-[15px] px-5 py-2 rounded-lg shadow transition-all duration-150"
+            className="bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[120px] hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
             onClick={() => onSave && onSave(editValue)}
           >Сохранить</button>
           <button
-            className="bg-transparent border border-light-accent dark:border-dark-accent text-light-accent dark:text-dark-accent font-semibold text-[15px] px-5 py-2 rounded-lg transition-all duration-150 hover:bg-light-accent/10 dark:hover:bg-dark-accent/10"
+            className="bg-gradient-to-r from-white/80 to-light-card/80 dark:from-dark-card/70 dark:to-[#181926]/80 text-light-accent dark:text-dark-accent font-semibold rounded-xl px-7 py-2.5 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[120px] hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-white hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30"
             onClick={onCancel}
           >Отмена</button>
         </div>

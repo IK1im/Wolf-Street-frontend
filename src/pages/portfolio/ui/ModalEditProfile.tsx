@@ -88,7 +88,7 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
       />
       {/* Модальное окно с анимацией */}
       <div
-        className="relative bg-white dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent rounded-2xl shadow-2xl p-8 min-w-[320px] max-w-[95vw] max-w-[380px] text-light-fg dark:text-dark-fg z-10 transition-all duration-300 animate-scalein"
+        className="relative bg-gradient-to-br from-white to-light-card dark:from-dark-card dark:to-[#181926] border-2 border-light-accent dark:border-dark-accent rounded-2xl shadow-2xl p-8 min-w-[320px] max-w-[95vw] max-w-[380px] text-light-fg dark:text-dark-fg z-10 transition-all duration-300 animate-scalein"
         style={{ boxShadow: `0 4px 32px ${palette.shadow}` }}
         onClick={e => e.stopPropagation()}
       >
@@ -108,7 +108,7 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
         {/* Аватары */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32, marginBottom: 8 }}>
           {/* Текущий аватар */}
-          <div className="w-24 h-24 rounded-full border-2 border-light-accent dark:border-dark-accent bg-light-bg dark:bg-dark-bg flex items-center justify-center overflow-hidden">
+          <div className="w-24 h-24 rounded-full border-2 border-light-accent dark:border-dark-accent bg-gradient-to-br from-light-bg to-light-card dark:from-dark-bg dark:to-dark-card flex items-center justify-center overflow-hidden">
             <img src={currentAvatar} alt="current avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
           {/* Стрелка */}
@@ -118,7 +118,7 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
-            className={`w-24 h-24 rounded-full border-2 border-dashed ${dragActive ? 'border-light-accent dark:border-dark-accent' : 'border-light-border dark:border-dark-border'} bg-light-bg dark:bg-dark-bg flex items-center justify-center overflow-hidden cursor-pointer transition-colors duration-200 relative`}
+            className={`w-24 h-24 rounded-full border-2 border-dashed ${dragActive ? 'border-light-accent dark:border-dark-accent' : 'border-light-border dark:border-dark-border'} bg-gradient-to-br from-light-bg to-light-card dark:from-dark-bg dark:to-dark-card flex items-center justify-center overflow-hidden cursor-pointer transition-colors duration-200 relative`}
             onClick={() => fileInputRef.current && fileInputRef.current.click()}
           >
             {avatar ? (
@@ -151,7 +151,7 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
             type="text"
             value={nickname}
             onChange={e => setNickname(e.target.value.slice(0, NICK_LIMIT))}
-            className={`w-full text-[17px] font-semibold bg-light-bg dark:bg-dark-bg border rounded-lg px-4 py-2 outline-none mb-1 transition-colors duration-200 ${error ? 'border-light-accent dark:border-dark-accent' : 'border-light-border dark:border-dark-border'} text-light-fg dark:text-dark-fg`}
+            className={`w-full text-[17px] font-semibold bg-gradient-to-br from-light-bg to-light-card dark:from-dark-bg dark:to-dark-card border rounded-lg px-4 py-2 outline-none mb-1 transition-colors duration-200 ${error ? 'border-light-accent dark:border-dark-accent' : 'border-light-border dark:border-dark-border'} text-light-fg dark:text-dark-fg`}
             maxLength={NICK_LIMIT}
             autoFocus
             onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') onClose(); }}
@@ -165,12 +165,12 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, marginTop: 24 }}>
           <button
             onClick={handleSave}
-            className={`flex-1 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-white font-bold text-[16px] py-3 rounded-lg shadow-lg transition-all duration-150 mr-2 ${!nickname.trim() || nickname.length > NICK_LIMIT ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105'}`}
+            className={`flex-1 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-3 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 mr-2 w-[120px] hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 ${!nickname.trim() || nickname.length > NICK_LIMIT ? 'opacity-60 cursor-not-allowed' : ''}`}
             disabled={!nickname.trim() || nickname.length > NICK_LIMIT}
           >Сохранить</button>
           <button
             onClick={onClose}
-            className="flex-1 bg-transparent border border-light-accent dark:border-dark-accent text-light-accent dark:text-dark-accent font-semibold text-[16px] py-3 rounded-lg transition-all duration-150 ml-2 hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:scale-105"
+            className="flex-1 bg-gradient-to-r from-white/80 to-light-card/80 dark:from-dark-card/70 dark:to-[#181926]/80 text-light-accent dark:text-dark-accent font-semibold rounded-xl px-7 py-3 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 ml-2 w-[120px] hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-white hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30"
           >Отмена</button>
         </div>
       </div>

@@ -79,45 +79,12 @@ const ModalColorSettings: React.FC<ModalColorSettingsProps> = ({ open, onClose, 
         <div style={{ display: 'flex', gap: 16, marginTop: 18 }}>
           <button
             onClick={onClose}
-            style={{
-              flex: 1,
-              background: palette.bg,
-              color: palette.fg,
-              border: `1.5px solid ${palette.navInactive}`,
-              borderRadius: 8,
-              fontWeight: 500,
-              fontSize: 16,
-              padding: '12px 0',
-              cursor: 'pointer',
-              transition: 'background 0.2s, color 0.2s, transform 0.13s',
-            }}
-            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
-            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.04)'}
-            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+            className="flex-1 bg-gradient-to-r from-white/80 to-light-card/80 dark:from-dark-card/70 dark:to-[#181926]/80 text-light-accent dark:text-dark-accent font-semibold rounded-xl px-7 py-3 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[120px] hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-white hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30"
           >Отмена</button>
           <button
             onClick={() => onConfirm(selected)}
             disabled={selected === current}
-            style={{
-              flex: 1,
-              background: selected === current ? palette.navInactive + '22' : palette.accent,
-              color: selected === current ? palette.navInactive : palette.bg,
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 600,
-              fontSize: 16,
-              padding: '12px 0',
-              cursor: selected === current ? 'not-allowed' : 'pointer',
-              opacity: selected === current ? 0.7 : 1,
-              transition: 'background 0.2s, color 0.2s, transform 0.13s',
-            }}
-            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
-            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.04)'}
-            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+            className={`flex-1 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-3 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[120px] hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 ${selected === current ? 'opacity-60 cursor-not-allowed' : ''}`}
           >Подтвердить</button>
         </div>
       </div>

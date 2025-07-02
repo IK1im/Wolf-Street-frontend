@@ -74,7 +74,7 @@ export default function SettingsPanel() {
       {/* Заголовок */}
       <h1 className="text-[28px] font-extrabold mb-8 text-light-accent dark:text-dark-accent text-center">Настройки</h1>
       {/* Никнейм и аватар */}
-      <div className="bg-light-card dark:bg-dark-card rounded-2xl shadow-lg p-8 mb-8 border border-light-border dark:border-dark-border flex flex-row items-center gap-8 min-h-[220px]">
+      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-lg card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border flex flex-row items-center gap-8 min-h-[220px]">
         {/* Поля */}
         <div className="flex-1 flex flex-col justify-center min-w-0">
           <div className="text-[20px] font-semibold mb-1">Никнейм и аватар</div>
@@ -123,7 +123,7 @@ export default function SettingsPanel() {
         />
       </div>
       {/* Уведомления */}
-      <div className="bg-light-card dark:bg-dark-card rounded-2xl shadow-lg p-8 mb-8 border border-light-border dark:border-dark-border">
+      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-lg card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border">
         <div className="text-[20px] font-bold text-light-accent dark:text-dark-accent mb-1">Уведомления</div>
         <div className="text-light-nav-inactive dark:text-dark-nav-inactive text-[15px] mb-6 max-w-2xl">Управляйте своими уведомлениями — выберите, как мы можем держать вас в курсе самого важного. Мы ценим ваше доверие и никогда не будем злоупотреблять вашим вниманием.</div>
         <div className="space-y-6">
@@ -154,7 +154,7 @@ export default function SettingsPanel() {
         </div>
       </div>
       {/* Предпочитаемые настройки */}
-      <div className="bg-light-card dark:bg-dark-card rounded-2xl shadow-lg p-8 mb-8 border border-light-border dark:border-dark-border">
+      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-lg card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border">
         <div className="text-[20px] font-bold text-light-accent dark:text-dark-accent mb-1">Предпочитаемые настройки</div>
         <div className="space-y-6 mt-6">
           {/* Цветовая схема */}
@@ -163,7 +163,10 @@ export default function SettingsPanel() {
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Настройка цвета</div>
               <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">{colorScheme === 'green-red' ? <span className="text-green-400 font-semibold">Зелёный</span> : <span className="text-red-400 font-semibold">Красный</span>} — рост / <span className="text-red-400 font-semibold">красный</span> — падение</div>
             </div>
-            <button className="bg-light-accent dark:bg-dark-accent text-white rounded-lg px-5 py-2 font-semibold shadow hover:scale-105 transition-transform" onClick={() => setColorModal(true)}>Изменить</button>
+            <button
+              className="bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[130px] text-center hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
+              onClick={() => setColorModal(true)}
+            >Изменить</button>
           </div>
           {/* Стиль графика */}
           <div className="flex items-center gap-4">
@@ -171,7 +174,10 @@ export default function SettingsPanel() {
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Настройка стиля</div>
               <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">{customTheme ? <span className="text-light-accent font-semibold">Пользовательская</span> : 'Стандартная'}</div>
             </div>
-            <button className="bg-light-accent dark:bg-dark-accent text-white rounded-lg px-5 py-2 font-semibold shadow hover:scale-105 transition-transform" onClick={() => setChartStyleModal(true)}>Изменить</button>
+            <button
+              className="bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[130px] text-center hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
+              onClick={() => setChartStyleModal(true)}
+            >Изменить</button>
           </div>
           {/* Часовой пояс */}
           <div className="flex items-center gap-4">
@@ -179,14 +185,20 @@ export default function SettingsPanel() {
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Часовой пояс, <span className="font-normal">{timezone}</span></div>
               <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">Europe/Moscow</div>
             </div>
-            <button ref={tzBtnRef} className="bg-light-accent dark:bg-dark-accent text-white rounded-lg px-5 py-2 font-semibold shadow hover:scale-105 transition-transform" onClick={() => setTimezoneModal(true)}>Изменить</button>
+            <button
+              ref={tzBtnRef}
+              className="bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[130px] text-center hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
+              onClick={() => setTimezoneModal(true)}
+            >Изменить</button>
           </div>
           {/* Горячие клавиши */}
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Горячие клавиши</div>
             </div>
-            <button className="bg-light-accent dark:bg-dark-accent text-white rounded-lg px-5 py-2 font-semibold shadow hover:scale-105 transition-transform">Изменить</button>
+            <button
+              className="bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[130px] text-center hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
+            >Изменить</button>
           </div>
           {/* Тема */}
           <div className="flex items-center gap-4">

@@ -552,13 +552,12 @@ const ModalChartStyle: React.FC<ModalChartStyleProps> = ({ open, onClose, palett
         <div className="flex gap-4 mt-8">
           <button
             onClick={onClose}
-            className="flex-1 bg-transparent border border-light-accent dark:border-dark-accent text-light-accent dark:text-dark-accent font-semibold text-[16px] py-3 rounded-lg transition-all duration-150 hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:scale-105"
+            className="flex-1 bg-gradient-to-r from-white/80 to-light-card/80 dark:from-dark-card/70 dark:to-[#181926]/80 text-light-accent dark:text-dark-accent font-semibold rounded-xl px-7 py-3 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[120px] hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-white hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30"
           >Отмена</button>
           <button
             onClick={() => onConfirm(selected)}
-            className="flex-1 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-white font-bold text-[16px] py-3 rounded-lg shadow-lg transition-all duration-150 hover:scale-105"
+            className={`flex-1 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-3 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[120px] hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 ${(selected.up === current.up && selected.down === current.down && !custom) ? 'opacity-60 cursor-not-allowed' : ''}`}
             disabled={selected.up === current.up && selected.down === current.down && !custom}
-            style={{ opacity: selected.up === current.up && selected.down === current.down && !custom ? 0.6 : 1 }}
           >Сохранить</button>
         </div>
         {/* Попап выбора цвета */}
