@@ -36,7 +36,15 @@ export default function PortfolioPage({ palette, theme, setTheme, NAV }: { palet
   const [activeMenu, setActiveMenu] = useState('Панель инструментов');
   const SectionComponent = SECTIONS[activeMenu] || ProfileSection;
   return (
-    <div style={{ minHeight: '100vh', background: palette.bg, color: palette.fg, fontFamily: 'sans-serif', paddingTop: 80 }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: palette.bg,
+        color: palette.fg,
+        fontFamily: "sans-serif",
+        paddingTop: 80,
+      }}
+    >
       {/* Шапка сайта */}
       <Header
         palette={palette}
@@ -44,7 +52,6 @@ export default function PortfolioPage({ palette, theme, setTheme, NAV }: { palet
         NAV={NAV}
         setSearchPos={() => {}}
         scrolled={false}
-        setTheme={setTheme}
         activeSection={""}
         headerVisible={true}
         setSearchOpen={() => {}}
