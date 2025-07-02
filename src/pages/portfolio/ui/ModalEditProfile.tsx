@@ -88,7 +88,7 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
       />
       {/* Модальное окно с анимацией */}
       <div
-        className="relative bg-white dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent rounded-2xl shadow-2xl p-8 min-w-[320px] max-w-[95vw] w-full max-w-[420px] text-light-fg dark:text-dark-fg z-10 transition-all duration-300 animate-scalein"
+        className="relative bg-white dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent rounded-2xl shadow-2xl p-8 min-w-[320px] max-w-[95vw] max-w-[380px] text-light-fg dark:text-dark-fg z-10 transition-all duration-300 animate-scalein"
         style={{ boxShadow: `0 4px 32px ${palette.shadow}` }}
         onClick={e => e.stopPropagation()}
       >

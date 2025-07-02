@@ -42,16 +42,7 @@ const ModalColorSettings: React.FC<ModalColorSettingsProps> = ({ open, onClose, 
       position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 1000,
       background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
-      <div style={{
-        background: palette.card,
-        borderRadius: 18,
-        boxShadow: `0 4px 32px ${palette.shadow}`,
-        padding: 28,
-        minWidth: 380,
-        maxWidth: 480,
-        color: palette.fg,
-        position: 'relative',
-      }}>
+      <div className="relative bg-white dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent rounded-2xl shadow-2xl p-8 min-w-[320px] max-w-[95vw] max-w-[420px] text-light-fg dark:text-dark-fg z-10 transition-all duration-300 animate-scalein">
         <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18 }}>Настройки цвета</div>
         {/* Кнопка закрытия */}
         <button onClick={onClose} style={{ position: 'absolute', right: 18, top: 18, background: 'none', border: 'none', color: palette.navInactive, fontSize: 22, cursor: 'pointer' }}>×</button>

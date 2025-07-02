@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function AssetsSection() {
   return (
     <div className="bg-light-card dark:bg-dark-card rounded-2xl p-7 min-h-[180px] flex flex-col items-center justify-center shadow-lg">

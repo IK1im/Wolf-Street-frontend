@@ -163,414 +163,430 @@ function hexToHsv(hex: string): [number, number, number] {
   const { r, g, b } = hexToRgb(hex);
   return rgbToHsv(r, g, b);
 }
+function hsvToHex(h: number, s: number, v: number): string {
+  const { r, g, b } = hsvToRgb(h, s, v);
+  return rgbToHex(r, g, b);
+}
 
-// Кастомный компактный RGB color picker popover
-function CompactColorPickerPopover({
-  anchorRef,
-  color,
-  onChange,
-  onClose,
-  palette,
-}: {
+function clamp(v: number, min: number, max: number): number { return Math.max(min, Math.min(max, v)); }
+
+function ColorWheel({ hsv, setHSV }: { hsv: [number, number, number]; setHSV: (hsv: [number, number, number]) => void }) {
+  // SVG круг для выбора HUE
+  const size = 140;
+  const r = size / 2 - 10;
+  const [drag, setDrag] = useState(false);
+  const ref = useRef(null);
+  // Переводим угол в координаты
+  const angle = hsv[0] * Math.PI / 180;
+  const cx = size / 2 + r * Math.cos(angle - Math.PI / 2);
+  const cy = size / 2 + r * Math.sin(angle - Math.PI / 2);
+  function handle(e) {
+    const rect = ref.current.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left - size / 2;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top - size / 2;
+    let deg = Math.atan2(y, x) * 180 / Math.PI + 90;
+    if (deg < 0) deg += 360;
+    setHSV([deg, hsv[1], hsv[2]]);
+  }
+  return (
+    <svg
+      ref={ref}
+      width={size}
+      height={size}
+      className="block mx-auto cursor-pointer select-none"
+      onMouseDown={e => { setDrag(true); handle(e); }}
+      onMouseMove={e => drag && handle(e)}
+      onMouseUp={() => setDrag(false)}
+      onMouseLeave={() => setDrag(false)}
+      onTouchStart={e => { setDrag(true); handle(e); }}
+      onTouchMove={e => drag && handle(e)}
+      onTouchEnd={() => setDrag(false)}
+      style={{ touchAction: 'none' }}
+    >
+      <defs>
+        <radialGradient id="wheel-white" r="80%">
+          <stop offset="60%" stopColor="#fff" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+        </radialGradient>
+        <conicGradient id="wheel-hue">
+          <stop offset="0%" stopColor="#f00" />
+          <stop offset="16.6%" stopColor="#ff0" />
+          <stop offset="33.3%" stopColor="#0f0" />
+          <stop offset="50%" stopColor="#0ff" />
+          <stop offset="66.6%" stopColor="#00f" />
+          <stop offset="83.3%" stopColor="#f0f" />
+          <stop offset="100%" stopColor="#f00" />
+        </conicGradient>
+      </defs>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="url(#wheel-hue)" strokeWidth="18" />
+      <circle cx={size/2} cy={size/2} r={r-9} fill="url(#wheel-white)" />
+      <circle cx={cx} cy={cy} r={8} fill="#fff" stroke="#222" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function SVSquare({ hsv, setHSV }: { hsv: [number, number, number]; setHSV: (hsv: [number, number, number]) => void }) {
+  // Квадрат для выбора S/V
+  const size = 140;
+  const [drag, setDrag] = useState(false);
+  const ref = useRef(null);
+  function handle(e) {
+    const rect = ref.current.getBoundingClientRect();
+    const x = clamp((e.touches ? e.touches[0].clientX : e.clientX) - rect.left, 0, size);
+    const y = clamp((e.touches ? e.touches[0].clientY : e.clientY) - rect.top, 0, size);
+    setHSV([hsv[0], x/size, 1-y/size]);
+  }
+  // Цвет фона — выбранный HUE
+  const { r, g, b } = hsvToRgb(hsv[0], 1, 1);
+  const color = `rgb(${r},${g},${b})`;
+  const x = hsv[1] * size;
+  const y = (1-hsv[2]) * size;
+  return (
+    <div
+      ref={ref}
+      className="relative mx-auto mt-2 mb-4 cursor-pointer"
+      style={{ width: size, height: size, background: `linear-gradient(90deg,#fff,${color}),linear-gradient(0deg,#0000,#000)` }}
+      onMouseDown={e => { setDrag(true); handle(e); }}
+      onMouseMove={e => drag && handle(e)}
+      onMouseUp={() => setDrag(false)}
+      onMouseLeave={() => setDrag(false)}
+      onTouchStart={e => { setDrag(true); handle(e); }}
+      onTouchMove={e => drag && handle(e)}
+      onTouchEnd={() => setDrag(false)}
+      style={{ touchAction: 'none', width: size, height: size, borderRadius: 10, boxShadow: '0 1px 6px #0002' }}
+    >
+      <div
+        className="absolute border-2 border-light-accent dark:border-dark-accent rounded-full pointer-events-none"
+        style={{ left: x-8, top: y-8, width: 16, height: 16, background: '#fff8', boxShadow: '0 0 0 2px #0002' }}
+      />
+    </div>
+  );
+}
+
+function ModernColorPickerPopover({ anchorRef, color, onChange, onClose }: {
   anchorRef: React.RefObject<HTMLButtonElement>;
   color: string;
-  onChange: (v: string) => void;
+  onChange: (c: string) => void;
   onClose: () => void;
-  palette: any;
 }) {
-  const popRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState({ left: 0, top: 0 });
-  const hsvInit = hexToHsv(color);
-  const rgbInit = hsvToRgb(hsvInit[0], hsvInit[1], hsvInit[2]);
-  const [hsv, setHSV] = useState<[number, number, number]>(hsvInit);
-  const [hex, setHex] = useState(color);
-  const [rgb, setRgb] = useState(rgbInit);
-  const [focusR, setFocusR] = useState(false);
-  const [focusG, setFocusG] = useState(false);
-  const [focusB, setFocusB] = useState(false);
+  // HSV <-> RGB <-> HEX
+  const [hsv, setHSV] = useState<[number, number, number]>(hexToHsv(color));
+  useEffect(() => { setHSV(hexToHsv(color)); }, [color]);
+  useEffect(() => { onChange(hsvToHex(...hsv)); }, [hsv]);
 
   // Позиционирование popover
+  const [pos, setPos] = useState({ left: 0, top: 0 });
+  const popRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (anchorRef.current && popRef.current) {
       const rect = anchorRef.current.getBoundingClientRect();
-      const popHeight = 220; // высота поповера
-      const margin = 8;
-      const windowHeight = window.innerHeight;
-      let top = rect.bottom + margin;
-      if (windowHeight - rect.bottom < popHeight + margin) {
-        // Мало места снизу — показываем сверху
-        top = rect.top - popHeight - margin;
+      const popW = 320, popH = 400, margin = 10;
+      let left = rect.left + rect.width / 2 - popW / 2 + window.scrollX;
+      let top = rect.bottom + window.scrollY + margin;
+      if (top + popH > window.innerHeight - 8) {
+        top = rect.top + window.scrollY - popH - margin;
       }
-      setPos({ left: rect.left, top });
+      if (left < 8) left = 8;
+      if (left + popW > window.innerWidth - 8) left = window.innerWidth - popW - 8;
+      setPos({ left, top });
     }
-  }, [anchorRef]);
+  }, [anchorRef, color]);
 
-  // Закрытие по клику вне и по Esc
+  // Color wheel на canvas
+  const wheelRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    function handle(e: MouseEvent) {
-      if (popRef.current && !popRef.current.contains(e.target as Node) && anchorRef.current && !anchorRef.current.contains(e.target as Node)) onClose();
+    const canvas = wheelRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const size = 180, r = 80;
+    ctx.clearRect(0, 0, size, size);
+    for (let a = 0; a < 360; a += 1) {
+      const rad = (a - 90) * Math.PI / 180;
+      ctx.beginPath();
+      ctx.moveTo(size/2, size/2);
+      ctx.arc(size/2, size/2, r, rad, rad + Math.PI/180, false);
+      ctx.closePath();
+      ctx.fillStyle = hsvToHex(a, 1, 1);
+      ctx.fill();
     }
-    function esc(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
-    document.addEventListener('mousedown', handle);
-    document.addEventListener('keydown', esc);
-    return () => { document.removeEventListener('mousedown', handle); document.removeEventListener('keydown', esc); };
-  }, [onClose, anchorRef]);
+    // Белый круг внутри
+    ctx.beginPath();
+    ctx.arc(size/2, size/2, r-18, 0, 2*Math.PI);
+    ctx.fillStyle = ctx.createRadialGradient(size/2, size/2, r-30, size/2, size/2, r-10);
+    ctx.fillStyle = '#fff';
+    ctx.globalAlpha = 0.85;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }, [hsv[0]]);
 
-  // Синхронизация HEX/RGB/HSV
+  // SV-квадрат на canvas
+  const svRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    setRgb(hsvToRgb(hsv[0], hsv[1], hsv[2]));
-    const rgb = hsvToRgb(hsv[0], hsv[1], hsv[2]);
-    setHex(rgbToHex(rgb.r, rgb.g, rgb.b));
-  }, [hsv]);
-  useEffect(() => {
-    const rgb = hexToRgb(hex);
-    setRgb(rgb);
-    setHSV(rgbToHsv(rgb.r, rgb.g, rgb.b));
-  }, [hex]);
-
-  // Обработка выбора в квадрате SV
-  function handleSV(e: React.MouseEvent<HTMLCanvasElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
-    setHSV([hsv[0], x, 1 - y]);
-  }
-  // Обработка hue
-  function handleHue(e: React.MouseEvent<HTMLDivElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
-    setHSV([y * 360, hsv[1], hsv[2]]);
-  }
-
-  // Применить
-  function handleApply() {
-    onChange(rgbToHex(rgb.r, rgb.g, rgb.b));
-    onClose();
-  }
-
-  // Рендер квадрат SV
-  function renderSV() {
-    const w = 140, h = 140;
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    useEffect(() => {
-      const ctx = canvasRef.current?.getContext('2d');
-      if (!ctx) return;
-      for (let i = 0; i < w; i++) {
-        for (let j = 0; j < h; j++) {
-          const s = i / (w - 1);
-          const v = 1 - j / (h - 1);
-          const rgb = hsvToRgb(hsv[0], s, v);
-          ctx.fillStyle = rgbToHex(rgb.r, rgb.g, rgb.b);
-          ctx.fillRect(i, j, 1, 1);
-        }
+    const canvas = svRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const size = 180;
+    // Цвет по hue
+    for (let x = 0; x < size; x++) {
+      for (let y = 0; y < size; y++) {
+        const s = x / (size-1);
+        const v = 1 - y / (size-1);
+        ctx.fillStyle = hsvToHex(hsv[0], s, v);
+        ctx.fillRect(x, y, 1, 1);
       }
-    }, [hsv[0]]);
-    // Кружок выбора
-    const x = hsv[1] * w;
-    const y = (1 - hsv[2]) * h;
-    return (
-      <div style={{ position: 'relative', width: w, height: h }}>
-        <canvas ref={canvasRef} width={w} height={h} style={{ borderRadius: 8, cursor: 'crosshair', width: w, height: h }} onClick={handleSV} />
-        <div style={{ position: 'absolute', left: x - 7, top: y - 7, width: 14, height: 14, border: `2px solid ${palette.accent}`, borderRadius: '50%', pointerEvents: 'none', boxShadow: '0 0 0 2px #0008' }} />
-      </div>
-    );
+    }
+  }, [hsv[0]]);
+
+  // Drag&drop для wheel
+  function handleWheel(e: React.MouseEvent | React.TouchEvent) {
+    const canvas = wheelRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const size = 180, r = 80;
+    const x = (e.type.startsWith('touch') ? (e as React.TouchEvent).touches[0].clientX : (e as React.MouseEvent).clientX) - rect.left - size/2;
+    const y = (e.type.startsWith('touch') ? (e as React.TouchEvent).touches[0].clientY : (e as React.MouseEvent).clientY) - rect.top - size/2;
+    const dist = Math.sqrt(x*x + y*y);
+    if (dist < r-22 || dist > r+8) return;
+    let deg = Math.atan2(y, x) * 180 / Math.PI + 90;
+    if (deg < 0) deg += 360;
+    setHSV([deg, hsv[1], hsv[2]]);
   }
-  // Рендер hue
-  function renderHue() {
-    const h = 140;
-    const stops = [0, 60, 120, 180, 240, 300, 360];
-    const grad = `linear-gradient(to bottom, ${stops.map(h => rgbToHex(...Object.values(hsvToRgb(h, 1, 1)))).join(',')})`;
-    const y = (hsv[0] / 360) * h;
-    return (
-      <div style={{ position: 'relative', width: 18, height: h, marginLeft: 10, marginRight: 10, borderRadius: 8, background: grad, cursor: 'pointer' }} onClick={handleHue}>
-        <div style={{ position: 'absolute', left: -2, top: y - 5, width: 22, height: 10, borderRadius: 6, border: `2px solid ${palette.accent}`, background: '#fff', boxShadow: '0 0 0 2px #0008' }} />
-      </div>
-    );
+  // Drag&drop для SV
+  function handleSV(e: React.MouseEvent | React.TouchEvent) {
+    const canvas = svRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const size = 180;
+    const x = (e.type.startsWith('touch') ? (e as React.TouchEvent).touches[0].clientX : (e as React.MouseEvent).clientX) - rect.left;
+    const y = (e.type.startsWith('touch') ? (e as React.TouchEvent).touches[0].clientY : (e as React.MouseEvent).clientY) - rect.top;
+    setHSV([hsv[0], clamp(x/size,0,1), clamp(1-y/size,0,1)]);
   }
 
-  return (
-    <div ref={popRef} style={{
-      position: 'fixed', left: pos.left, top: pos.top, zIndex: 2000,
-      background: palette.card, borderRadius: 14, boxShadow: `0 4px 24px #0008`, padding: 16, minWidth: 220, color: palette.fg,
-      border: `1.5px solid ${palette.accent}`,
-      display: 'flex', flexDirection: 'column', alignItems: 'center',
-      animation: 'fadeIn .18s',
-    }}>
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-        {renderSV()}
-        {renderHue()}
-      </div>
-      <div style={{ marginTop: 10, width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <div style={{ width: 32, height: 32, borderRadius: 8, background: rgbToHex(rgb.r, rgb.g, rgb.b), border: `2px solid ${palette.accent}` }} />
-        <input type="text" value={hex} onChange={e => setHex(e.target.value.startsWith('#') ? e.target.value : '#' + e.target.value)} maxLength={7} style={{ width: 70, fontSize: 15, borderRadius: 6, border: `1px solid ${palette.navInactive}`, background: palette.bg, color: palette.fg, padding: '4px 8px', textAlign: 'center' }} />
-        <input
-          type="number"
-          value={rgb.r}
-          min={0}
-          max={255}
-          onChange={e => setRgb({ ...rgb, r: Number(e.target.value) })}
-          onFocus={() => setFocusR(true)}
-          onBlur={() => setFocusR(false)}
-          style={{
-            width: 44,
-            height: 36,
-            fontSize: 16,
-            borderRadius: 8,
-            border: `1.5px solid ${focusR ? palette.accent : palette.navInactive}`,
-            background: palette.bg,
-            color: palette.fg,
-            padding: '4px 8px',
-            textAlign: 'center',
-            outline: 'none',
-            transition: 'border 0.18s',
-            boxShadow: '0 1px 4px #0001',
-            appearance: 'textfield',
-            MozAppearance: 'textfield',
-            WebkitAppearance: 'none',
-          }}
+  // Поля HEX/RGB
+  const { r, g, b } = hsvToRgb(...hsv);
+  const hex = hsvToHex(...hsv);
+  function handleHexInput(v: string) {
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) setHSV(hexToHsv(v));
+  }
+  function handleRgbInput(idx: number, v: string) {
+    const arr = [r, g, b];
+    arr[idx] = clamp(Number(v), 0, 255);
+    setHSV(rgbToHsv(...arr));
+  }
+
+  // Маркеры
+  const wheelAngle = (hsv[0]-90)*Math.PI/180;
+  const wheelR = 80;
+  const wheelX = 90 + wheelR * Math.cos(wheelAngle);
+  const wheelY = 90 + wheelR * Math.sin(wheelAngle);
+  const svX = 180 * hsv[1];
+  const svY = 180 * (1-hsv[2]);
+
+    return (
+    <div
+      ref={popRef}
+      className="fixed z-[1201] bg-white/80 dark:bg-dark-card/80 shadow-2xl rounded-2xl p-4 flex flex-col items-center backdrop-blur-xl"
+      style={{ left: pos.left, top: pos.top, width: 240, minWidth: 220, minHeight: 320, maxWidth: 270 }}
+    >
+      <button
+        onClick={onClose}
+        className="absolute right-4 top-4 text-[22px] text-neutral-500 hover:text-light-accent dark:hover:text-dark-accent transition-colors bg-transparent border-none outline-none"
+        style={{ lineHeight: 1 }}
+        aria-label="Закрыть"
+      >×</button>
+      {/* Большая превью выбранного цвета */}
+      <div className="w-24 h-24 rounded-full mb-4 border-4 border-white dark:border-dark-bg shadow-xl" style={{ background: hex, boxShadow: `0 2px 24px ${hex}55` }} />
+      {/* Color wheel */}
+      <div className="relative mb-4">
+        <canvas
+          ref={wheelRef}
+          width={180}
+          height={180}
+          className="block rounded-full cursor-pointer select-none"
+          style={{ background: 'transparent' }}
+          onMouseDown={e => { handleWheel(e); window.onmousemove = ev => handleWheel(ev as any); window.onmouseup = () => { window.onmousemove = null; }; }}
+          onTouchStart={e => { handleWheel(e); window.ontouchmove = ev => handleWheel(ev as any); window.ontouchend = () => { window.ontouchmove = null; }; }}
         />
-        <input
-          type="number"
-          value={rgb.g}
-          min={0}
-          max={255}
-          onChange={e => setRgb({ ...rgb, g: Number(e.target.value) })}
-          onFocus={() => setFocusG(true)}
-          onBlur={() => setFocusG(false)}
-          style={{
-            width: 44,
-            height: 36,
-            fontSize: 16,
-            borderRadius: 8,
-            border: `1.5px solid ${focusG ? palette.accent : palette.navInactive}`,
-            background: palette.bg,
-            color: palette.fg,
-            padding: '4px 8px',
-            textAlign: 'center',
-            outline: 'none',
-            transition: 'border 0.18s',
-            boxShadow: '0 1px 4px #0001',
-            appearance: 'textfield',
-            MozAppearance: 'textfield',
-            WebkitAppearance: 'none',
-          }}
-        />
-        <input
-          type="number"
-          value={rgb.b}
-          min={0}
-          max={255}
-          onChange={e => setRgb({ ...rgb, b: Number(e.target.value) })}
-          onFocus={() => setFocusB(true)}
-          onBlur={() => setFocusB(false)}
-          style={{
-            width: 44,
-            height: 36,
-            fontSize: 16,
-            borderRadius: 8,
-            border: `1.5px solid ${focusB ? palette.accent : palette.navInactive}`,
-            background: palette.bg,
-            color: palette.fg,
-            padding: '4px 8px',
-            textAlign: 'center',
-            outline: 'none',
-            transition: 'border 0.18s',
-            boxShadow: '0 1px 4px #0001',
-            appearance: 'textfield',
-            MozAppearance: 'textfield',
-            WebkitAppearance: 'none',
-          }}
+        {/* Маркер на wheel */}
+        <div
+          className="absolute"
+          style={{ left: wheelX-12, top: wheelY-12, width: 24, height: 24, borderRadius: '50%', border: '3px solid #fff', boxShadow: '0 0 0 2px #222, 0 2px 8px #0006', background: hex, pointerEvents: 'none', transition: 'box-shadow 0.18s' }}
         />
       </div>
-      <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-        <button onClick={onClose} style={{ background: palette.bg, color: palette.fg, border: `1.5px solid ${palette.navInactive}`, borderRadius: 8, fontWeight: 500, fontSize: 15, padding: '7px 22px', cursor: 'pointer', transition: 'background 0.2s, color 0.2s, transform 0.13s' }}>Отмена</button>
-        <button onClick={handleApply} style={{ background: palette.accent, color: palette.bg, border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 15, padding: '7px 22px', cursor: 'pointer', transition: 'background 0.2s, color 0.2s, transform 0.13s' }}>Применить</button>
+      {/* SV-квадрат */}
+      <div className="relative mb-4">
+        <canvas
+          ref={svRef}
+          width={180}
+          height={180}
+          className="block rounded-xl cursor-pointer select-none"
+          style={{ background: 'transparent' }}
+          onMouseDown={e => { handleSV(e); window.onmousemove = ev => handleSV(ev as any); window.onmouseup = () => { window.onmousemove = null; }; }}
+          onTouchStart={e => { handleSV(e); window.ontouchmove = ev => handleSV(ev as any); window.ontouchend = () => { window.ontouchmove = null; }; }}
+        />
+        {/* Маркер на квадрате */}
+        <div
+          className="absolute"
+          style={{ left: svX-12, top: svY-12, width: 24, height: 24, borderRadius: '50%', border: '3px solid #fff', boxShadow: '0 0 0 2px #222, 0 2px 8px #0006', background: hex, pointerEvents: 'none', transition: 'box-shadow 0.18s' }}
+        />
+      </div>
+      {/* HEX/RGB */}
+      <div className="flex items-center gap-3 mb-2 mt-2">
+        <span className="text-xs text-light-nav-inactive dark:text-dark-nav-inactive">HEX</span>
+        <input
+          className="w-28 px-2 py-1 rounded-lg border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-center text-lg font-mono shadow focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition-all"
+          value={hex}
+          onChange={e => handleHexInput(e.target.value)}
+          maxLength={7}
+          type="text"
+        />
+      </div>
+      <div className="flex items-center gap-3 mb-2">
+        <span className="text-xs text-light-nav-inactive dark:text-dark-nav-inactive">R</span>
+        <input
+          type="text"
+          pattern="[0-9]*"
+          inputMode="numeric"
+          className="w-14 px-1 py-1 rounded-lg border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-center text-lg font-mono shadow focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition-all"
+          value={r}
+          onChange={e => handleRgbInput(0, e.target.value)}
+        />
+        <span className="text-xs text-light-nav-inactive dark:text-dark-nav-inactive">G</span>
+        <input
+          type="text"
+          pattern="[0-9]*"
+          inputMode="numeric"
+          className="w-14 px-1 py-1 rounded-lg border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-center text-lg font-mono shadow focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition-all"
+          value={g}
+          onChange={e => handleRgbInput(1, e.target.value)}
+        />
+        <span className="text-xs text-light-nav-inactive dark:text-dark-nav-inactive">B</span>
+        <input
+          type="text"
+          pattern="[0-9]*"
+          inputMode="numeric"
+          className="w-14 px-1 py-1 rounded-lg border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-center text-lg font-mono shadow focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition-all"
+          value={b}
+          onChange={e => handleRgbInput(2, e.target.value)}
+        />
       </div>
     </div>
   );
 }
 
 const ModalChartStyle: React.FC<ModalChartStyleProps> = ({ open, onClose, palette, current, onConfirm }) => {
-  const [selected, setSelected] = useState<'old' | 'new' | 'daltonic' | 'custom'>('new');
-  const [customUp, setCustomUp] = useState('#22d3a8');
-  const [customDown, setCustomDown] = useState('#f43f5e');
-  const [baseCandles, setBaseCandles] = useState(() => randomCandles('#22d3a8', '#f43f5e'));
-  const [pendingCustom, setPendingCustom] = useState<{ up: string; down: string }>({ up: '#22d3a8', down: '#f43f5e' });
-  const modalRef = useRef<HTMLDivElement>(null);
-  const [colorPopover, setColorPopover] = useState<{ which: 'up' | 'down'; anchor: React.RefObject<HTMLButtonElement> } | null>(null);
-  const upBtnRef = useRef<HTMLButtonElement>(null) as React.RefObject<HTMLButtonElement>;
-  const downBtnRef = useRef<HTMLButtonElement>(null) as React.RefObject<HTMLButtonElement>;
+  const [selected, setSelected] = useState(current);
+  const [custom, setCustom] = useState(false);
+  const [showPicker, setShowPicker] = useState<'up' | 'down' | null>(null);
+  const upBtnRef = useRef<HTMLButtonElement>(null);
+  const downBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (open) {
-      setSelected(
-        PRESETS.find(p => p.up === current.up && p.down === current.down)?.key as any || 'custom'
-      );
-      setCustomUp(current.up);
-      setCustomDown(current.down);
-      setPendingCustom({ up: current.up, down: current.down });
-      setBaseCandles(randomCandles(current.up, current.down));
+      setSelected(current);
+      setCustom(false);
+      setShowPicker(null);
     }
   }, [open, current]);
 
-  useEffect(() => {
-    function handleEsc(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
-    }
-    if (open) document.addEventListener('keydown', handleEsc);
-    return () => document.removeEventListener('keydown', handleEsc);
-  }, [open, onClose]);
-
-  // Для предпросмотра: если выбран кастом — показываем pendingCustom, иначе — цвета пресета
-  const getColors = () => {
-    if (selected === 'custom') return pendingCustom;
-    const preset = PRESETS.find(p => p.key === selected)!;
-    return { up: preset.up, down: preset.down };
-  };
-  const { up, down } = getColors();
-  const preview = baseCandles.map(c => ({ ...c, color: c.close >= c.open ? up : down }));
-
   if (!open) return null;
-
-  const isChanged =
-    (selected === 'custom'
-      ? pendingCustom.up !== current.up || pendingCustom.down !== current.down
-      : PRESETS.find(p => p.key === selected)?.up !== current.up || PRESETS.find(p => p.key === selected)?.down !== current.down
-    );
-
   return (
-    <div style={{
-      position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 1000,
-      background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}>
-      <div ref={modalRef} style={{
-        background: palette.card,
-        borderRadius: 18,
-        boxShadow: `0 4px 32px ${palette.shadow}`,
-        padding: 28,
-        minWidth: 420,
-        maxWidth: 540,
-        color: palette.fg,
-        position: 'relative',
-      }}>
-        <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18 }}>Настройки стиля</div>
-        <button onClick={onClose} style={{ position: 'absolute', right: 18, top: 18, background: 'none', border: 'none', color: palette.navInactive, fontSize: 22, cursor: 'pointer' }}>×</button>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginBottom: 28 }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" aria-modal="true" role="dialog">
+      <div className="relative bg-white dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent rounded-2xl shadow-2xl p-8 min-w-[320px] max-w-[95vw] max-w-[420px] text-light-fg dark:text-dark-fg z-10 transition-all duration-300 animate-scalein">
+        {/* Кнопка закрытия */}
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 text-[22px] text-neutral-500 hover:text-light-accent dark:hover:text-dark-accent transition-colors bg-transparent border-none outline-none"
+          style={{ lineHeight: 1 }}
+          aria-label="Закрыть"
+        >×</button>
+        {/* Заголовок */}
+        <div className="text-center mb-6">
+          <div className="text-[24px] font-extrabold text-light-accent dark:text-dark-accent mb-1">Настройка стиля графика</div>
+          <div className="text-[15px] text-light-nav-inactive dark:text-dark-nav-inactive">Выберите цветовую схему или задайте свои цвета</div>
+        </div>
+        {/* Пресеты */}
+        <div className="flex flex-col gap-4 mb-6">
           {PRESETS.map(preset => (
             <div
               key={preset.key}
-              onClick={() => setSelected(preset.key as any)}
-              style={{
-                border: selected === preset.key ? `1.5px solid ${palette.accent}` : `1.5px solid ${palette.navInactive}33`,
-                borderRadius: 12,
-                background: selected === preset.key ? palette.bg : palette.card,
-                padding: 18,
-                cursor: 'pointer',
-                boxShadow: selected === preset.key ? `0 0 0 2px ${palette.accent}22` : 'none',
-                transition: 'border 0.2s, box-shadow 0.2s, background 0.2s',
-                marginBottom: 2,
-              }}
+              className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-150 ${selected.up === preset.up && selected.down === preset.down && !custom ? 'border-light-accent dark:border-dark-accent bg-light-accent/10 dark:bg-dark-accent/10' : 'border-light-border dark:border-dark-border hover:bg-light-bg/60 dark:hover:bg-dark-bg/60'}`}
+              onClick={() => { setSelected({ up: preset.up, down: preset.down }); setCustom(false); }}
             >
-              <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-                {preset.icon.map((c, i) => (
-                  <span key={i} style={{ width: 18, height: 18, borderRadius: 4, background: c.color, display: 'inline-block', border: '2px solid #222', marginRight: 4 }} />
+              <div className="flex gap-2">
+                {preset.icon.map((ic, i) => (
+                  <span key={i} className="w-6 h-6 rounded-full border-2 border-light-border dark:border-dark-border" style={{ background: ic.color }} />
                 ))}
-                {preset.name}
               </div>
-              <ChartPreview candles={baseCandles.map(c => ({ ...c, color: c.close >= c.open ? preset.up : preset.down }))} />
+              <span className="font-semibold text-[16px]">{preset.name}</span>
             </div>
           ))}
-          {/* Кастом */}
-          <div
-            onClick={() => setSelected('custom')}
-            style={{
-              border: selected === 'custom' ? `1.5px solid ${palette.accent}` : `1.5px solid ${palette.navInactive}33`,
-              borderRadius: 12,
-              background: selected === 'custom' ? palette.bg : palette.card,
-              padding: 18,
-              cursor: 'pointer',
-              boxShadow: selected === 'custom' ? `0 0 0 2px ${palette.accent}22` : 'none',
-              transition: 'border 0.2s, box-shadow 0.2s, background 0.2s',
-              marginBottom: 2,
-            }}
-          >
-            <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 18, height: 18, borderRadius: 4, background: pendingCustom.up, display: 'inline-block', border: '2px solid #222', marginRight: 4 }} />
-              <span style={{ width: 18, height: 18, borderRadius: 4, background: pendingCustom.down, display: 'inline-block', border: '2px solid #222', marginRight: 8 }} />
-              Свои цвета
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 28, marginBottom: 16 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-                <span style={{ fontSize: 15, fontWeight: 500, minWidth: 60, color: palette.fg }}>Рост</span>
-                <button ref={upBtnRef} type="button" style={{ width: 36, height: 36, borderRadius: '50%', background: pendingCustom.up, border: `2.5px solid #222`, boxShadow: '0 2px 8px #0002', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.18s, border 0.18s', position: 'relative' }} onClick={() => setColorPopover({ which: 'up', anchor: upBtnRef })} />
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-                <span style={{ fontSize: 15, fontWeight: 500, minWidth: 80, color: palette.fg }}>Падение</span>
-                <button ref={downBtnRef} type="button" style={{ width: 36, height: 36, borderRadius: '50%', background: pendingCustom.down, border: `2.5px solid #222`, boxShadow: '0 2px 8px #0002', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.18s, border 0.18s', position: 'relative' }} onClick={() => setColorPopover({ which: 'down', anchor: downBtnRef })} />
-              </label>
-              {colorPopover && (
-                <CompactColorPickerPopover
-                  anchorRef={colorPopover.anchor}
-                  color={colorPopover.which === 'up' ? pendingCustom.up : pendingCustom.down}
-                  onChange={v => setPendingCustom(pc => colorPopover.which === 'up' ? { ...pc, up: v } : { ...pc, down: v })}
-                  onClose={() => setColorPopover(null)}
-                  palette={palette}
-                />
-              )}
-            </div>
-            <ChartPreview candles={baseCandles.map(c => ({ ...c, color: c.close >= c.open ? pendingCustom.up : pendingCustom.down }))} />
+        {/* Кастомные цвета */}
+        <div className="mb-6">
+          <div className="font-semibold text-[15px] mb-2">Свои цвета:</div>
+          <div className="flex gap-4 items-center">
+            <button
+              ref={upBtnRef}
+              type="button"
+              className="w-10 h-10 rounded-full border-2 border-light-accent dark:border-dark-accent shadow-md"
+              style={{ background: selected.up }}
+              onClick={e => { e.preventDefault(); e.stopPropagation(); setShowPicker(showPicker === 'up' ? null : 'up'); setCustom(true); }}
+              aria-label="Выбрать цвет роста"
+            />
+            <span className="font-semibold text-[15px]">Рост</span>
+            <button
+              ref={downBtnRef}
+              type="button"
+              className="w-10 h-10 rounded-full border-2 border-light-accent dark:border-dark-accent shadow-md"
+              style={{ background: selected.down }}
+              onClick={e => { e.preventDefault(); e.stopPropagation(); setShowPicker(showPicker === 'down' ? null : 'down'); setCustom(true); }}
+              aria-label="Выбрать цвет падения"
+            />
+            <span className="font-semibold text-[15px]">Падение</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 16, marginTop: 18 }}>
+        {/* Кнопки */}
+        <div className="flex gap-4 mt-8">
           <button
             onClick={onClose}
-            style={{
-              flex: 1,
-              background: palette.bg,
-              color: palette.fg,
-              border: `1.5px solid ${palette.navInactive}`,
-              borderRadius: 8,
-              fontWeight: 500,
-              fontSize: 16,
-              padding: '12px 0',
-              cursor: 'pointer',
-              transition: 'background 0.2s, color 0.2s, transform 0.13s',
-            }}
-            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
-            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.04)'}
-            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+            className="flex-1 bg-transparent border border-light-accent dark:border-dark-accent text-light-accent dark:text-dark-accent font-semibold text-[16px] py-3 rounded-lg transition-all duration-150 hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:scale-105"
           >Отмена</button>
           <button
-            onClick={() => {
-              if (selected === 'custom') onConfirm({ up: pendingCustom.up, down: pendingCustom.down });
-              else {
-                const preset = PRESETS.find(p => p.key === selected)!;
-                onConfirm({ up: preset.up, down: preset.down });
-              }
-            }}
-            disabled={!isChanged}
-            style={{
-              flex: 1,
-              background: !isChanged ? palette.navInactive + '22' : palette.accent,
-              color: !isChanged ? palette.navInactive : palette.bg,
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 600,
-              fontSize: 16,
-              padding: '12px 0',
-              cursor: !isChanged ? 'not-allowed' : 'pointer',
-              opacity: !isChanged ? 0.7 : 1,
-              transition: 'background 0.2s, color 0.2s, transform 0.13s',
-            }}
-            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
-            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.04)'}
-            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-          >Подтвердить</button>
+            onClick={() => onConfirm(selected)}
+            className="flex-1 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-white font-bold text-[16px] py-3 rounded-lg shadow-lg transition-all duration-150 hover:scale-105"
+            disabled={selected.up === current.up && selected.down === current.down && !custom}
+            style={{ opacity: selected.up === current.up && selected.down === current.down && !custom ? 0.6 : 1 }}
+          >Сохранить</button>
         </div>
+        {/* Попап выбора цвета */}
+        {showPicker && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowPicker(null)}>
+            <div
+              className="relative bg-white dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent rounded-2xl shadow-2xl p-6 min-w-[220px] max-w-[95vw] max-w-[320px] text-light-fg dark:text-dark-fg z-10 animate-scalein"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowPicker(null)}
+                className="absolute right-4 top-4 text-[22px] text-neutral-500 hover:text-light-accent dark:hover:text-dark-accent transition-colors bg-transparent border-none outline-none"
+                style={{ lineHeight: 1 }}
+                aria-label="Закрыть"
+              >×</button>
+              <div className="text-center mb-4 font-semibold text-[16px]">Выберите цвет</div>
+              <ModernColorPickerPopover
+                anchorRef={showPicker === 'up' ? upBtnRef : downBtnRef}
+                color={showPicker === 'up' ? selected.up : selected.down}
+                onChange={v => {
+                  if (showPicker === 'up') setSelected(s => ({ ...s, up: v }));
+                  if (showPicker === 'down') setSelected(s => ({ ...s, down: v }));
+                }}
+                onClose={() => setShowPicker(null)}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
