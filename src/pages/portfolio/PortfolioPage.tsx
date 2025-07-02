@@ -10,7 +10,7 @@ import BalanceSection from './BalanceSection';
 import AssetsSection from './AssetsSection';
 import HistorySection from './HistorySection';
 
-const SECTIONS: { [key: string]: (props: { palette: any }) => JSX.Element } = {
+const SECTIONS: { [key: string]: React.FC } = {
   'Панель инструментов': ProfileSection,
   'Пройдите верификацию': VerificationSection,
   'Пополните счет': DepositSection,
@@ -32,22 +32,13 @@ const MENU_LABELS = [
   'Настройки',
 ];
 
-export default function PortfolioPage({ palette, theme, setTheme, NAV }: { palette: any, theme: string, setTheme: (t: string) => void, NAV: { id: string, label: string}[] }) {
+export default function PortfolioPage({ theme, setTheme, NAV }: { theme: string, setTheme: (t: string) => void, NAV: { id: string, label: string}[] }) {
   const [activeMenu, setActiveMenu] = useState('Панель инструментов');
   const SectionComponent = SECTIONS[activeMenu] || ProfileSection;
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: palette.bg,
-        color: palette.fg,
-        fontFamily: "sans-serif",
-        paddingTop: 80,
-      }}
-    >
+    <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-fg dark:text-dark-fg font-sans pt-20">
       {/* Шапка сайта */}
       <Header
-        palette={palette}
         theme={theme}
         NAV={NAV}
         setSearchPos={() => {}}
@@ -57,12 +48,12 @@ export default function PortfolioPage({ palette, theme, setTheme, NAV }: { palet
         setSearchOpen={() => {}}
         searchOpen={false}
       />
-      <div style={{ display: 'flex', maxWidth: 1400, margin: '0 auto', padding: 16, gap: 40, minHeight: 'calc(100vh - 80px)' }}>
+      <div className="flex max-w-[1400px] mx-auto p-4 gap-10 min-h-[calc(100vh-80px)]">
         {/* Левое меню */}
-        <LeftMenu palette={palette} activeMenu={activeMenu} setActiveMenu={setActiveMenu} menuLabels={MENU_LABELS} />
+        <LeftMenu activeMenu={activeMenu} setActiveMenu={setActiveMenu} menuLabels={MENU_LABELS} />
         {/* Контент */}
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <SectionComponent palette={palette} />
+        <main className="flex-1 flex flex-col gap-5">
+          <SectionComponent />
         </main>
       </div>
     </div>

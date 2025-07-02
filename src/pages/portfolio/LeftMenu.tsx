@@ -1,63 +1,20 @@
 import React from 'react';
 
-function LeftMenuButton({ label, onClick, active, palette }: { label: string; onClick: () => void; active: boolean; palette: any }) {
+function LeftMenuButton({ label, onClick, active }: { label: string; onClick: () => void; active: boolean }) {
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: '8px 12px',
-        borderRadius: 8,
-        background: active ? palette.navActive : 'none',
-        fontWeight: active ? 700 : 600,
-        fontSize: 15,
-        color: '#fff',
-        cursor: 'pointer',
-        transition: 'background 0.2s, color 0.2s',
-        boxShadow: active ? `0 2px 8px ${palette.accent}33` : 'none',
-        letterSpacing: 0.1,
-        textShadow: '0 1px 6px rgba(0,0,0,0.5)',
-        minWidth: 0,
-        maxWidth: '100%',
-        textDecoration: 'none',
-      }}
+      className={`flex items-center gap-2 px-3 py-2 rounded-lg font-semibold text-[15px] cursor-pointer transition-all min-w-0 max-w-full no-underline shadow ${active ? 'bg-light-accent dark:bg-dark-accent text-white font-bold shadow-lg scale-[1.04]' : 'bg-transparent text-light-fg dark:text-dark-fg hover:bg-light-accent/80 dark:hover:bg-dark-accent/80 hover:text-white'}`}
       onClick={onClick}
-      onMouseOver={e => {
-        (e.currentTarget as HTMLDivElement).style.background = palette.navActive;
-        (e.currentTarget as HTMLDivElement).style.color = '#fff';
-      }}
-      onMouseOut={e => {
-        (e.currentTarget as HTMLDivElement).style.background = active ? palette.navActive : 'none';
-        (e.currentTarget as HTMLDivElement).style.color = '#fff';
-      }}
     >
       <span>{label}</span>
     </div>
   );
 }
 
-export default function LeftMenu({ palette, activeMenu, setActiveMenu, menuLabels }: { palette: any, activeMenu: string, setActiveMenu: (label: string) => void, menuLabels: string[] }) {
+export default function LeftMenu({ activeMenu, setActiveMenu, menuLabels }: { activeMenu: string, setActiveMenu: (label: string) => void, menuLabels: string[] }) {
   return (
     <aside
-      style={{
-        minWidth: 220,
-        background: 'none',
-        borderRadius: 18,
-        padding: 20,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        boxShadow: `0 0 16px 0 ${palette.accent}22`,
-        height: 'fit-content',
-        marginRight: 40,
-        marginLeft: -180,
-        border: `1.5px solid ${palette.border}88`,
-        position: 'sticky',
-        top: 100,
-        zIndex: 2,
-        color: palette.fg,
-      }}
+      className="min-w-[220px] bg-none rounded-2xl p-5 flex flex-col gap-2 shadow-[0_0_16px_0_rgba(80,80,200,0.13)] h-fit mr-10 ml-[-180px] border border-light-border dark:border-dark-border sticky top-[100px] z-20 text-light-fg dark:text-dark-fg"
     >
       {menuLabels.map((label) => (
         <LeftMenuButton
@@ -65,7 +22,6 @@ export default function LeftMenu({ palette, activeMenu, setActiveMenu, menuLabel
           label={label}
           onClick={() => setActiveMenu(label)}
           active={activeMenu === label}
-          palette={palette}
         />
       ))}
     </aside>

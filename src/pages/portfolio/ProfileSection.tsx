@@ -7,43 +7,43 @@ import AssetsSection from './AssetsSection';
 import HistorySection from './HistorySection';
 import { getCurrencyRates } from '../../services/Api';
 
-function ToolPanelSection({ palette }: { palette: any }) {
+function ToolPanelSection() {
   return (
-    <div style={{ display: 'flex', gap: 24, marginBottom: 32 }}>
+    <div className="flex gap-6 mb-8">
       {/* Кошелёк */}
-      <div style={{ flex: 1, background: palette.card, borderRadius: 16, boxShadow: `0 2px 8px ${palette.shadow}`, padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0 }}>
-        <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8, color: palette.fg }}>Актуальный кошелёк</div>
-        <div style={{ fontSize: 36, fontWeight: 800, color: palette.accent, marginBottom: 6 }}>₽ 0.00</div>
-        <div style={{ color: palette.navInactive, fontSize: 15 }}>Ваш баланс</div>
+      <div className="flex-1 bg-light-card dark:bg-dark-card rounded-2xl shadow-lg p-6 flex flex-col items-start min-w-0">
+        <div className="text-[22px] font-bold mb-2 text-light-fg dark:text-dark-fg">Актуальный кошелёк</div>
+        <div className="text-[36px] font-extrabold text-light-accent dark:text-dark-accent mb-1">₽ 0.00</div>
+        <div className="text-light-brown dark:text-dark-brown text-[15px]">Ваш баланс</div>
       </div>
       {/* Пустая */}
-      <div style={{ flex: 1, background: palette.card, borderRadius: 16, boxShadow: `0 2px 8px ${palette.shadow}`, padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minWidth: 0, color: palette.navInactive, fontSize: 18, fontWeight: 600 }}>
-        <span style={{ fontSize: 32, marginBottom: 8 }}>🚧</span>
+      <div className="flex-1 bg-light-card dark:bg-dark-card rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center min-w-0 text-light-brown dark:text-dark-brown text-[18px] font-semibold">
+        <span className="text-[32px] mb-2">🚧</span>
         Скоро
       </div>
       {/* Курс валют */}
-      <CurrencyRatesCard palette={palette} />
+      <CurrencyRatesCard />
     </div>
   );
 }
 
-function UserHeader({ palette }: { palette: any }) {
+function UserHeader() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 24 }}>
-      <img alt="avatar" style={{ width: 72, height: 72, borderRadius: '50%', background: palette.card, border: `2.5px solid ${palette.accent}` }} />
+    <div className="flex items-center gap-6 mb-6">
+      <img alt="avatar" className="w-[72px] h-[72px] rounded-full bg-light-card dark:bg-dark-card border-2.5 border-light-accent dark:border-dark-accent" />
       <div>
-        <div style={{ fontSize: 24, fontWeight: 700 }}>
-          Игорь Климкин <span style={{ color: palette.navInactive, fontWeight: 400 }}> Рубли</span>
+        <div className="text-[24px] font-bold">
+          Игорь Климкин <span className="text-light-brown dark:text-dark-brown font-normal"> Рубли</span>
         </div>
-        <div style={{ fontSize: 16, color: palette.navInactive, marginTop: 4 }}>
-          UID 1125773083 <span style={{ marginLeft: 16 }}>VIP Обычный пользователь</span>
+        <div className="text-[16px] text-light-brown dark:text-dark-brown mt-1">
+          UID 1125773083 <span className="ml-4">VIP Обычный пользователь</span>
         </div>
       </div>
     </div>
   );
 }
 
-function CurrencyRatesCard({ palette }: { palette: any }) {
+function CurrencyRatesCard() {
   const [rates, setRates] = React.useState<{ code: string; rate: string; icon: string }[] | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
@@ -68,43 +68,43 @@ function CurrencyRatesCard({ palette }: { palette: any }) {
   }, []);
 
   return (
-    <div style={{ flex: 1, background: palette.card, borderRadius: 16, boxShadow: `0 2px 8px ${palette.shadow}`, padding: 24, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-      <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8, color: palette.fg }}>Курс валют</div>
+    <div className="flex-1 bg-light-card dark:bg-dark-card rounded-2xl shadow-lg p-6 flex flex-col min-w-0">
+      <div className="text-[22px] font-bold mb-2 text-light-fg dark:text-dark-fg">Курс валют</div>
       {loading ? (
-        <div style={{ color: palette.navInactive, fontSize: 16, margin: '24px 0' }}>Загрузка...</div>
+        <div className="text-light-brown dark:text-dark-brown text-[16px] my-6">Загрузка...</div>
       ) : error ? (
-        <div style={{ color: '#f43f5e', fontSize: 16, margin: '24px 0' }}>Ошибка загрузки</div>
+        <div className="text-red-500 text-[16px] my-6">Ошибка загрузки</div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           {rates && rates.map(r => (
-            <div key={r.code} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 17, fontWeight: 600, color: palette.fg }}>
-              <span style={{ fontSize: 22 }}>{r.icon}</span>
-              <span style={{ minWidth: 70 }}>{r.code}</span>
-              <span style={{ color: palette.accent, fontWeight: 700 }}>{r.rate}</span>
+            <div key={r.code} className="flex items-center gap-2.5 text-[17px] font-semibold text-light-fg dark:text-dark-fg">
+              <span className="text-[22px]">{r.icon}</span>
+              <span className="min-w-[70px]">{r.code}</span>
+              <span className="text-light-accent dark:text-dark-accent font-bold">{r.rate}</span>
             </div>
           ))}
         </div>
       )}
-      <div style={{ color: palette.navInactive, fontSize: 14, marginTop: 10 }}>Курс за 1 единицу валюты</div>
+      <div className="text-light-brown dark:text-dark-brown text-[14px] mt-2.5">Курс за 1 единицу валюты</div>
     </div>
   );
 }
 
-export default function ProfileSection({ palette }: { palette: any }) {
+export default function ProfileSection() {
   return (
-    <div style={{ background: palette.card, borderRadius: 16, padding: 32, boxShadow: `0 2px 8px ${palette.shadow}`, color: palette.fg, marginTop: 24 }}>
+    <div className="bg-light-card dark:bg-dark-card rounded-2xl p-8 shadow-lg text-light-fg dark:text-dark-fg mt-6">
       {/* Шапка пользователя */}
-      <UserHeader palette={palette} />
+      <UserHeader />
       {/* Панель инструментов */}
-      <ToolPanelSection palette={palette} />
+      <ToolPanelSection />
       {/* Секции */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <VerificationSection palette={palette} />
-        <DepositSection palette={palette} />
-        <TradeSection palette={palette} />
-        <BalanceSection palette={palette} />
-        <AssetsSection palette={palette} />
-        <HistorySection palette={palette} />
+      <div className="flex flex-col gap-4.5">
+        <VerificationSection />
+        <DepositSection />
+        <TradeSection />
+        <BalanceSection />
+        <AssetsSection />
+        <HistorySection />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
-import HeroSection from "./HeroSection";
+import HeroSection from "./section/HeroSection";
 import SearchModal from "../../components/ui/SearchModal";
 import AboutSection from "./section/AboutSection";
 import ChartSection from "./section/ChartSection";

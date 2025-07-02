@@ -1,11 +1,11 @@
 import React from 'react';
 
-export default function VerificationSection({ palette }: { palette: any }) {
+export default function VerificationSection() {
   return (
-    <div style={{ background: palette.card, borderRadius: 16, border: `2px solid ${palette.accent}`, padding: 28, minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: `0 2px 8px ${palette.shadow}` }}>
-      <div style={{ fontSize: 48, color: palette.accent, marginBottom: 12 }}>🚧</div>
-      <div style={{ fontWeight: 700, fontSize: 22, color: palette.accent, marginBottom: 8 }}>В разработке</div>
-      <div style={{ color: palette.navInactive, fontSize: 16, textAlign: 'center', maxWidth: 400 }}>
+    <div className="bg-light-card dark:bg-dark-card rounded-2xl border-2 border-light-accent dark:border-dark-accent p-7 min-h-[180px] flex flex-col items-center justify-center shadow-lg">
+      <div className="text-[48px] text-light-accent dark:text-dark-accent mb-3">🚧</div>
+      <div className="font-bold text-[22px] text-light-accent dark:text-dark-accent mb-2">В разработке</div>
+      <div className="text-light-brown dark:text-dark-brown text-[16px] text-center max-w-[400px]">
         Раздел "Пройдите верификацию" находится в разработке. Скоро здесь появится функционал!
       </div>
     </div>

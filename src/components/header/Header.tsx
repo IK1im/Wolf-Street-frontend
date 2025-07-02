@@ -4,7 +4,7 @@ import { useTheme } from "../../context/ThemeContext";
 
 interface HeaderProps {
   scrolled: boolean;
-  NAV: { id: string; label: string }[];
+  NAV?: { id: string; label: string }[];
   setSearchPos: (pos: { top: number; left: number }) => void;
   activeSection: string;
   headerVisible: boolean;
@@ -14,7 +14,7 @@ interface HeaderProps {
 
 export default function Header({
   scrolled,
-  NAV,
+  NAV = [],
   setSearchPos,
   activeSection,
   headerVisible,
