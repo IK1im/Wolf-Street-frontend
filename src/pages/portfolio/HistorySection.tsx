@@ -85,14 +85,14 @@ export default function HistorySection() {
   }
 
   return (
-    <div className="bg-light-card dark:bg-dark-card rounded-2xl p-7 min-h-[400px] shadow-lg flex flex-col">
+    <div className="bg-gradient-to-br from-light-card/95 to-light-bg/80 dark:from-dark-card/95 dark:to-[#181926]/90 rounded-2xl shadow-2xl card-glow backdrop-blur-xl border border-light-border/40 dark:border-dark-border/40 p-8 min-h-[400px] flex flex-col transition-all duration-300">
       {/* Заголовок секции */}
       <div className="mb-6 text-[22px] font-bold text-light-accent dark:text-dark-accent flex items-center gap-2">
         <FaExchangeAlt className="text-light-accent dark:text-dark-accent text-2xl" /> История операций
       </div>
       {/* Поиск и фильтры */}
       <div className="mb-8 w-full">
-        <div className="flex flex-col md:flex-row gap-3 md:gap-4 bg-light-bg/60 dark:bg-dark-bg/60 rounded-xl shadow-inner backdrop-blur px-4 py-3 items-center">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-4 bg-white/70 dark:bg-dark-card/70 rounded-xl shadow-inner backdrop-blur px-4 py-3 items-center">
           <div className="relative w-full md:w-[240px]">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-light-brown dark:text-dark-accent text-lg pointer-events-none">
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -158,7 +158,7 @@ export default function HistorySection() {
         </div>
       </div>
       <div className="flex flex-col flex-1">
-        <div className="overflow-x-auto rounded-lg flex-1">
+        <div className="overflow-x-auto rounded-lg flex-1 bg-light-bg/60 dark:bg-dark-bg/60">
           <table className="min-w-full text-left h-full">
             <thead>
               <tr className="bg-light-bg dark:bg-dark-bg">
@@ -206,21 +206,23 @@ export default function HistorySection() {
         </div>
         {/* Пагинация */}
         {pageCount > 1 && (
-          <div className="flex justify-center mt-6 gap-2 min-h-[48px]">
+          <div className="flex justify-center mt-6 gap-2 min-h-[40px]">
             <button
               onClick={() => setPage(page - 1)}
               disabled={page === 1}
-              className="px-3 py-1 min-w-[44px] rounded-lg bg-transparent text-light-brown dark:text-dark-fg border border-light-border dark:border-dark-border hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 transition disabled:opacity-40"
+              className="h-8 px-3 flex items-center justify-center rounded-full bg-transparent text-light-accent dark:text-dark-accent transition hover:bg-light-accent hover:text-white hover:opacity-80 active:opacity-60 dark:hover:bg-dark-accent dark:hover:text-white disabled:opacity-40 text-base"
             >
               Назад
             </button>
             {getPaginationButtons(page, pageCount).map((btn, idx) =>
               btn === '...'
-                ? <span key={idx} className="px-2 py-1 min-w-[44px] text-light-brown dark:text-dark-fg text-center">...</span>
+                ? <span key={idx} className="h-8 w-8 flex items-center justify-center rounded-full text-light-brown dark:text-dark-fg text-center text-base">...</span>
                 : <button
                     key={btn}
                     onClick={() => setPage(Number(btn))}
-                    className={`px-3 py-1 min-w-[44px] rounded-lg transition font-medium ${page === btn ? 'bg-light-accent dark:bg-dark-accent text-white shadow' : 'bg-transparent text-light-brown dark:text-dark-fg border border-light-border dark:border-dark-border hover:bg-light-accent/10 dark:hover:bg-dark-accent/10'}`}
+                    className={`h-8 w-8 flex items-center justify-center rounded-full font-medium transition duration-150 text-base ${page === btn
+                      ? 'bg-light-accent dark:bg-dark-accent text-white shadow hover:opacity-80 active:opacity-60'
+                      : 'bg-transparent text-light-accent dark:text-dark-accent hover:bg-light-accent hover:text-white hover:opacity-80 active:opacity-60 dark:hover:bg-dark-accent dark:hover:text-white'}`}
                   >
                     {btn}
                   </button>
@@ -228,7 +230,7 @@ export default function HistorySection() {
             <button
               onClick={() => setPage(page + 1)}
               disabled={page === pageCount}
-              className="px-3 py-1 min-w-[44px] rounded-lg bg-transparent text-light-brown dark:text-dark-fg border border-light-border dark:border-dark-border hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 transition disabled:opacity-40"
+              className="h-8 px-3 flex items-center justify-center rounded-full bg-transparent text-light-accent dark:text-dark-accent transition hover:bg-light-accent hover:text-white hover:opacity-80 active:opacity-60 dark:hover:bg-dark-accent dark:hover:text-white disabled:opacity-40 text-base"
             >
               Вперёд
             </button>

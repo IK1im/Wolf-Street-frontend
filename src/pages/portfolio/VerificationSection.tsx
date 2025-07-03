@@ -108,11 +108,21 @@ function SecurityRow({ icon, label, desc, status, btn, danger }: { icon: React.R
       </div>
       {status && <span className={`font-bold mr-2 ${status === 'ВЫКЛ' ? 'text-light-accent dark:text-dark-accent' : 'text-green-500'}`}>{status}</span>}
       <button
-        className={`btn-accent-glow-strong flex items-center gap-2 ${danger ? 'btn-danger' : ''}`}
+        className={
+          danger
+            ? `flex items-center gap-2 px-4 py-1.5 rounded-lg text-[15px] font-semibold
+                bg-gradient-to-r from-red-600 to-red-500 dark:from-red-700 dark:to-red-500
+                text-white shadow border border-red-500/60 dark:border-red-600/60
+                transition-all duration-200
+                hover:from-red-700 hover:to-red-600 hover:shadow-lg hover:ring-2 hover:ring-red-400/40
+                focus:outline-none focus:ring-2 focus:ring-red-400/40
+                ml-0 justify-start`
+            : `flex items-center gap-2 px-4 py-1.5 rounded-lg text-[15px] font-semibold bg-gradient-to-r from-light-accent/80 to-light-accent/60 dark:from-dark-accent/80 dark:to-dark-accent/60 text-white shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 hover:scale-[1.03] hover:shadow-lg hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 hover:border-light-accent dark:hover:border-dark-accent focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 ml-0 justify-start`
+        }
         type="button"
       >
+        <FaChevronRight className={danger ? "text-[15px] text-white opacity-90 mr-1" : "text-[15px] opacity-70 mr-1"} />
         {btn}
-        <FaChevronRight className="text-[15px] opacity-70" />
       </button>
     </div>
   );

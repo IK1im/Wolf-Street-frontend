@@ -23,7 +23,7 @@ const mockHistory = [
 
 const STEPS: Step[] = [
   { key: 'wallet', label: 'Актуальный кошелёк' },
-  { key: 'empty', label: '' },
+  { key: 'empty', label: 'Анализ' },
   { key: 'rates', label: 'Курс валют' },
 ];
 
@@ -130,7 +130,7 @@ function CurrencyRatesCard({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export default function ProfileSection() {
+export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () => void }) {
   return (
     <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl p-8 shadow-2xl card-glow backdrop-blur-md border border-light-border/40 dark:border-dark-border/40 text-light-fg dark:text-dark-fg mt-6 transition-all duration-300">
       {/* Шапка пользователя */}
@@ -141,50 +141,157 @@ export default function ProfileSection() {
         vipLabel="VIP Обычный пользователь"
         vip={true}
       />
-      {/* Stepper */}
-      <StepperPanel />
-      {/* Секции */}
+      <StepperPanel onDepositClick={onGoToDeposit} />
       <div className="flex flex-col gap-4.5">
-        {/* <DepositSection /> */}
         <TradeSection />
         <AssetsSection />
+        {/* ...и всё, что было раньше */}
       </div>
     </div>
   );
 }
 
-function StepperPanel() {
+function StepperPanel({ onDepositClick }: { onDepositClick: () => void }) {
   const [active, setActive] = useState<string>('wallet');
+  const cards = [
+    {
+      key: 'wallet',
+      title: 'Актуальный кошелёк',
+      icon: '💸',
+      content: (
+        <div className="flex flex-col items-start gap-1 w-full">
+          <span className="text-[32px] animate-pulse mb-1">💸</span>
+          <span className="text-[28px] font-extrabold text-light-accent dark:text-dark-accent mb-0.5">₽ 0.00</span>
+          <span className="text-light-brown dark:text-dark-brown text-[15px]">Ваш баланс</span>
+        </div>
+      ),
+      actions: <ActionButton onClick={onDepositClick}>Пополнить</ActionButton>,
+    },
+    {
+      key: 'empty',
+      title: 'Анализ портфеля',
+      icon: '💹',
+      content: <div className="w-full flex flex-col items-start"><PortfolioMiniAnalytics /></div>,
+    },
+    {
+      key: 'rates',
+      title: 'Курс валют',
+      icon: '💱',
+      content: <div className="w-full flex flex-col items-start"><CurrencyRatesCard /></div>,
+    },
+  ];
+  if (active === 'deposit') {
+    cards.push({
+      key: 'deposit',
+      title: 'Пополнить счёт',
+      icon: '💳',
+      content: <div className="w-full flex flex-col items-start"><DepositSection /></div>,
+    });
+  }
   return (
     <div className="w-full mb-8 relative">
-      <Stepper steps={STEPS} active={active} onStepClick={setActive} />
-      <div className="flex gap-6 flex-wrap md:flex-nowrap justify-center md:justify-between">
-        <Card
-          title="Актуальный кошелёк"
-          accent={active === 'wallet'}
-          actions={active === 'wallet' && (
-            <ActionButton>Пополнить</ActionButton>
-          )}
-        >
-          <div className="flex flex-col items-center justify-center gap-2 mt-2">
-            <span className="text-[36px] animate-pulse">💸</span>
-            <span className="text-[32px] font-extrabold text-light-accent dark:text-dark-accent mb-1 animate-pulse">₽ 0.00</span>
-            <span className="text-light-brown dark:text-dark-brown text-[15px]">Ваш баланс</span>
+      <StepperModern steps={STEPS} active={active} onStepClick={setActive} />
+      <div className="flex flex-row w-full min-h-[220px] h-[350px] gap-4">
+        {cards.map((card, idx) => {
+          const isActive = active === card.key;
+          return (
+            <div
+              key={card.key}
+              onClick={() => setActive(card.key)}
+              className={
+                `transition-all duration-500 overflow-hidden flex flex-col min-h-[220px] h-full cursor-pointer select-none rounded-xl ` +
+                (isActive
+                  ? 'flex-grow bg-light-card dark:bg-dark-card shadow-xl ring-2 ring-light-accent/40 dark:ring-dark-accent/40 border-light-accent dark:border-dark-accent z-10 px-8 py-6 items-start text-left'
+                  : 'w-[200px] md:w-[220px] bg-light-card dark:bg-dark-card opacity-90 hover:opacity-100 hover:shadow-lg z-0 items-center justify-center text-center p-0') +
+                (idx !== 0 ? ' border-l border-light-border dark:border-dark-border' : '')
+              }
+              style={{ boxSizing: 'border-box', position: 'relative' }}
+            >
+              {isActive ? (
+                <div className="flex flex-col justify-between w-full h-full">
+                  <div className="flex items-start justify-between w-full mb-4">
+                    <div className="text-[22px] font-bold text-light-fg dark:text-dark-fg leading-tight">{card.title}</div>
+                    <span className="text-[38px] ml-4 flex-shrink-0">{card.icon}</span>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-start w-full gap-4 overflow-y-auto">
+                    {card.content}
+                    {card.actions && <div className="mt-4">{card.actions}</div>}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center w-full h-full px-2">
+                  <span className="text-[28px] mb-2">{card.icon}</span>
+                  <div className="text-[15px] font-semibold text-light-fg dark:text-dark-fg leading-tight">{card.title}</div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Новый современный stepper
+function StepperModern({ steps, active, onStepClick }: { steps: Step[]; active: string; onStepClick: (key: string) => void }) {
+  return (
+    <div className="flex items-center justify-between mb-6 px-2 min-h-[48px]">
+      {steps.map((step, idx) => (
+        <React.Fragment key={step.key}>
+          <div
+            className={`flex flex-col items-center cursor-pointer group transition-all duration-200 select-none`}
+            onClick={() => onStepClick(step.key)}
+          >
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-[20px] border-2 z-10 transition-all duration-200
+              ${active === step.key
+                ? 'bg-light-accent dark:bg-dark-accent text-white border-light-accent dark:border-dark-accent shadow-xl ring-2 ring-light-accent/30 dark:ring-dark-accent/30'
+                : 'bg-light-bg dark:bg-dark-bg text-light-brown dark:text-dark-brown border-light-border dark:border-dark-border group-hover:border-light-accent/60 dark:group-hover:border-dark-accent/60'}
+            `}>
+              {idx + 1}
+            </div>
+            <div className={`mt-2 text-[15px] font-medium text-center transition-colors duration-200
+              ${active === step.key ? 'text-light-accent dark:text-dark-accent' : 'text-light-brown dark:text-dark-brown group-hover:text-light-accent/80 dark:group-hover:text-dark-accent/80'}`}>{step.label}</div>
           </div>
-        </Card>
-        {/* Пустой центральный блок */}
-        <Card
-          title=""
-          accent={active === 'empty'}
-        >
-          <div />
-        </Card>
-        <Card
-          title="Курс валют"
-          accent={active === 'rates'}
-        >
-          <CurrencyRatesCard />
-        </Card>
+          {idx < steps.length - 1 && (
+            <div className="flex-1 h-0.5 mx-2 bg-gradient-to-r from-light-border/60 via-light-accent/30 to-light-border/60 dark:from-dark-border/60 dark:via-dark-accent/30 dark:to-dark-border/60" />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function PortfolioMiniAnalytics() {
+  const assets = [
+    { symbol: 'BTC', name: 'Bitcoin', percent: 73.1, value: 2730000, color: 'bg-gradient-to-r from-yellow-400 to-yellow-500' },
+    { symbol: 'ETH', name: 'Ethereum', percent: 23.1, value: 864000, color: 'bg-gradient-to-r from-blue-400 to-blue-600' },
+    { symbol: 'USDT', name: 'Tether', percent: 3.0, value: 110400, color: 'bg-gradient-to-r from-emerald-400 to-emerald-600' },
+    { symbol: 'TON', name: 'Toncoin', percent: 0.8, value: 31500, color: 'bg-gradient-to-r from-cyan-400 to-cyan-600' },
+  ];
+  const total = assets.reduce((sum, a) => sum + a.value, 0);
+  const topAssets = assets.slice(0, 3);
+  return (
+    <div className="flex flex-col gap-2 items-center justify-center w-full">
+      <span className="text-[22px] font-extrabold text-light-accent dark:text-dark-accent mb-0.5">💹</span>
+      <div className="text-[13px] text-light-brown dark:text-dark-brown">Суммарная стоимость</div>
+      <div className="text-[18px] font-extrabold text-light-accent dark:text-dark-accent mb-1">₽ {total.toLocaleString('ru-RU')}</div>
+      <div className="w-full flex flex-col gap-1">
+        {topAssets.map(a => (
+          <div key={a.symbol} className="flex items-center gap-1 w-full">
+            <span className={`w-2 h-2 rounded-full ${a.color} inline-block`} />
+            <span className="font-semibold text-light-fg dark:text-dark-fg text-[13px]">{a.symbol}</span>
+            <span className="text-light-brown dark:text-dark-brown text-[12px]">{a.name}</span>
+            <div className="flex-1 mx-1 h-1.5 rounded-full bg-light-bg/40 dark:bg-dark-bg/40 overflow-hidden">
+              <div className={`h-1.5 rounded-full ${a.color}`} style={{ width: `${a.percent}%` }} />
+            </div>
+            <span className="ml-auto text-[12px] font-bold text-light-accent dark:text-dark-accent min-w-[32px] text-right">{a.percent}%</span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-1 text-[12px] text-light-brown dark:text-dark-brown flex flex-row gap-2 items-center">
+        <span>Доля BTC: <span className="font-bold text-light-accent dark:text-dark-accent">{assets[0].percent}%</span></span>
+        <span className="mx-1">/</span>
+        <span>Диверсификация: <span className="font-bold text-light-accent dark:text-dark-accent">низкая</span></span>
       </div>
     </div>
   );

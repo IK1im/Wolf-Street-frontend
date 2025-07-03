@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { FaPlus, FaArrowRight, FaChartLine } from 'react-icons/fa';
 
 // Тип для актива
 interface Asset {
@@ -99,34 +100,34 @@ export default function AssetsSection() {
   const pie = useMemo(() => assets.map(a => (a.amount * a.price) / total), [total]);
 
   return (
-    <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-2xl card-glow backdrop-blur-md border border-light-border/40 dark:border-dark-border/40 p-8 flex flex-col gap-8 transition-all duration-300">
-      <h2 className="text-2xl font-extrabold text-light-accent dark:text-dark-accent mb-2 text-center tracking-wide">Ваши активы</h2>
+    <div className="bg-gradient-to-br from-light-card/95 to-light-bg/80 dark:from-dark-card/95 dark:to-[#181926]/90 rounded-2xl shadow-2xl card-glow backdrop-blur-xl border border-light-border/40 dark:border-dark-border/40 p-10 flex flex-col gap-10 transition-all duration-300">
+      <h2 className="text-3xl font-extrabold text-light-accent dark:text-dark-accent mb-2 text-center tracking-wide drop-shadow-lg">Ваши активы</h2>
       {/* Pie chart + сумма */}
-      <div className="flex flex-col md:flex-row items-center gap-8 justify-center">
-        <div className="relative w-[160px] h-[160px] flex items-center justify-center">
+      <div className="flex flex-col md:flex-row items-center gap-10 justify-center">
+        <div className="relative w-[180px] h-[180px] flex items-center justify-center">
           <PieChart pie={pie} colors={PIE_COLORS} />
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <div className="text-[18px] font-bold text-light-accent dark:text-dark-accent">Всего</div>
-            <div className="text-[28px] font-extrabold text-light-fg dark:text-dark-fg">₽ {formatNumber(total)}</div>
+            <div className="text-[20px] font-bold text-light-accent dark:text-dark-accent drop-shadow-lg">Всего</div>
+            <div className="text-[34px] font-extrabold text-light-fg dark:text-dark-fg drop-shadow-xl">₽ {formatNumber(total)}</div>
           </div>
         </div>
         {/* Легенда pie chart */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4 min-w-[220px]">
           {assets.map((a, i) => (
             <div key={a.symbol} className="flex items-center gap-3">
-              <span className={`w-4 h-4 rounded-full bg-gradient-to-br ${PIE_COLORS[i]} mr-2`} />
-              <span className="font-semibold text-light-fg dark:text-dark-fg">{a.name}</span>
+              <span className={`w-4 h-4 rounded-full bg-gradient-to-br ${PIE_COLORS[i]} mr-2 shadow-md`} />
+              <span className="font-semibold text-light-fg dark:text-dark-fg text-[16px]">{a.name}</span>
               <span className="text-light-brown dark:text-dark-brown text-[15px]">({a.symbol})</span>
-              <span className="ml-2 text-[15px] text-light-accent dark:text-dark-accent font-bold">{((pie[i] || 0) * 100).toFixed(1)}%</span>
+              <span className="ml-2 text-[16px] font-bold text-light-accent dark:text-dark-accent">{((pie[i] || 0) * 100).toFixed(1)}%</span>
             </div>
           ))}
         </div>
       </div>
       {/* Таблица активов */}
-      <div className="overflow-x-auto rounded-2xl shadow-lg bg-white/60 dark:bg-[#23243a]/60 backdrop-blur-md border border-light-border/30 dark:border-dark-border/30">
+      <div className="overflow-x-auto rounded-2xl shadow-xl bg-gradient-to-br from-white/80 to-light-card/80 dark:from-dark-card/80 dark:to-[#181926]/80 backdrop-blur-lg border border-light-border/30 dark:border-dark-border/30">
         <table className="min-w-full text-left">
           <thead>
-            <tr className="text-[15px] text-light-brown dark:text-dark-brown font-semibold">
+            <tr className="text-[16px] text-light-accent dark:text-dark-accent font-bold">
               <th className="py-3 px-4">Актив</th>
               <th className="py-3 px-4">Количество</th>
               <th className="py-3 px-4">Цена</th>
@@ -136,20 +137,26 @@ export default function AssetsSection() {
           </thead>
           <tbody>
             {assets.map((a, i) => (
-              <tr key={a.symbol} className="hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 transition-all group">
+              <tr key={a.symbol} className="hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 transition-all group rounded-xl">
                 <td className="py-3 px-4 flex items-center gap-3 min-w-[160px]">
-                  <img src={a.iconUrl} alt={a.symbol} className="w-7 h-7 rounded-full border border-light-border dark:border-dark-border shadow-sm bg-white/80 dark:bg-[#23243a]/80" />
-                  <span className="font-semibold text-light-fg dark:text-dark-fg">{a.symbol}</span>
+                  <img src={a.iconUrl} alt={a.symbol} className="w-8 h-8 rounded-full border-2 border-light-accent dark:border-dark-accent shadow bg-white/90 dark:bg-[#23243a]/90" />
+                  <span className="font-semibold text-light-fg dark:text-dark-fg text-[16px]">{a.symbol}</span>
                   <span className="text-light-brown dark:text-dark-brown text-[15px]">{a.name}</span>
                 </td>
-                <td className="py-3 px-4 font-mono">{formatNumber(a.amount)}</td>
-                <td className="py-3 px-4 font-mono">₽ {formatNumber(a.price)}</td>
-                <td className="py-3 px-4 font-mono font-bold">₽ {formatNumber(a.amount * a.price)}</td>
-                <td className="py-3 px-4 text-center">
+                <td className="py-3 px-4 font-mono text-[15px]">{formatNumber(a.amount)}</td>
+                <td className="py-3 px-4 font-mono text-[15px]">₽ {formatNumber(a.price)}</td>
+                <td className="py-3 px-4 font-mono font-bold text-[15px]">₽ {formatNumber(a.amount * a.price)}</td>
+                <td className="py-3 px-6 text-center">
                   <div className="flex gap-2 justify-center">
-                    <button className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 hover:scale-[1.04] hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[15px] opacity-60 cursor-not-allowed">Пополнить</button>
-                    <button className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 hover:scale-[1.04] hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[15px] opacity-60 cursor-not-allowed">Вывести</button>
-                    <button className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 hover:scale-[1.04] hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[15px] opacity-60 cursor-not-allowed">Торговать</button>
+                    <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white font-semibold shadow transition-all duration-200 hover:scale-[1.04] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[15px]">
+                      <FaPlus className="text-[14px] mr-1" />Пополнить
+                    </button>
+                    <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white font-semibold shadow transition-all duration-200 hover:scale-[1.04] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[15px]">
+                      <FaArrowRight className="text-[14px] mr-1" />Вывести
+                    </button>
+                    <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white font-semibold shadow transition-all duration-200 hover:scale-[1.04] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[15px]">
+                      <FaChartLine className="text-[14px] mr-1" />Торговать
+                    </button>
                   </div>
                 </td>
               </tr>
