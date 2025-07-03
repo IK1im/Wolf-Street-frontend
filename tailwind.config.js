@@ -23,7 +23,7 @@ module.exports = {
         "dark-accent": "#81c784",
         "dark-card": "#1a1918",
         "dark-border": "#3e3c3a",
-        "dark-brown": "#558b2f",
+        "dark-brown": "#a0a4ac ",
         "dark-shadow": "#00000080",
         "dark-nav-active": "#81c784",
         "dark-nav-text": "#f0f4f0",

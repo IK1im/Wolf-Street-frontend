@@ -12,7 +12,7 @@ import HistorySection from './HistorySection';
 
 const SECTIONS: { [key: string]: React.FC } = {
   'Панель инструментов': ProfileSection,
-  'Пройдите верификацию': VerificationSection,
+  'Безопасность': VerificationSection,
   'Пополните счет': DepositSection,
   'Совершите сделку': TradeSection,
   'Ваши активы': AssetsSection,
@@ -22,7 +22,7 @@ const SECTIONS: { [key: string]: React.FC } = {
 
 const MENU_LABELS = [
   'Панель инструментов',
-  'Пройдите верификацию',
+  'Безопасность',
   'Пополните счет',
   'Совершите сделку',
   'Ваши активы',

@@ -7,6 +7,11 @@ import AssetsSection from './AssetsSection';
 import HistorySection from './HistorySection';
 import { getCurrencyRates } from '../../services/Api';
 import clsx from 'clsx';
+import ProfileHeader from './ui/ProfileHeader';
+import Card from './ui/Card';
+import Stepper from './ui/Stepper';
+import type { Step } from './ui/StepTypes';
+import ActionButton from './ui/ActionButton';
 
 // Мок-история операций
 const mockHistory = [
@@ -16,91 +21,11 @@ const mockHistory = [
   { date: '2024-05-15', asset: 'TON', action: 'Вывод', amount: '-50 TON', value: '-10 500 ₽', status: 'В обработке' },
 ];
 
-const STEPS = [
+const STEPS: Step[] = [
   { key: 'wallet', label: 'Актуальный кошелёк' },
-  // { key: 'history', label: 'История операций' }, // временно скрыто
+  { key: 'empty', label: '' },
   { key: 'rates', label: 'Курс валют' },
 ];
-
-function StepCard({ active, title, children, button, onClick }: { active: boolean, title: string, children: React.ReactNode, button?: string, onClick: () => void }) {
-  return (
-    <div
-      className={`flex flex-col justify-between min-w-[320px] max-w-[420px] min-h-[300px] h-[300px] rounded-xl border-2 px-8 py-7 select-none transition-colors duration-200
-        ${active ? 'border-light-accent dark:border-dark-accent bg-light-card dark:bg-dark-card' : 'border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg'}
-        cursor-pointer`}
-      onClick={onClick}
-      style={{ boxSizing: 'border-box' }}
-    >
-      <div className="mb-2">
-        <div className="text-[22px] font-bold text-light-fg dark:text-dark-fg mb-4">{title}</div>
-        <div className="flex-1">{children}</div>
-      </div>
-      {active && button && (
-        <button className="ml-auto px-5 py-2.5 rounded bg-light-accent dark:bg-dark-accent text-white font-semibold text-[16px] shadow-none hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 transition-all duration-150">{button}</button>
-      )}
-    </div>
-  );
-}
-
-function StepperLine({ activeKey }: { activeKey: string }) {
-  return (
-    <div className="flex items-center justify-between mb-2 px-2 min-h-[40px]">
-      {STEPS.map((step, idx) => (
-        <div key={step.key} className="flex-1 flex items-center relative">
-          {/* Линия слева только у НЕ первого шага */}
-          {idx > 0 && (
-            <div className="h-0.5 flex-1 bg-light-border dark:bg-dark-border" />
-          )}
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[16px] border-2 mx-1 z-10 transition-colors duration-200
-            ${activeKey === step.key
-              ? 'bg-light-accent dark:bg-dark-accent text-white border-light-accent dark:border-dark-accent'
-              : 'bg-light-bg dark:bg-dark-bg text-light-brown dark:text-dark-brown border-light-border dark:border-dark-border'}`}>{idx + 1}</div>
-          {/* Линия справа только у НЕ последнего шага */}
-          {idx < STEPS.length - 1 && (
-            <div className="h-0.5 flex-1 bg-light-border dark:bg-dark-border" />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function StepperPanel() {
-  const [active, setActive] = useState<'wallet'|'empty'|'rates'>('wallet');
-  return (
-    <div className="w-full mb-8 relative">
-      <StepperLine activeKey={active} />
-      <div className="flex gap-6 flex-wrap md:flex-nowrap justify-center md:justify-between">
-        <StepCard
-          active={active === 'wallet'}
-          title="Актуальный кошелёк"
-          onClick={() => setActive('wallet')}
-        >
-          <div className="flex flex-col items-center justify-center gap-2 mt-2">
-            <span className="text-[36px] animate-pulse">💸</span>
-            <span className="text-[32px] font-extrabold text-light-accent dark:text-dark-accent mb-1 animate-pulse">₽ 0.00</span>
-            <span className="text-light-brown dark:text-dark-brown text-[15px]">Ваш баланс</span>
-          </div>
-        </StepCard>
-        {/* Пустой центральный блок */}
-        <StepCard
-          active={active === 'empty'}
-          title=""
-          onClick={() => setActive('empty')}
-        >
-          {/* Пусто */}
-        </StepCard>
-        <StepCard
-          active={active === 'rates'}
-          title="Курс валют"
-          onClick={() => setActive('rates')}
-        >
-          <CurrencyRatesCard />
-        </StepCard>
-      </div>
-    </div>
-  );
-}
 
 function OperationHistoryBlock({ compact = false, maxRows }: { compact?: boolean, maxRows?: number }) {
   const rows = maxRows ? mockHistory.slice(0, maxRows) : (compact ? mockHistory.slice(0, 3) : mockHistory);
@@ -130,30 +55,6 @@ function OperationHistoryBlock({ compact = false, maxRows }: { compact?: boolean
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function UserHeader() {
-  return (
-    <div className="flex items-center gap-7 mb-8 px-2">
-      <div className="relative">
-        <img
-          alt="avatar"
-          src="https://i.imgur.com/0y0y0y0.png"
-          className="w-[88px] h-[88px] rounded-full border-4 border-light-accent dark:border-dark-accent shadow-xl bg-gradient-to-br from-light-bg to-light-card dark:from-dark-bg dark:to-dark-card"
-        />
-        <span className="absolute bottom-2 right-2 w-5 h-5 rounded-full bg-gradient-to-br from-light-accent to-light-bg dark:from-dark-accent dark:to-dark-bg flex items-center justify-center text-white text-xs font-bold shadow-lg">VIP</span>
-      </div>
-      <div className="flex flex-col gap-1">
-        <div className="text-[26px] font-extrabold text-light-fg dark:text-dark-fg leading-tight flex items-center gap-2">
-          Игорь Климкин
-        </div>
-        <div className="flex items-center gap-4 mt-1">
-          <span className="text-light-brown dark:text-dark-brown text-[16px] font-mono">UID 1125773083</span>
-          <span className="bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent text-[15px] font-semibold px-3 py-1 rounded-xl ml-2">VIP Обычный пользователь</span>
-        </div>
-      </div>
     </div>
   );
 }
@@ -233,14 +134,57 @@ export default function ProfileSection() {
   return (
     <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl p-8 shadow-2xl card-glow backdrop-blur-md border border-light-border/40 dark:border-dark-border/40 text-light-fg dark:text-dark-fg mt-6 transition-all duration-300">
       {/* Шапка пользователя */}
-      <UserHeader />
+      <ProfileHeader
+        avatar="https://i.imgur.com/0y0y0y0.png"
+        nickname="Игорь Климкин"
+        uid="1125773083"
+        vipLabel="VIP Обычный пользователь"
+        vip={true}
+      />
       {/* Stepper */}
       <StepperPanel />
       {/* Секции */}
       <div className="flex flex-col gap-4.5">
-        <DepositSection />
+        {/* <DepositSection /> */}
         <TradeSection />
         <AssetsSection />
+      </div>
+    </div>
+  );
+}
+
+function StepperPanel() {
+  const [active, setActive] = useState<string>('wallet');
+  return (
+    <div className="w-full mb-8 relative">
+      <Stepper steps={STEPS} active={active} onStepClick={setActive} />
+      <div className="flex gap-6 flex-wrap md:flex-nowrap justify-center md:justify-between">
+        <Card
+          title="Актуальный кошелёк"
+          accent={active === 'wallet'}
+          actions={active === 'wallet' && (
+            <ActionButton>Пополнить</ActionButton>
+          )}
+        >
+          <div className="flex flex-col items-center justify-center gap-2 mt-2">
+            <span className="text-[36px] animate-pulse">💸</span>
+            <span className="text-[32px] font-extrabold text-light-accent dark:text-dark-accent mb-1 animate-pulse">₽ 0.00</span>
+            <span className="text-light-brown dark:text-dark-brown text-[15px]">Ваш баланс</span>
+          </div>
+        </Card>
+        {/* Пустой центральный блок */}
+        <Card
+          title=""
+          accent={active === 'empty'}
+        >
+          <div />
+        </Card>
+        <Card
+          title="Курс валют"
+          accent={active === 'rates'}
+        >
+          <CurrencyRatesCard />
+        </Card>
       </div>
     </div>
   );
