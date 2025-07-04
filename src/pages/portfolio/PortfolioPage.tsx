@@ -16,6 +16,7 @@ const SECTIONS: { [key: string]: React.FC } = {
   'Пополните счет': DepositSection,
   'Совершите сделку': TradeSection,
   'Ваши активы': AssetsSection,
+  'assets-overview': AssetsSection,
   'История операций': HistorySection,
   'Настройки': SettingsPanel,
 };
@@ -50,7 +51,7 @@ export default function PortfolioPage({ theme, setTheme, NAV }: { theme: string,
         {/* Левое меню */}
         <LeftMenu activeMenu={activeMenu} setActiveMenu={setActiveMenu} menuLabels={MENU_LABELS} />
         {/* Контент */}
-        <main className="flex-1 flex flex-col gap-5">
+        <main className="flex-1 flex flex-col gap-5 ml-[288px]">
           <SectionComponent />
         </main>
       </div>
