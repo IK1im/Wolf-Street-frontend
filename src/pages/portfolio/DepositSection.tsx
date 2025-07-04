@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { FaLock, FaCreditCard, FaApple, FaGoogle, FaWallet, FaArrowRight } from 'react-icons/fa';
+import Button from '../../components/ui/Button';
 
 const quickAmounts = [1000, 5000, 10000, 50000];
 const methods = [
@@ -41,14 +42,16 @@ export default function DepositSection() {
           </div>
           <div className="flex flex-wrap gap-2 justify-center mt-2">
             {quickAmounts.map(val => (
-              <button
+              <Button
                 key={val}
                 type="button"
+                size="sm"
+                variant={amount === val.toString() ? 'gradient' : 'secondary'}
                 onClick={() => handleQuickAmount(val)}
-                className="px-4 py-2 rounded-lg bg-light-bg dark:bg-dark-bg text-light-brown dark:text-dark-fg border border-light-border dark:border-dark-border hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 transition"
+                className="min-w-[90px]"
               >
                 +{val.toLocaleString('ru-RU')} ₽
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -76,23 +79,29 @@ export default function DepositSection() {
         <div className="flex flex-col md:w-1/3 min-h-[340px] justify-center items-center gap-4 pl-0 md:pl-6 border-t md:border-t-0 md:border-l border-light-border dark:border-dark-border pt-6 md:pt-0">
           <div className="flex flex-col gap-3 w-full max-w-[220px]">
             {methods.map(m => (
-              <button
+              <Button
                 key={m.label}
                 type="button"
+                size="md"
+                variant={method === m.label ? 'gradient' : 'secondary'}
+                iconLeft={m.icon}
                 onClick={() => setMethod(m.label)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition font-medium text-[15px] w-full justify-center ${method === m.label ? 'bg-light-accent dark:bg-dark-accent text-white border-light-accent dark:border-dark-accent shadow' : 'bg-light-bg dark:bg-dark-bg text-light-brown dark:text-dark-fg border-light-border dark:border-dark-border hover:bg-light-accent/10 dark:hover:bg-dark-accent/10'}`}
+                className="w-full justify-center"
               >
-                {m.icon} {m.label}
-              </button>
+                {m.label}
+              </Button>
             ))}
-            <button
+            <Button
               type="button"
+              size="lg"
+              variant="gradient"
+              loading={loading}
               disabled={!amount || loading}
               onClick={handleDeposit}
-              className="h-12 w-full rounded-xl bg-light-accent dark:bg-dark-accent text-white text-[18px] font-bold transition hover:scale-[1.03] active:scale-100 disabled:opacity-50 mt-2 shadow-lg"
+              className="w-full mt-2"
             >
-              {loading ? 'Пополнение...' : 'Пополнить'}
-            </button>
+              Пополнить
+            </Button>
           </div>
           <div className="flex items-center gap-2 justify-center text-[14px] text-light-brown dark:text-dark-fg mt-4">
             <FaLock className="text-[16px]" /> Все операции защищены

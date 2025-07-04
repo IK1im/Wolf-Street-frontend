@@ -4,6 +4,8 @@ import btcIcon from '../../image/crypto/bitcoin.svg';
 import ethIcon from '../../image/crypto/ethereum.svg';
 import usdtIcon from '../../image/crypto/usdt.svg';
 import tonIcon from '../../image/crypto/ton.svg';
+import Button from '../../components/ui/Button';
+import Card from '../../components/ui/Card';
 
 // Тип для актива
 interface Asset {
@@ -126,15 +128,9 @@ export default function AssetsSection() {
             <span className="ml-4 text-[18px] text-light-brown dark:text-dark-brown bg-white/40 dark:bg-[#23243a]/40 px-3 py-1 rounded-xl shadow-inner font-semibold">~ {formatNumber(totalUSDT, 2)} USDT</span>
           </div>
           <div className="flex gap-4 mt-4">
-            <button className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white font-semibold shadow-lg transition-all duration-200 hover:scale-[1.06] hover:shadow-2xl active:scale-95 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[16px]">
-              <FaPlus className="text-[16px]" />Пополнить
-            </button>
-            <button className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white font-semibold shadow-lg transition-all duration-200 hover:scale-[1.06] hover:shadow-2xl active:scale-95 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[16px]">
-              <FaArrowRight className="text-[16px]" />Вывести
-            </button>
-            <button className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white font-semibold shadow-lg transition-all duration-200 hover:scale-[1.06] hover:shadow-2xl active:scale-95 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40 text-[16px]">
-              <FaExchangeAlt className="text-[16px]" />Трансфер
-            </button>
+            <Button variant="gradient" size="md" iconLeft={<FaPlus />}>Пополнить</Button>
+            <Button variant="gradient" size="md" iconLeft={<FaArrowRight />}>Вывести</Button>
+            <Button variant="gradient" size="md" iconLeft={<FaExchangeAlt />}>Трансфер</Button>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center gap-2">
@@ -171,15 +167,14 @@ export default function AssetsSection() {
       {/* Таблица-«карточки» */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filtered.map((a, i) => (
-          <div key={a.symbol} className="rounded-2xl bg-gradient-to-br from-white/80 to-light-card/80 dark:from-dark-card/80 dark:to-[#181926]/80 border border-light-border/30 dark:border-dark-border/30 shadow-xl p-5 flex flex-col gap-3 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] animate-fadein">
-            <div className="flex items-center gap-4 mb-2">
-              <img src={a.iconUrl} alt={a.symbol} className="w-10 h-10 rounded-full border-2 border-light-accent dark:border-dark-accent shadow bg-white/90 dark:bg-[#23243a]/90" />
-              <div className="flex flex-col">
-                <span className="font-bold text-light-fg dark:text-dark-fg text-[18px]">{a.symbol}</span>
-                <span className="text-light-brown dark:text-dark-brown text-[15px]">{a.name}</span>
-              </div>
-              <span className="ml-auto text-[17px] font-bold text-light-accent dark:text-dark-accent">₽ {formatNumber(a.amount * a.price, 2)}</span>
-            </div>
+          <Card
+            key={a.symbol}
+            icon={<img src={a.iconUrl} alt={a.symbol} className="w-10 h-10 rounded-full border-2 border-light-accent dark:border-dark-accent shadow bg-white/90 dark:bg-[#23243a]/90" />}
+            title={<span className="font-bold text-light-fg dark:text-dark-fg text-[18px]">{a.symbol}</span>}
+            actions={<span className="text-[17px] font-bold text-light-accent dark:text-dark-accent">₽ {formatNumber(a.amount * a.price, 2)}</span>}
+            className="p-5"
+          >
+            <div className="text-light-brown dark:text-dark-brown text-[15px] mb-2">{a.name}</div>
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex flex-col">
                 <span className="text-[14px] text-light-brown dark:text-dark-brown">Доступно</span>
@@ -199,17 +194,11 @@ export default function AssetsSection() {
               </div>
             </div>
             <div className="flex gap-3 mt-2">
-              <button title="Пополнить" className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-2xl active:scale-95 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40">
-                <FaPlus className="text-[18px]" />
-              </button>
-              <button title="Вывести" className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-2xl active:scale-95 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40">
-                <FaArrowRight className="text-[18px]" />
-              </button>
-              <button title="Торговать" className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-2xl active:scale-95 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40">
-                <FaChartLine className="text-[18px]" />
-              </button>
+              <Button title="Пополнить" variant="gradient" size="sm" iconLeft={<FaPlus />} />
+              <Button title="Вывести" variant="gradient" size="sm" iconLeft={<FaArrowRight />} />
+              <Button title="Торговать" variant="gradient" size="sm" iconLeft={<FaChartLine />} />
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

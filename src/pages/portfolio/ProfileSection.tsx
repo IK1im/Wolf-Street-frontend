@@ -8,10 +8,10 @@ import HistorySection from './HistorySection';
 import { getCurrencyRates } from '../../services/Api';
 import clsx from 'clsx';
 import ProfileHeader from './ui/ProfileHeader';
-import Card from './ui/Card';
+import Card from '../../components/ui/Card';
 import Stepper from './ui/Stepper';
 import type { Step } from './ui/StepTypes';
-import ActionButton from './ui/ActionButton';
+import Button from '../../components/ui/Button';
 
 // Мок-история операций
 const mockHistory = [
@@ -165,7 +165,7 @@ function StepperPanel({ onDepositClick }: { onDepositClick: () => void }) {
           <span className="text-light-brown dark:text-dark-brown text-[15px]">Ваш баланс</span>
         </div>
       ),
-      actions: <ActionButton onClick={onDepositClick}>Пополнить</ActionButton>,
+      actions: <Button variant="gradient" size="md" onClick={onDepositClick}>Пополнить</Button>,
     },
     {
       key: 'empty',
