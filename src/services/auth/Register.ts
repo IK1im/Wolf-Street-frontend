@@ -1,5 +1,6 @@
 import api from "../Api";
 import type { RegisterRequest } from "./TypesAuth";
+import { handleApiError } from "./handleApiError";
 
 /**
  * Регистрация нового пользователя
@@ -12,10 +13,11 @@ export const registerUser = async (
   try {
     await api.post("/auth/register", userData);
   } catch (error: unknown) {
-    // Обработка ошибок
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
-    throw new Error("Ошибка регистрации");
+    handleApiError(error);
   }
 };
+
+/**
+ * Экспорт по умолчанию для registerUser
+ */
+export default registerUser;

@@ -1,5 +1,6 @@
 import api from "../Api";
 import type { LoginRequest, LoginResponse } from "./TypesAuth";
+import { handleApiError } from "./handleApiError";
 
 /**
  * Вход пользователя в систему
@@ -13,11 +14,8 @@ export const loginUser = async (
     const response = await api.post("/auth/login", credentials);
     return response.data as LoginResponse;
   } catch (error: unknown) {
-    // Обработка ошибок
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
-    throw new Error("Ошибка входа в систему");
+    handleApiError(error);
+    throw error;
   }
 };
 
