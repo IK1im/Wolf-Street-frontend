@@ -37,6 +37,25 @@ module.exports = {
         warning: "#FFD600",
         error: "#ef4444",
       },
+      keyframes: {
+        'profile-menu-fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(-8px) scale(0.97)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'portfolio-fade': {
+          '0%': { opacity: '0', transform: 'translateY(24px) scale(0.98)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'leftmenu-fade-in': {
+          '0%': { opacity: '0', transform: 'translateX(-32px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+      },
+      animation: {
+        'profile-menu': 'profile-menu-fade-in 0.22s cubic-bezier(.4,0,.2,1)',
+        'portfolio-fade': 'portfolio-fade 0.5s cubic-bezier(.4,0,.2,1)',
+        'leftmenu-fade-in': 'leftmenu-fade-in 0.5s cubic-bezier(.4,0,.2,1)',
+      },
     },
   },
   darkMode: "class",

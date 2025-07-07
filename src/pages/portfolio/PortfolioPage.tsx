@@ -54,7 +54,9 @@ export default function PortfolioPage({ theme, setTheme, NAV }: { theme: string,
         </div>
         {/* Контент */}
         <main className="w-full flex flex-col gap-5">
-          <SectionComponent />
+          <div key={activeMenu} className="animate-portfolio-fade">
+            <SectionComponent />
+          </div>
         </main>
       </div>
     </div>

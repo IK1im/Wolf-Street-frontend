@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -36,6 +36,33 @@ export default function Header({
     } else {
       navigate("/");
     }
+  };
+
+  // --- AUTH LOGIC ---
+  const [isAuth, setIsAuth] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsAuth(!!localStorage.getItem("accessToken"));
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    if (menuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    setIsAuth(false);
+    setMenuOpen(false);
+    navigate("/login");
   };
 
   return (
@@ -135,12 +162,46 @@ export default function Header({
             </svg>
           </button>
 
-          <button
-            onClick={() => navigate("/login")}
-            className="py-1.5 px-4 bg-light-accent dark:bg-dark-accent text-light-nav-text dark:text-dark-nav-text rounded-full font-bold text-sm border-none cursor-pointer shadow-[0_2px_8px_rgba(197,107,98,0.33)] dark:shadow-[0_2px_8px_rgba(129,199,132,0.33)] hover:scale-105 transition-transform"
-          >
-            Войти
-          </button>
+          {/* --- AUTH BUTTONS --- */}
+          {!isAuth ? (
+            <button
+              onClick={() => navigate("/login")}
+              className="py-1.5 px-4 bg-light-accent dark:bg-dark-accent text-light-nav-text dark:text-dark-nav-text rounded-full font-bold text-sm border-none cursor-pointer shadow-[0_2px_8px_rgba(197,107,98,0.33)] dark:shadow-[0_2px_8px_rgba(129,199,132,0.33)] hover:scale-105 transition-transform"
+            >
+              Войти
+            </button>
+          ) : (
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                className="w-9 h-9 rounded-full bg-light-card dark:bg-dark-card flex items-center justify-center border border-light-border dark:border-dark-border shadow transition-all duration-200 hover:scale-110 hover:shadow-xl"
+                aria-label="Профиль"
+              >
+                <svg className="w-6 h-6 text-light-fg dark:text-dark-fg" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-2.5 3.5-4 8-4s8 1.5 8 4" />
+                </svg>
+              </button>
+              {menuOpen && (
+                <div
+                  className="absolute right-0 mt-2 w-40 bg-white dark:bg-dark-card shadow-lg rounded-lg z-50 border border-light-border dark:border-dark-border transition-all duration-200 origin-top-right animate-profile-menu"
+                >
+                  <button
+                    className="w-full text-left px-4 py-2 rounded-md transition-all duration-200 hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-light-accent dark:hover:text-dark-accent focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent active:bg-light-accent/20 dark:active:bg-dark-accent/20 hover:pl-6"
+                    onClick={() => { setMenuOpen(false); navigate("/portfolio"); }}
+                  >
+                    Профиль
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 rounded-md transition-all duration-200 hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-light-accent dark:hover:text-dark-accent focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent active:bg-light-accent/20 dark:active:bg-dark-accent/20 hover:pl-6"
+                    onClick={handleLogout}
+                  >
+                    Выйти
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           <ThemeToggle />
         </div>
