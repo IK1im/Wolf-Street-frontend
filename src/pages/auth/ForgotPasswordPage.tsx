@@ -1,30 +1,145 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AuthFormHeader from "./components/AuthFormHeader";
 import AuthFormFooter from "./components/AuthFormFooter";
 import ErrorAlert from "../../components/ui/ErrorAlert";
+import axios from "axios";
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+const API_BASE = "http://89.169.183.192:8080";
 
 const ForgotPasswordPage: React.FC = () => {
+  const query = useQuery();
+  const token = query.get("token");
+  const emailFromQuery = query.get("email");
+
+  // --- Состояния для email формы ---
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // --- Состояния для смены пароля ---
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changeSuccess, setChangeSuccess] = useState(false);
+  const [changeError, setChangeError] = useState("");
+  const [changeLoading, setChangeLoading] = useState(false);
+
+  // --- Проверка email и отправка письма ---
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setNotFound(false);
     setIsLoading(true);
     try {
-      // Здесь должен быть вызов API для восстановления пароля
-      // await api.post('/auth/change-password', { email });
+      // ОТКЛЮЧЕНО: Проверка существования email
+      // const res = await axios.get(`${API_BASE}/user-service/user/me`, { params: { email } });
+      // if (!res.data || !res.data.email) {
+      //   setNotFound(true);
+      //   setIsLoading(false);
+      //   return;
+      // }
+      // Отправка письма (заглушка, заменить на реальный эндпоинт)
+      // await axios.post(`${API_BASE}/auth/forgot-password`, { email });
       setSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
       setError("Ошибка при отправке запроса на восстановление пароля");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // --- Смена пароля ---
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setChangeError("");
+    setChangeLoading(true);
+    if (newPassword !== confirmPassword) {
+      setChangeError("Пароли не совпадают");
+      setChangeLoading(false);
+      return;
+    }
+    try {
+      // Отправка нового пароля (заглушка, заменить на реальный эндпоинт)
+      // await axios.post(`${API_BASE}/auth/change-password`, { email: emailFromQuery, token, newPassword });
+      setChangeSuccess(true);
+    } catch (err) {
+      setChangeError("Ошибка при смене пароля");
+    } finally {
+      setChangeLoading(false);
+    }
+  };
+
+  // --- UI для смены пароля ---
+  if (token && emailFromQuery) {
+    if (changeSuccess) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-light-bg dark:bg-dark-bg">
+          <div className="max-w-md w-full rounded-2xl card-glow fade-in overflow-hidden bg-light-card dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent shadow-2xl p-8 flex flex-col items-center">
+            <h2 className="text-2xl font-bold mb-4 text-light-accent dark:text-dark-accent">Пароль успешно изменён!</h2>
+            <Link to="/login" className="text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown font-medium underline">Войти</Link>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-light-bg dark:bg-dark-bg">
+        <div className="max-w-md w-full rounded-2xl card-glow fade-in overflow-hidden bg-light-card dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent shadow-2xl">
+          <AuthFormHeader
+            title="Смена пароля"
+            subtitle={`Email: ${emailFromQuery}`}
+          />
+          <form className="px-8 pt-4 pb-2" onSubmit={handleChangePassword}>
+            <ErrorAlert error={changeError} />
+            <div className="mb-4">
+              <label htmlFor="newPassword" className="block text-sm font-medium text-light-fg dark:text-dark-fg mb-1">
+                Новый пароль
+              </label>
+              <input
+                id="newPassword"
+                name="newPassword"
+                type="password"
+                required
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-light-fg dark:text-dark-fg focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent"
+                placeholder="Введите новый пароль"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-light-fg dark:text-dark-fg mb-1">
+                Подтверждение пароля
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-light-fg dark:text-dark-fg focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent"
+                placeholder="Повторите новый пароль"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={changeLoading}
+              className="w-full py-2 rounded-lg bg-light-accent dark:bg-dark-accent text-white font-semibold hover:bg-light-brown dark:hover:bg-dark-brown transition-colors duration-200 disabled:opacity-60"
+            >
+              {changeLoading ? "Сохранение..." : "Сменить пароль"}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // --- UI для email формы ---
   if (success) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-light-bg dark:bg-dark-bg">
@@ -65,8 +180,13 @@ const ForgotPasswordPage: React.FC = () => {
           title="Восстановление пароля"
           subtitle="Введите email, чтобы получить ссылку для сброса пароля"
         />
-        <form className="px-8 pt-4 pb-2" onSubmit={handleSubmit}>
+        <form className="px-8 pt-4 pb-2" onSubmit={handleEmailSubmit}>
           <ErrorAlert error={error} />
+          {notFound && (
+            <div className="mb-4 text-red-500 text-sm">
+              Такой email не найден. <Link to="/register" className="underline text-light-accent">Зарегистрироваться</Link>
+            </div>
+          )}
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-light-fg dark:text-dark-fg mb-1">
               Email

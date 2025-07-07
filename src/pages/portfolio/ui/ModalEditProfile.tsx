@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 
 interface ModalEditProfileProps {
   open: boolean;
@@ -8,6 +9,8 @@ interface ModalEditProfileProps {
   currentAvatar: string;
   onSave: (data: { nickname: string; avatar: string; avatarFile: File | null }) => void;
 }
+
+const API_BASE = "http://89.169.183.192:8080";
 
 const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
   open,
@@ -61,7 +64,7 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); setDragActive(true); };
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); setDragActive(false); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!nickname.trim()) {
       setError('Никнейм не может быть пустым');
       return;
@@ -71,7 +74,36 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
       return;
     }
     setError('');
-    onSave({ nickname, avatar: avatar || currentAvatar, avatarFile });
+    try {
+      // Формируем данные для отправки
+      const payload: any = { username: nickname };
+      // Если реализована поддержка аватара на backend, добавить avatar
+      // payload.avatar = avatar || currentAvatar;
+      await axios.put(`${API_BASE}/user-service/user/me`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+      // После успешного обновления профиля разлогиниваем пользователя
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/login?profileUpdated=1";
+      // onSave({ nickname, avatar: avatar || currentAvatar, avatarFile }); // больше не нужен, т.к. будет logout
+    } catch (err: any) {
+      if (axios.isAxiosError(err) && err.response) {
+        if (err.response.status === 401) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          window.location.href = "/login";
+        } else if (err.response.status === 404) {
+          setError('Пользователь не найден');
+        } else {
+          setError('Ошибка при обновлении профиля');
+        }
+      } else {
+        setError('Ошибка при обновлении профиля');
+      }
+    }
   };
 
   if (!open) return null;

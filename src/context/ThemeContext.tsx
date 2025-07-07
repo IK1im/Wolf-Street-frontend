@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useLayoutEffect } from "react";
+import Cookies from "js-cookie";
 
 interface ThemeContextType {
   theme: "dark" | "light";
@@ -17,25 +18,25 @@ export default function ThemeProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  // Получаем тему из cookie или localStorage
+  const getInitialTheme = (): "dark" | "light" => {
+    const cookieTheme = Cookies.get("theme");
+    if (cookieTheme === "dark" || cookieTheme === "light") return cookieTheme;
+    const localTheme = localStorage.getItem("wolf-street-theme");
+    if (localTheme === "dark" || localTheme === "light") return localTheme;
+    return "dark";
+  };
 
-  // Критически важно для Tailwind dark mode
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
+  const [theme, setTheme] = useState<"dark" | "light">(getInitialTheme);
 
-  // Загружаем сохранённую тему при инициализации
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("wolf-street-theme") as
-      | "dark"
-      | "light";
-    if (savedTheme) {
-      setTheme(savedTheme);
+  // Синхронизируем тему с DOM до первого рендера
+  useLayoutEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
-  }, []);
-
-  // Сохраняем тему в localStorage
-  useEffect(() => {
+    Cookies.set("theme", theme, { expires: 365 });
     localStorage.setItem("wolf-street-theme", theme);
   }, [theme]);
 

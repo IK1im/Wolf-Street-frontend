@@ -65,7 +65,7 @@ const ProfileFieldBlock: React.FC<ProfileFieldBlockProps> = ({
             )}
           </div>
         ) : (
-          <div className="text-[16px] text-light-fg dark:text-dark-fg truncate">{value}</div>
+          <div className="text-[16px] text-light-fg dark:text-dark-fg truncate">{type === 'password' ? '********' : value}</div>
         )}
       </div>
       {editing ? (

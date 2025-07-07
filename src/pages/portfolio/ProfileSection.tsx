@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import VerificationSection from './VerificationSection';
 import DepositSection from './DepositSection';
 import TradeSection from './TradeSection';
@@ -12,6 +12,8 @@ import Card from '../../components/ui/Card';
 import Stepper from './ui/Stepper';
 import type { Step } from './ui/StepTypes';
 import Button from '../../components/ui/Button';
+import axios from "axios";
+import { LoaderBlock, ErrorBlock } from '../../components/ui/LoadingButton';
 
 // Мок-история операций
 const mockHistory = [
@@ -130,13 +132,61 @@ function CurrencyRatesCard({ compact = false }: { compact?: boolean }) {
   );
 }
 
+const API_BASE = "http://89.169.183.192:8080";
+
 export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () => void }) {
+  const [user, setUser] = useState<{ email: string; phone: string; username: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+        setUser(res.data);
+      } catch (err) {
+        setError("Не удалось загрузить данные пользователя");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleRetry = () => {
+    setLoading(true);
+    setError("");
+    // повторно вызвать fetchUser
+    (async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+        setUser(res.data);
+      } catch (err) {
+        setError("Не удалось загрузить данные пользователя");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  };
+
+  if (loading) return <LoaderBlock text="Загружаем профиль..." />;
+  if (error) return <ErrorBlock text={error} onRetry={handleRetry} />;
+  if (!user) return null;
+
   return (
     <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl p-8 shadow-2xl card-glow backdrop-blur-md border border-light-border/40 dark:border-dark-border/40 text-light-fg dark:text-dark-fg mt-6 transition-all duration-300">
       {/* Шапка пользователя */}
       <ProfileHeader
         avatar="https://i.imgur.com/0y0y0y0.png"
-        nickname="Игорь Климкин"
+        nickname={user.username}
         uid="1125773083"
         vipLabel="VIP Обычный пользователь"
         vip={true}

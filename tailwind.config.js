@@ -55,6 +55,8 @@ module.exports = {
         'profile-menu': 'profile-menu-fade-in 0.22s cubic-bezier(.4,0,.2,1)',
         'portfolio-fade': 'portfolio-fade 0.5s cubic-bezier(.4,0,.2,1)',
         'leftmenu-fade-in': 'leftmenu-fade-in 0.5s cubic-bezier(.4,0,.2,1)',
+        'spin-slow': 'spin 1.2s linear infinite',
+        'pulse': 'pulse 1.1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },

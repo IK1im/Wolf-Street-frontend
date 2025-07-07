@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FaShieldAlt, FaExclamationTriangle, FaUserCheck, FaKey, FaListUl, FaLock, FaUserSecret, FaUserFriends, FaLink, FaCode, FaMobileAlt, FaPowerOff, FaTrashAlt, FaChevronRight } from 'react-icons/fa';
+import { LoaderBlock } from '../../components/ui/LoadingButton';
 
 const steps = [
   { label: 'Двухфакторная аутентификация (2FA)', icon: <FaKey />, enabled: false },
@@ -9,6 +10,12 @@ const steps = [
 ];
 
 export default function VerificationSection() {
+  // Заглушка для будущей загрузки
+  const [loading] = React.useState(false); // заменить на useState(true) при интеграции с backend
+  if (loading) {
+    return <LoaderBlock text="Загружаем данные безопасности..." />;
+  }
+
   return (
     <div className="bg-gradient-to-br from-light-card/90 to-light-bg/80 dark:from-dark-card/90 dark:to-[#181926]/80 rounded-3xl shadow-2xl card-glow ring-2 ring-light-accent/10 dark:ring-dark-accent/20 backdrop-blur-md border border-light-border/30 dark:border-dark-border/30 max-w-5xl mx-auto mt-8 flex flex-col gap-10 p-12 transition-all duration-300">
       {/* Проверка безопасности */}
