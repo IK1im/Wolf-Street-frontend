@@ -11,7 +11,7 @@ export const loginUser = async (
   credentials: LoginRequest
 ): Promise<LoginResponse> => {
   try {
-    const response = await api.post("/auth/login", credentials);
+    const response = await api.post("/user-service/auth/login", credentials);
     return response.data as LoginResponse;
   } catch (error: unknown) {
     handleApiError(error);
