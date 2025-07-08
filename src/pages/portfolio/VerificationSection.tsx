@@ -39,7 +39,7 @@ export default function VerificationSection() {
           <FaExclamationTriangle className="text-light-accent dark:text-dark-accent text-xl drop-shadow-glow" />
           <div>
             <div className="font-bold text-light-accent dark:text-dark-accent mb-1">Аккаунт под угрозой</div>
-            <div className="text-light-brown dark:text-dark-fg text-[15px]">Вы ещё не активировали Passkey. Мы рекомендуем добавить Passkey для защиты вашей учётной записи.</div>
+            <div className="text-light-fg/80 dark:text-dark-fg text-[15px]">Вы ещё не активировали Passkey. Мы рекомендуем добавить Passkey для защиты вашей учётной записи.</div>
           </div>
           <button className="ml-auto btn-accent-glow">Добавить Passkey</button>
         </div>
@@ -97,7 +97,7 @@ function SecuritySetting({ icon, title, desc, status, btn }: { icon: React.React
       <div className="text-xl">{icon}</div>
       <div className="flex-1">
         <div className="text-light-fg dark:text-dark-fg font-medium">{title}</div>
-        <div className="text-light-brown dark:text-dark-fg/70 text-[14px]">{desc}</div>
+        <div className="text-light-fg dark:text-dark-fg/80 text-[14px]">{desc}</div>
       </div>
       <span className="font-bold mr-2 text-light-accent dark:text-dark-accent">{status}</span>
       <button className="btn-accent-glow">{btn}</button>
@@ -111,7 +111,7 @@ function SecurityRow({ icon, label, desc, status, btn, danger }: { icon: React.R
       <div className="text-xl">{icon}</div>
       <div className="flex-1">
         <div className="text-light-fg dark:text-dark-fg font-medium">{label}</div>
-        <div className="text-light-brown dark:text-dark-fg/70 text-[14px]">{desc}</div>
+        <div className="text-light-fg dark:text-dark-fg/80 text-[14px]">{desc}</div>
       </div>
       {status && <span className={`font-bold mr-2 ${status === 'ВЫКЛ' ? 'text-light-accent dark:text-dark-accent' : 'text-green-500'}`}>{status}</span>}
       <button

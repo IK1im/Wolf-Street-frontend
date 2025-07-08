@@ -18,7 +18,7 @@ export function LoaderBlock({ text }: { text: string }) {
         {/* Внутренний пульс */}
         <div className="animate-pulse rounded-full bg-light-accent/80 dark:bg-dark-accent/80 w-6 h-6" />
       </div>
-      <div className="text-light-brown dark:text-dark-brown text-lg mt-2">{text}</div>
+      <div className="text-light-fg dark:text-dark-fg text-lg font-semibold mt-2">{text}</div>
     </div>
   );
 }

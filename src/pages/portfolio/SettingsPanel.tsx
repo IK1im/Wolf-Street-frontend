@@ -192,7 +192,7 @@ export default function SettingsPanel() {
         {/* Поля */}
         <div className="flex-1 flex flex-col justify-center min-w-0">
           <div className="text-[20px] font-semibold mb-1">Никнейм и аватар</div>
-          <div className="text-light-brown dark:text-dark-brown text-[15px] mb-6">Настройте аватар и никнейм. Мы рекомендуем не использовать своё настоящее имя или ваш никнейм в соц. сетях.</div>
+          <div className="text-light-fg/80 dark:text-dark-nav-inactive text-[15px] mb-6 max-w-2xl">Настройте аватар и никнейм. Мы рекомендуем не использовать своё настоящее имя или ваш никнейм в соц. сетях.</div>
           <div className="space-y-5">
             {/* Email */}
             <ProfileFieldBlock
@@ -266,13 +266,13 @@ export default function SettingsPanel() {
       {/* Уведомления */}
       <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-lg card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border">
         <div className="text-[20px] font-bold text-light-accent dark:text-dark-accent mb-1">Уведомления</div>
-        <div className="text-light-nav-inactive dark:text-dark-nav-inactive text-[15px] mb-6 max-w-2xl">Управляйте своими уведомлениями — выберите, как мы можем держать вас в курсе самого важного. Мы ценим ваше доверие и никогда не будем злоупотреблять вашим вниманием.</div>
+        <div className="text-light-fg/80 dark:text-dark-nav-inactive text-[15px] mb-6 max-w-2xl">Управляйте своими уведомлениями — выберите, как мы можем держать вас в курсе самого важного. Мы ценим ваше доверие и никогда не будем злоупотреблять вашим вниманием.</div>
         <div className="space-y-6">
           {/* Email уведомления */}
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Получать рассылку на Email</div>
-              <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">Получайте <span className="text-light-accent dark:text-dark-accent font-semibold">важные новости</span>, обновления и персональные предложения на вашу электронную почту. Мы не рассылаем спам и заботимся о вашей приватности.</div>
+              <div className="text-[14px] text-light-fg/80 dark:text-dark-nav-inactive">Получайте <span className="text-light-accent dark:text-dark-accent font-semibold">важные новости</span>, обновления и персональные предложения на вашу электронную почту. Мы не рассылаем спам и заботимся о вашей приватности.</div>
             </div>
             <CustomSwitch checked={emailNotif} onChange={setEmailNotif} ariaLabel="Email уведомления" />
           </div>
@@ -280,7 +280,7 @@ export default function SettingsPanel() {
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Получать рассылку на телефон (SMS)</div>
-              <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">Оперативные уведомления о <span className="text-light-accent dark:text-dark-accent font-semibold">безопасности</span> и важных событиях. Только действительно важная информация — никаких рекламных сообщений.</div>
+              <div className="text-[14px] text-light-fg/80 dark:text-dark-nav-inactive">Оперативные уведомления о <span className="text-light-accent dark:text-dark-accent font-semibold">безопасности</span> и важных событиях. Только действительно важная информация — никаких рекламных сообщений.</div>
             </div>
             <CustomSwitch checked={smsNotif} onChange={setSmsNotif} ariaLabel="SMS уведомления" />
           </div>
@@ -288,7 +288,7 @@ export default function SettingsPanel() {
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Push-уведомления в браузере</div>
-              <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">Будьте в курсе событий в <span className="text-light-accent dark:text-dark-accent font-semibold">реальном времени</span> прямо в браузере. Вы всегда сможете изменить этот выбор в настройках.</div>
+              <div className="text-[14px] text-light-fg/80 dark:text-dark-nav-inactive">Будьте в курсе событий в <span className="text-light-accent dark:text-dark-accent font-semibold">реальном времени</span> прямо в браузере. Вы всегда сможете изменить этот выбор в настройках.</div>
             </div>
             <CustomSwitch checked={browserNotif} onChange={setBrowserNotif} ariaLabel="Push уведомления" />
           </div>
@@ -302,7 +302,7 @@ export default function SettingsPanel() {
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Настройка цвета</div>
-              <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">{colorScheme === 'green-red' ? <span className="text-green-400 font-semibold">Зелёный</span> : <span className="text-red-400 font-semibold">Красный</span>} — рост / <span className="text-red-400 font-semibold">красный</span> — падение</div>
+              <div className="text-[14px] text-light-fg/80 dark:text-dark-nav-inactive">{colorScheme === 'green-red' ? <span className="text-green-400 font-semibold">Зелёный</span> : <span className="text-red-400 font-semibold">Красный</span>} — рост / <span className="text-red-400 font-semibold">красный</span> — падение</div>
             </div>
             <button
               className="bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[130px] text-center hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
@@ -313,7 +313,7 @@ export default function SettingsPanel() {
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Настройка стиля</div>
-              <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">{customTheme ? <span className="text-light-accent font-semibold">Пользовательская</span> : 'Стандартная'}</div>
+              <div className="text-[14px] text-light-fg/80 dark:text-dark-nav-inactive">{customTheme ? <span className="text-light-accent font-semibold">Пользовательская</span> : 'Стандартная'}</div>
             </div>
             <button
               className="bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 w-[130px] text-center hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
@@ -324,7 +324,7 @@ export default function SettingsPanel() {
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="text-[16px] font-semibold text-light-fg dark:text-dark-fg">Часовой пояс, <span className="font-normal">{timezone}</span></div>
-              <div className="text-[14px] text-light-nav-inactive dark:text-dark-nav-inactive">Europe/Moscow</div>
+              <div className="text-[14px] text-light-fg/80 dark:text-dark-nav-inactive">Europe/Moscow</div>
             </div>
             <button
               ref={tzBtnRef}
@@ -352,7 +352,7 @@ export default function SettingsPanel() {
                 onChange={v => setTheme(v ? 'dark' : 'light')}
                 ariaLabel="Переключить тему"
               />
-              <span className="text-[15px] text-light-nav-inactive dark:text-dark-nav-inactive">Тёмная</span>
+              <span className="text-[15px] text-light-fg/80 dark:text-dark-nav-inactive">Тёмная</span>
               <span className="ml-1 text-[18px]">🌙</span>
             </div>
           </div>

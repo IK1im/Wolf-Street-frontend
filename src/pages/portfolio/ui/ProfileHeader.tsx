@@ -26,7 +26,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ avatar, nickname, uid, vi
         {nickname}
       </div>
       <div className="flex items-center gap-4 mt-1">
-        <span className="text-light-brown dark:text-dark-brown text-[16px] font-mono">UID {uid}</span>
+        <span className="text-light-fg/80 dark:text-dark-brown text-[16px] font-mono">UID {uid}</span>
         {vipLabel && (
           <span className="bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent text-[15px] font-semibold px-3 py-1 rounded-xl ml-2">{vipLabel}</span>
         )}

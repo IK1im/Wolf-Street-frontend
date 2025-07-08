@@ -23,7 +23,7 @@ const RegisterPage: React.FC = () => {
       <div className="w-full max-w-md mb-4 flex justify-start">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown transition-colors duration-200"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-light-accent dark:text-dark-accent hover:text-light-fg/80 dark:hover:text-dark-brown transition-colors duration-200"
         >
           <svg
             className="w-4 h-4"

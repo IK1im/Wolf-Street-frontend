@@ -35,7 +35,7 @@ function OperationHistoryBlock({ compact = false, maxRows }: { compact?: boolean
     <div className="flex flex-col min-w-0">
       <table className="min-w-full text-left">
         <thead>
-          <tr className="text-[15px] text-light-brown dark:text-dark-brown font-semibold">
+          <tr className="text-[15px] text-light-fg/80 dark:text-dark-brown font-semibold">
             <th className="py-2 px-3">Дата</th>
             <th className="py-2 px-3">Актив</th>
             <th className="py-2 px-3">Действие</th>
@@ -90,7 +90,7 @@ function CurrencyRatesCard({ compact = false }: { compact?: boolean }) {
       <div className="flex flex-col min-w-0">
         <div className="text-[22px] font-bold mb-2 text-light-accent dark:text-dark-accent">Курс валют</div>
         {loading ? (
-          <div className="text-light-brown dark:text-dark-brown text-[16px] my-2">Загрузка...</div>
+          <div className="text-light-fg/80 dark:text-dark-brown text-[16px] my-2">Загрузка...</div>
         ) : error ? (
           <div className="text-red-500 text-[16px] my-2">Ошибка загрузки</div>
         ) : (
@@ -113,7 +113,7 @@ function CurrencyRatesCard({ compact = false }: { compact?: boolean }) {
     <div className="flex flex-col min-w-0">
       <div className="text-[22px] font-bold mb-2 text-light-accent dark:text-dark-accent">Курс валют</div>
       {loading ? (
-        <div className="text-light-brown dark:text-dark-brown text-[16px] my-6">Загрузка...</div>
+        <div className="text-light-fg/80 dark:text-dark-brown text-[16px] my-6">Загрузка...</div>
       ) : error ? (
         <div className="text-red-500 text-[16px] my-6">Ошибка загрузки</div>
       ) : (
@@ -127,7 +127,7 @@ function CurrencyRatesCard({ compact = false }: { compact?: boolean }) {
           ))}
         </div>
       )}
-      <div className="text-light-brown dark:text-dark-brown text-[14px] mt-2.5">Курс за 1 единицу валюты</div>
+      <div className="text-light-fg/80 dark:text-dark-brown text-[14px] mt-2.5">Курс за 1 единицу валюты</div>
     </div>
   );
 }
@@ -212,7 +212,7 @@ function StepperPanel({ onDepositClick }: { onDepositClick: () => void }) {
         <div className="flex flex-col items-start gap-1 w-full">
           <span className="text-[32px] animate-pulse mb-1">💸</span>
           <span className="text-[28px] font-extrabold text-light-accent dark:text-dark-accent mb-0.5">₽ 0.00</span>
-          <span className="text-light-brown dark:text-dark-brown text-[15px]">Ваш баланс</span>
+          <span className="text-light-fg/80 dark:text-dark-brown text-[15px]">Ваш баланс</span>
         </div>
       ),
       actions: <Button variant="gradient" size="md" onClick={onDepositClick}>Пополнить</Button>,
@@ -295,12 +295,12 @@ function StepperModern({ steps, active, onStepClick }: { steps: Step[]; active: 
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-[20px] border-2 z-10 transition-all duration-200
               ${active === step.key
                 ? 'bg-light-accent dark:bg-dark-accent text-white border-light-accent dark:border-dark-accent shadow-xl ring-2 ring-light-accent/30 dark:ring-dark-accent/30'
-                : 'bg-light-bg dark:bg-dark-bg text-light-brown dark:text-dark-brown border-light-border dark:border-dark-border group-hover:border-light-accent/60 dark:group-hover:border-dark-accent/60'}
+                : 'bg-light-bg dark:bg-dark-bg text-light-fg/80 dark:text-dark-brown border-light-border dark:border-dark-border group-hover:border-light-accent/60 dark:group-hover:border-dark-accent/60'}
             `}>
               {idx + 1}
             </div>
             <div className={`mt-2 text-[15px] font-medium text-center transition-colors duration-200
-              ${active === step.key ? 'text-light-accent dark:text-dark-accent' : 'text-light-brown dark:text-dark-brown group-hover:text-light-accent/80 dark:group-hover:text-dark-accent/80'}`}>{step.label}</div>
+              ${active === step.key ? 'text-light-accent dark:text-dark-accent' : 'text-light-fg/80 dark:text-dark-brown group-hover:text-light-accent/80 dark:group-hover:text-dark-accent/80'}`}>{step.label}</div>
           </div>
           {idx < steps.length - 1 && (
             <div className="flex-1 h-0.5 mx-2 bg-gradient-to-r from-light-border/60 via-light-accent/30 to-light-border/60 dark:from-dark-border/60 dark:via-dark-accent/30 dark:to-dark-border/60" />
@@ -323,14 +323,14 @@ function PortfolioMiniAnalytics() {
   return (
     <div className="flex flex-col gap-2 items-center justify-center w-full">
       <span className="text-[22px] font-extrabold text-light-accent dark:text-dark-accent mb-0.5">💹</span>
-      <div className="text-[13px] text-light-brown dark:text-dark-brown">Суммарная стоимость</div>
+      <div className="text-[13px] text-light-fg/80 dark:text-dark-brown">Суммарная стоимость</div>
       <div className="text-[18px] font-extrabold text-light-accent dark:text-dark-accent mb-1">₽ {total.toLocaleString('ru-RU')}</div>
       <div className="w-full flex flex-col gap-1">
         {topAssets.map(a => (
           <div key={a.symbol} className="flex items-center gap-1 w-full">
             <span className={`w-2 h-2 rounded-full ${a.color} inline-block`} />
             <span className="font-semibold text-light-fg dark:text-dark-fg text-[13px]">{a.symbol}</span>
-            <span className="text-light-brown dark:text-dark-brown text-[12px]">{a.name}</span>
+            <span className="text-light-fg/80 dark:text-dark-brown text-[12px]">{a.name}</span>
             <div className="flex-1 mx-1 h-1.5 rounded-full bg-light-bg/40 dark:bg-dark-bg/40 overflow-hidden">
               <div className={`h-1.5 rounded-full ${a.color}`} style={{ width: `${a.percent}%` }} />
             </div>
@@ -338,7 +338,7 @@ function PortfolioMiniAnalytics() {
           </div>
         ))}
       </div>
-      <div className="mt-1 text-[12px] text-light-brown dark:text-dark-brown flex flex-row gap-2 items-center">
+      <div className="mt-1 text-[12px] text-light-fg/80 dark:text-dark-brown flex flex-row gap-2 items-center">
         <span>Доля BTC: <span className="font-bold text-light-accent dark:text-dark-accent">{assets[0].percent}%</span></span>
         <span className="mx-1">/</span>
         <span>Диверсификация: <span className="font-bold text-light-accent dark:text-dark-accent">низкая</span></span>

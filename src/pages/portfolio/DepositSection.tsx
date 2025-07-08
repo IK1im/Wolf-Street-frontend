@@ -36,7 +36,7 @@ export default function DepositSection() {
           <div className="flex items-center gap-3">
             <FaWallet className="text-[38px] text-light-accent dark:text-dark-accent" />
             <div className="flex flex-col items-start">
-              <span className="text-[15px] text-light-brown dark:text-dark-fg">Текущий баланс</span>
+              <span className="text-[15px] text-light-fg/80 dark:text-dark-fg">Текущий баланс</span>
               <span className="text-[32px] font-bold text-light-accent dark:text-dark-accent">{balance.toLocaleString('ru-RU')} ₽</span>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function DepositSection() {
               Пополнить
             </Button>
           </div>
-          <div className="flex items-center gap-2 justify-center text-[14px] text-light-brown dark:text-dark-fg mt-4">
+          <div className="flex items-center gap-2 justify-center text-[14px] text-light-fg/80 dark:text-dark-fg mt-4">
             <FaLock className="text-[16px]" /> Все операции защищены
           </div>
         </div>

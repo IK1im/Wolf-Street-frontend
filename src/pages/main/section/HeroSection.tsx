@@ -75,7 +75,7 @@ export default function HeroSection({
               </button>
             </form>
 
-            <span className="text-light-brown dark:text-dark-brown text-xs lg:text-sm opacity-70 text-center lg:text-left">
+            <span className="text-light-fg/80 dark:text-dark-brown text-xs lg:text-sm opacity-70 text-center lg:text-left">
               * Мы не рассылаем спам. Только важные новости и инсайты.
             </span>
           </div>

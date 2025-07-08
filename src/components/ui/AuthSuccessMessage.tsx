@@ -30,7 +30,7 @@ export default function AuthSuccessMessage({
         <h2 className="text-2xl font-bold text-light-fg dark:text-dark-fg mb-4">
           {title}
         </h2>
-        <p className="text-light-nav-inactive dark:text-dark-nav-inactive mb-6">
+        <p className="text-light-fg/80 dark:text-dark-nav-inactive mb-6">
           {message}
         </p>
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-light-accent dark:border-dark-accent mx-auto"></div>

@@ -109,7 +109,7 @@ export default function Header({
               ${
                 isMain && activeSection === "main"
                   ? "bg-light-nav-active dark:bg-dark-nav-active text-light-nav-text dark:text-dark-nav-text scale-105 shadow-[0_2px_8px_rgba(197,107,98,0.33)] dark:shadow-[0_2px_8px_rgba(129,199,132,0.33)]"
-                  : "bg-transparent text-light-nav-inactive dark:text-dark-nav-inactive hover:scale-105"
+                  : "bg-transparent text-light-fg/80 dark:text-dark-nav-inactive hover:scale-105"
               }`}
           >
             Главная
@@ -122,7 +122,7 @@ export default function Header({
                 ${
                   isMain && activeSection === section.id
                     ? "bg-light-nav-active dark:bg-dark-nav-active text-light-nav-text dark:text-dark-nav-text scale-105 shadow-[0_2px_8px_rgba(197,107,98,0.33)] dark:shadow-[0_2px_8px_rgba(129,199,132,0.33)]"
-                    : "bg-transparent text-light-nav-inactive dark:text-dark-nav-inactive hover:scale-105"
+                    : "bg-transparent text-light-fg/80 dark:text-dark-nav-inactive hover:scale-105"
                 }`}
             >
               {section.label}

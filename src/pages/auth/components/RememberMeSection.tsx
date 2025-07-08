@@ -15,17 +15,21 @@ export default function RememberMeSection({
         <button
           type="button"
           onClick={() => onRememberMeChange(!rememberMe)}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
-            rememberMe
-              ? "bg-light-accent dark:bg-dark-accent"
-              : "bg-light-card dark:bg-dark-card"
-          }`}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none border-2 shadow-md
+            ${rememberMe
+              ? "bg-light-accent dark:bg-dark-accent border-light-accent dark:border-dark-accent ring-2 ring-light-accent/30 dark:ring-dark-accent/40"
+              : "bg-light-card dark:bg-dark-card border-light-border dark:border-dark-border"
+            }`}
           aria-label="Запомнить меня"
         >
           <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
-              rememberMe ? "translate-x-6" : "translate-x-1"
-            }`}
+            className={`inline-block h-4 w-4 transform rounded-full shadow-lg transition-transform duration-200 ease-in-out
+              ${rememberMe
+                ? "bg-white ring-2 ring-light-accent dark:bg-dark-fg dark:ring-dark-accent"
+                : "bg-light-border dark:bg-dark-border"
+              }
+              ${rememberMe ? "translate-x-6" : "translate-x-1"}
+            `}
           />
         </button>
 
@@ -39,7 +43,7 @@ export default function RememberMeSection({
 
       <Link
         to="/forgot-password"
-        className="text-sm font-medium hover:underline transition-all duration-200 text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown"
+        className="text-sm font-medium hover:underline transition-all duration-200 text-light-accent dark:text-dark-accent hover:text-light-fg/80 dark:hover:text-dark-brown"
       >
         Забыли пароль?
       </Link>

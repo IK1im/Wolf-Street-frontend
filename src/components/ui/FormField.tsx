@@ -49,17 +49,19 @@ export default function FormField({
           name={name}
           value={value}
           onChange={onChange}
-          className={`w-full px-3 py-2.5 rounded-lg focus:outline-none transition-all duration-300 ease-in-out placeholder-gray-400
+          className={`w-full px-3 py-2.5 rounded-lg focus:outline-none transition-all duration-300 ease-in-out
             ${isPasswordField ? "pr-12" : "pr-3"}
-            bg-light-card dark:bg-dark-card 
-            text-light-fg dark:text-dark-fg
-            border-2 
+            bg-white dark:bg-[#18191c]
+            text-light-fg dark:text-[#b0b3b8]
+            border-2 border-light-border dark:border-[#3e3c3a]
+            shadow-inner dark:shadow-inner
+            placeholder:text-light-fg/60 dark:placeholder:text-[#888c94]
             ${
               error
-                ? "border-error bg-red-900/10 dark:bg-red-900/20"
-                : "border-light-border dark:border-dark-border hover:border-light-accent dark:hover:border-dark-accent"
+                ? "border-error-border bg-white text-error-text dark:bg-dark-error-bg dark:text-dark-error-text"
+                : "hover:border-light-accent dark:hover:border-dark-accent dark:hover:bg-[#2a2b2a]/90"
             }
-            focus:border-light-accent dark:focus:border-dark-accent 
+            focus:border-light-accent dark:focus:border-dark-accent
             focus:shadow-[0_0_0_3px_rgba(197,107,98,0.2)] dark:focus:shadow-[0_0_0_3px_rgba(129,199,132,0.2)]
           `}
           placeholder={placeholder}
@@ -85,7 +87,16 @@ export default function FormField({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L12 12m0 0l3.121 3.121M12 12l-3.121-3.121m0 0l-1.414-1.414M12 12l3.121 3.121m0 0l1.414 1.414"
+                  d="M17.94 17.94A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 012.519-3.568M6.343 6.343A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.97 9.97 0 01-2.519 3.568M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <line
+                  x1="3"
+                  y1="3"
+                  x2="21"
+                  y2="21"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
                 />
               </svg>
             ) : (
@@ -115,7 +126,7 @@ export default function FormField({
       </div>
 
       {error && (
-        <p className="mt-1 text-sm text-error transition-all duration-300 ease-in-out">
+        <p className="mt-1 text-sm text-error-text dark:text-dark-error-text transition-all duration-300 ease-in-out">
           {error}
         </p>
       )}

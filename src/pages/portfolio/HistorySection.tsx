@@ -94,7 +94,7 @@ export default function HistorySection() {
       <div className="mb-8 w-full">
         <div className="flex flex-col md:flex-row gap-3 md:gap-4 bg-white/70 dark:bg-dark-card/70 rounded-xl shadow-inner backdrop-blur px-4 py-3 items-center">
           <div className="relative w-full md:w-[240px]">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-light-brown dark:text-dark-accent text-lg pointer-events-none">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-light-fg/80 dark:text-dark-fg/80 text-lg pointer-events-none">
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </span>
             <input
@@ -102,15 +102,15 @@ export default function HistorySection() {
               placeholder="Поиск по истории..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full h-10 pl-10 pr-3 rounded-lg bg-white/80 dark:bg-dark-card/80 shadow-inner border-none text-light-brown dark:text-dark-fg placeholder:text-light-brown/60 dark:placeholder:text-dark-fg/60 focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition"
+              className="w-full h-10 pl-10 pr-3 rounded-lg bg-white/80 dark:bg-dark-card/80 shadow-inner border-none text-light-fg/80 dark:text-dark-fg/80 placeholder:text-light-fg/60 dark:placeholder:text-dark-fg/60 focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition"
             />
           </div>
           <div className="relative w-full md:w-[150px]">
             <Listbox value={type} onChange={setType}>
               <div className="relative w-full md:w-[150px]">
-                <Listbox.Button className="h-10 w-full px-4 rounded-lg bg-white/80 dark:bg-dark-card/80 shadow-inner border-none text-left text-light-brown dark:text-dark-fg focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition cursor-pointer flex items-center justify-between">
+                <Listbox.Button className="h-10 w-full px-4 rounded-lg bg-white/80 dark:bg-dark-card/80 shadow-inner border-none text-left text-light-fg/80 dark:text-dark-fg/80 focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition cursor-pointer flex items-center justify-between">
                   {type}
-                  <span className="ml-2 text-light-brown dark:text-dark-fg">▼</span>
+                  <span className="ml-2 text-light-fg/80 dark:text-dark-fg/80">▼</span>
                 </Listbox.Button>
                 <Listbox.Options className="absolute z-10 mt-1 w-full rounded-lg bg-white dark:bg-dark-card shadow-lg ring-1 ring-black/10 dark:ring-white/10 focus:outline-none">
                   {typeOptions.map((opt) => (
@@ -120,7 +120,7 @@ export default function HistorySection() {
                       className={({ active, selected }) =>
                         `cursor-pointer select-none px-4 py-2 rounded-lg transition
                         ${active ? 'bg-light-accent/20 dark:bg-dark-accent/20' : ''}
-                        ${selected ? 'font-bold text-light-accent dark:text-dark-accent' : 'text-light-brown dark:text-dark-fg'}`
+                        ${selected ? 'font-bold text-light-accent dark:text-dark-accent' : 'text-light-fg/80 dark:text-dark-fg/80'}`
                       }
                     >
                       {opt}
@@ -133,9 +133,9 @@ export default function HistorySection() {
           <div className="relative w-full md:w-[150px]">
             <Listbox value={status} onChange={setStatus}>
               <div className="relative w-full md:w-[150px]">
-                <Listbox.Button className="h-10 w-full px-4 rounded-lg bg-white/80 dark:bg-dark-card/80 shadow-inner border-none text-left text-light-brown dark:text-dark-fg focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition cursor-pointer flex items-center justify-between">
+                <Listbox.Button className="h-10 w-full px-4 rounded-lg bg-white/80 dark:bg-dark-card/80 shadow-inner border-none text-left text-light-fg/80 dark:text-dark-fg/80 focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition cursor-pointer flex items-center justify-between">
                   {status}
-                  <span className="ml-2 text-light-brown dark:text-dark-fg">▼</span>
+                  <span className="ml-2 text-light-fg/80 dark:text-dark-fg/80">▼</span>
                 </Listbox.Button>
                 <Listbox.Options className="absolute z-10 mt-1 w-full rounded-lg bg-white dark:bg-dark-card shadow-lg ring-1 ring-black/10 dark:ring-white/10 focus:outline-none">
                   {statusOptions.map((opt) => (
@@ -145,7 +145,7 @@ export default function HistorySection() {
                       className={({ active, selected }) =>
                         `cursor-pointer select-none px-4 py-2 rounded-lg transition
                         ${active ? 'bg-light-accent/20 dark:bg-dark-accent/20' : ''}
-                        ${selected ? 'font-bold text-light-accent dark:text-dark-accent' : 'text-light-brown dark:text-dark-fg'}`
+                        ${selected ? 'font-bold text-light-accent dark:text-dark-accent' : 'text-light-fg/80 dark:text-dark-fg/80'}`
                       }
                     >
                       {opt}
@@ -171,7 +171,7 @@ export default function HistorySection() {
             <tbody>
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-6 text-center text-light-brown dark:text-dark-fg">Нет данных</td>
+                  <td colSpan={4} className="py-6 text-center text-light-fg/70 dark:text-dark-fg/70">Нет данных</td>
                 </tr>
               ) : (
                 paginatedData.map(item => (
@@ -216,7 +216,7 @@ export default function HistorySection() {
             </button>
             {getPaginationButtons(page, pageCount).map((btn, idx) =>
               btn === '...'
-                ? <span key={idx} className="h-8 w-8 flex items-center justify-center rounded-full text-light-brown dark:text-dark-fg text-center text-base">...</span>
+                ? <span key={idx} className="h-8 w-8 flex items-center justify-center rounded-full text-light-fg/80 dark:text-dark-fg/80 text-center text-base">...</span>
                 : <button
                     key={btn}
                     onClick={() => setPage(Number(btn))}

@@ -16,7 +16,7 @@ function Table<T>({ columns, data, renderCell, className }: TableProps<T>) {
   return (
     <table className={`min-w-full text-left ${className || ''}`}>
       <thead>
-        <tr className="text-[15px] text-light-brown dark:text-dark-brown font-semibold">
+        <tr className="text-[15px] text-light-fg/80 dark:text-dark-brown font-semibold">
           {columns.map(col => (
             <th key={col.key} className="py-2 px-3">{col.title}</th>
           ))}

@@ -47,7 +47,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
             placeholder="Введите имя пользователя"
             required
             error={validation.username}
-            className="login-field"
+            className="login-field "
           />
 
           <FormField

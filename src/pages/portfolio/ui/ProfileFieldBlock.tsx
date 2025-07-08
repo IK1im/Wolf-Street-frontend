@@ -32,7 +32,7 @@ const ProfileFieldBlock: React.FC<ProfileFieldBlockProps> = ({
   return (
     <div className="flex items-center gap-4 bg-light-bg/80 dark:bg-dark-bg/80 border border-light-border dark:border-dark-border rounded-lg px-4 py-3 transition hover:bg-light-bg/90 dark:hover:bg-dark-bg/90">
       <div className="flex-1 min-w-0">
-        <div className="text-[14px] text-neutral-400 mb-1">{label}</div>
+        <div className="text-[14px] text-light-fg/70 mb-1">{label}</div>
         {editing ? (
           <div className="flex items-center gap-2">
             <input
@@ -47,7 +47,7 @@ const ProfileFieldBlock: React.FC<ProfileFieldBlockProps> = ({
             {type === 'password' && (
               <button
                 type="button"
-                className="ml-[-36px] z-10 text-light-nav-inactive dark:text-dark-nav-inactive hover:text-light-accent dark:hover:text-dark-accent transition"
+                className="ml-[-36px] z-10 text-light-fg/80 dark:text-dark-nav-inactive hover:text-light-accent dark:hover:text-dark-accent transition"
                 tabIndex={-1}
                 onClick={() => setShowPassword(v => !v)}
               >

@@ -44,7 +44,7 @@ export default function AuthPromoBanner({
 
       {/* Кнопка - точно в самом низу */}
       <div className="pt-4">
-        <p className="text-sm mb-4 text-center lg:text-left text-light-nav-inactive dark:text-dark-nav-inactive">
+        <p className="text-sm mb-4 text-center lg:text-left text-light-fg/80 dark:text-dark-nav-inactive">
           {ctaText}
         </p>
         <Link

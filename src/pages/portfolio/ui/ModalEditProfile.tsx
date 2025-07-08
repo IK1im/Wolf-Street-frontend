@@ -126,7 +126,7 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
       >
         <div className="text-center">
           <div className="text-[24px] font-extrabold text-light-accent dark:text-dark-accent mb-1">Редактировать профиль</div>
-          <div className="text-[15px] text-light-nav-inactive dark:text-dark-nav-inactive mb-6">Измените ваш никнейм и аватар</div>
+          <div className="text-[15px] text-light-fg/80 dark:text-dark-nav-inactive mb-6">Измените ваш никнейм и аватар</div>
         </div>
         {/* Кнопка закрытия */}
         <button
@@ -189,8 +189,8 @@ const ModalEditProfile: React.FC<ModalEditProfileProps> = ({
             onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') onClose(); }}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className={`text-[13px] ${error ? 'text-light-accent dark:text-dark-accent' : 'text-light-nav-inactive dark:text-dark-nav-inactive'}`}>{error}</span>
-            <span className="text-[13px] text-light-nav-inactive dark:text-dark-nav-inactive">{nickname.length}/{NICK_LIMIT}</span>
+            <span className={`text-[13px] ${error ? 'text-light-accent dark:text-dark-accent' : 'text-light-fg/80 dark:text-dark-nav-inactive'}`}>{error}</span>
+            <span className="text-[13px] text-light-fg/80 dark:text-dark-nav-inactive">{nickname.length}/{NICK_LIMIT}</span>
           </div>
         </div>
         {/* Кнопки */}

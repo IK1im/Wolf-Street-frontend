@@ -82,7 +82,7 @@ const ForgotPasswordPage: React.FC = () => {
         <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-light-bg dark:bg-dark-bg">
           <div className="max-w-md w-full rounded-2xl card-glow fade-in overflow-hidden bg-light-card dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent shadow-2xl p-8 flex flex-col items-center">
             <h2 className="text-2xl font-bold mb-4 text-light-accent dark:text-dark-accent">Пароль успешно изменён!</h2>
-            <Link to="/login" className="text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown font-medium underline">Войти</Link>
+            <Link to="/login" className="text-light-accent dark:text-dark-accent hover:text-light-fg/80 dark:hover:text-dark-brown font-medium underline">Войти</Link>
           </div>
         </div>
       );
@@ -146,7 +146,7 @@ const ForgotPasswordPage: React.FC = () => {
         <div className="max-w-md w-full rounded-2xl card-glow fade-in overflow-hidden bg-light-card dark:bg-dark-card border-2 border-light-accent dark:border-dark-accent shadow-2xl p-8 flex flex-col items-center">
           <h2 className="text-2xl font-bold mb-4 text-light-accent dark:text-dark-accent">Письмо отправлено!</h2>
           <p className="text-light-fg dark:text-dark-fg mb-4 text-center">Если такой email зарегистрирован, на него отправлено письмо с инструкциями по восстановлению пароля.</p>
-          <Link to="/login" className="text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown font-medium underline">Вернуться к входу</Link>
+          <Link to="/login" className="text-light-accent dark:text-dark-accent hover:text-light-fg/80 dark:hover:text-dark-brown font-medium underline">Вернуться к входу</Link>
         </div>
       </div>
     );
@@ -157,7 +157,7 @@ const ForgotPasswordPage: React.FC = () => {
       <div className="w-full max-w-md mb-4 flex justify-start">
         <Link
           to="/login"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-light-accent dark:text-dark-accent hover:text-light-brown dark:hover:text-dark-brown transition-colors duration-200"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-light-accent dark:text-dark-accent hover:text-light-fg/80 dark:hover:text-dark-brown transition-colors duration-200"
         >
           <svg
             className="w-4 h-4"

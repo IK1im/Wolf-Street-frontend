@@ -434,7 +434,7 @@ function ModernColorPickerPopover({ anchorRef, color, onChange, onClose }: {
       </div>
       {/* HEX/RGB */}
       <div className="flex items-center gap-3 mb-2 mt-2">
-        <span className="text-xs text-light-nav-inactive dark:text-dark-nav-inactive">HEX</span>
+        <span className="text-xs text-light-fg/80 dark:text-dark-nav-inactive">HEX</span>
         <input
           className="w-28 px-2 py-1 rounded-lg border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-center text-lg font-mono shadow focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent transition-all"
           value={hex}
@@ -444,7 +444,7 @@ function ModernColorPickerPopover({ anchorRef, color, onChange, onClose }: {
         />
       </div>
       <div className="flex items-center gap-3 mb-2">
-        <span className="text-xs text-light-nav-inactive dark:text-dark-nav-inactive">R</span>
+        <span className="text-xs text-light-fg/80 dark:text-dark-nav-inactive">R</span>
         <input
           type="text"
           pattern="[0-9]*"
@@ -453,7 +453,7 @@ function ModernColorPickerPopover({ anchorRef, color, onChange, onClose }: {
           value={r}
           onChange={e => handleRgbInput(0, e.target.value)}
         />
-        <span className="text-xs text-light-nav-inactive dark:text-dark-nav-inactive">G</span>
+        <span className="text-xs text-light-fg/80 dark:text-dark-nav-inactive">G</span>
         <input
           type="text"
           pattern="[0-9]*"
@@ -462,7 +462,7 @@ function ModernColorPickerPopover({ anchorRef, color, onChange, onClose }: {
           value={g}
           onChange={e => handleRgbInput(1, e.target.value)}
         />
-        <span className="text-xs text-light-nav-inactive dark:text-dark-nav-inactive">B</span>
+        <span className="text-xs text-light-fg/80 dark:text-dark-nav-inactive">B</span>
         <input
           type="text"
           pattern="[0-9]*"
@@ -505,7 +505,7 @@ const ModalChartStyle: React.FC<ModalChartStyleProps> = ({ open, onClose, palett
         {/* Заголовок */}
         <div className="text-center mb-6">
           <div className="text-[24px] font-extrabold text-light-accent dark:text-dark-accent mb-1">Настройка стиля графика</div>
-          <div className="text-[15px] text-light-nav-inactive dark:text-dark-nav-inactive">Выберите цветовую схему или задайте свои цвета</div>
+          <div className="text-[15px] text-light-fg/80 dark:text-dark-nav-inactive">Выберите цветовую схему или задайте свои цвета</div>
         </div>
         {/* Пресеты */}
         <div className="flex flex-col gap-4 mb-6">

@@ -77,7 +77,7 @@ export default function StepIndicator({
                 ? "text-light-accent dark:text-dark-accent"
                 : index + 1 < currentStep
                 ? "text-light-accent dark:text-dark-accent"
-                : "text-gray-400 dark:text-gray-500"
+                : "text-light-fg/70 dark:text-gray-500"
             }`}
           >
             {step}
