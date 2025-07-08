@@ -11,7 +11,7 @@ import AssetsSection from './AssetsSection';
 import HistorySection from './HistorySection';
 
 const SECTIONS: { [key: string]: React.FC } = {
-  'Панель инструментов': ProfileSection,
+  'Портфель': ProfileSection,
   'Безопасность': VerificationSection,
   'Пополните счет': DepositSection,
   'Совершите сделку': TradeSection,
@@ -22,7 +22,7 @@ const SECTIONS: { [key: string]: React.FC } = {
 };
 
 const MENU_LABELS = [
-  'Панель инструментов',
+  'Портфель',
   'Безопасность',
   'Пополните счет',
   'Совершите сделку',
@@ -32,7 +32,7 @@ const MENU_LABELS = [
 ];
 
 export default function PortfolioPage({ theme, setTheme, NAV }: { theme: string, setTheme: (t: string) => void, NAV: { id: string, label: string}[] }) {
-  const [activeMenu, setActiveMenu] = useState('Панель инструментов');
+  const [activeMenu, setActiveMenu] = useState('Портфель');
   const SectionComponent = SECTIONS[activeMenu] || ProfileSection;
   return (
     <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-fg dark:text-dark-fg font-sans pt-20 relative overflow-hidden">
