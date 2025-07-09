@@ -6,6 +6,7 @@ import usdtIcon from '../../image/crypto/usdt.svg';
 import tonIcon from '../../image/crypto/ton.svg';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
+import { Portfolio3DPie } from './ProfileSection';
 
 // Тип для инструмента
 interface Instrument {
@@ -152,24 +153,18 @@ export default function AssetsSection() {
             <Button variant="gradient" size="md" iconLeft={<FaExchangeAlt />} className="shadow-md dark:shadow-lg">Трансфер</Button>
           </div>
         </div>
-        {/* Pie chart */}
-        <div className="flex flex-col items-center justify-center gap-2 md:w-[300px]">
-          <div className="relative group">
-            <div className="rounded-full shadow-2xl bg-white/30 dark:bg-[#23243a]/40 p-3 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_0_32px_0_rgba(161,143,255,0.25)]">
-              <PieChart pie={pie} colors={PIE_COLORS} size={220} />
-            </div>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3 mt-2">
-            {instruments.map((a, i) => (
-              <div key={a.symbol} className="flex items-center gap-2 px-2 py-1 rounded-xl bg-white/40 dark:bg-[#23243a]/60 border border-light-border/30 dark:border-dark-border/30 shadow-inner">
-                <span className={`w-3 h-3 rounded-full bg-gradient-to-br ${PIE_COLORS[i]} shadow`} />
-                <span className="font-semibold text-light-fg dark:text-dark-fg text-[15px]">{a.symbol}</span>
-                <span className="text-light-fg/80 dark:text-dark-brown text-[14px]">{((pie[i] || 0) * 100).toFixed(1)}%</span>
-              </div>
-            ))}
-          </div>
+        {/* Диаграмма справа */}
+        <div className="flex items-center justify-end w-full md:w-[340px] ml-auto">
+          <Portfolio3DPie assets={instruments.map((a, i) => ({
+            symbol: a.symbol,
+            name: a.name,
+            percent: pie[i] * 100,
+            value: Math.round(a.total * a.price),
+            color: PIE_COLORS[i % PIE_COLORS.length],
+          }))} />
         </div>
       </div>
+      {/* </div> */}
       {/* Поиск */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="font-semibold text-[20px] text-light-accent dark:text-dark-accent tracking-tight">Ваши инструменты</div>

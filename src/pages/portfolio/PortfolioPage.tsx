@@ -10,8 +10,8 @@ import BalanceSection from './BalanceSection';
 import AssetsSection from './AssetsSection';
 import HistorySection from './HistorySection';
 
-const SECTIONS: { [key: string]: React.FC } = {
-  'Портфель': ProfileSection,
+const SECTIONS: { [key: string]: React.FC<any> } = {
+  'Портфель': (props) => <ProfileSection onGoToDeposit={() => {}} {...props} />,
   'Безопасность': VerificationSection,
   'Пополните счет': DepositSection,
   'Совершите сделку': TradeSection,
@@ -38,7 +38,6 @@ export default function PortfolioPage({ theme, setTheme, NAV }: { theme: string,
     <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-fg dark:text-dark-fg font-sans pt-20 relative overflow-hidden">
       {/* Шапка сайта */}
       <Header
-        theme={theme}
         NAV={NAV}
         setSearchPos={() => {}}
         scrolled={false}

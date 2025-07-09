@@ -18,6 +18,8 @@
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "currency-codes": "^2.2.0",
+    "echarts": "^5.6.0",
+    "echarts-for-react": "^3.0.2",
     "framer-motion": "^12.23.0",
     "js-cookie": "^3.0.5",
     "money": "^0.2.0",

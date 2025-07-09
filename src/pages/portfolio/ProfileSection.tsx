@@ -7,10 +7,10 @@ import AssetsSection from './AssetsSection';
 import HistorySection from './HistorySection';
 import { getCurrencyRates } from '../../services/Api';
 import clsx from 'clsx';
-import ProfileHeader from './ui/ProfileHeader';
+import ProfileHeader from './components/ProfileHeader';
 import Card from '../../components/ui/Card';
-import Stepper from './ui/Stepper';
-import type { Step } from './ui/StepTypes';
+import Stepper from './components/Stepper';
+import type { Step } from './components/StepTypes';
 import Button from '../../components/ui/Button';
 import axios from "axios";
 import { LoaderBlock, ErrorBlock } from '../../components/ui/LoadingButton';
@@ -18,6 +18,8 @@ import fx from "money";
 import currencyCodes from "currency-codes";
 import { createPortal } from "react-dom";
 import ReactDOM from 'react-dom';
+import ReactECharts from 'echarts-for-react';
+import { useTheme } from '../../context/ThemeContext';
 
 // Мок-история операций
 const mockHistory = [
@@ -209,7 +211,7 @@ function CurrencyRatesCard({ rates, loading, error, onRefresh, compact = false }
                     minWidth: 260,
                     zIndex: 9999,
                   }}
-                  className="bg-white dark:bg-dark-bg border border-light-border dark:border-dark-border rounded shadow-lg max-h-72 overflow-y-auto transition-all duration-150 overflow-x-hidden"
+                  className="currency-dropdown-scrollbar bg-white dark:bg-dark-bg border border-light-border dark:border-dark-border rounded shadow-lg max-h-72 overflow-y-auto transition-all duration-150 overflow-x-hidden"
                 >
                   {filtered.length === 0 ? (
                     <div className="text-light-fg/60 dark:text-dark-brown text-[13px] px-3 py-2">Валюта не найдена</div>
@@ -452,6 +454,122 @@ function StepperModern({ steps, active, onStepClick }: { steps: Step[]; active: 
           )}
         </React.Fragment>
       ))}
+    </div>
+  );
+}
+
+export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: string; percent: number; value: number; color: string }[] }) {
+  const { theme } = useTheme();
+  const total = assets.reduce((sum, a) => sum + a.value, 0);
+  const accent = theme === 'dark' ? '#34d399' : '#059669'; // зелёный для dark, тёмно-зелёный для light
+  // Цвета для секторов (можно расширить)
+  const PIE_COLORS = [
+    { light: ['#a78bfa', '#6366f1'], dark: ['#a78bfa', '#6366f1'] }, // фиолетовый
+    { light: ['#60a5fa', '#2563eb'], dark: ['#60a5fa', '#2563eb'] }, // синий
+    { light: ['#34d399', '#059669'], dark: ['#34d399', '#059669'] }, // зелёный
+    { light: ['#2dd4bf', '#0e7490'], dark: ['#2dd4bf', '#0e7490'] }, // бирюзовый
+  ];
+  return (
+    <div style={{ width: 320, height: 320, background: 'transparent', borderRadius: 24, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <ReactECharts
+        style={{ width: '100%', height: 320 }}
+        option={{
+          backgroundColor: 'transparent',
+          tooltip: {
+            trigger: 'item',
+            backgroundColor: theme === 'dark' ? '#23243a' : '#fff',
+            borderColor: accent,
+            borderWidth: 2,
+            textStyle: {
+              color: theme === 'dark' ? '#fff' : '#23243a',
+              fontSize: 16,
+              fontWeight: 600,
+              fontFamily: 'Inter, Arial',
+            },
+            formatter: (params: any) => (
+              `<div style="text-align:center;">
+                <div style="font-size:18px;font-weight:700;color:${accent};">${params.name}</div>
+                <div style="font-size:16px;">${params.percent}%</div>
+                <div style="font-size:15px;color:${theme === 'dark' ? '#aaa' : '#444'};">${params.value.toLocaleString('ru-RU')} ₽</div>
+              </div>`
+            ),
+          },
+          legend: { show: false },
+          graphic: [
+            {
+              type: 'text',
+              left: 'center',
+              top: 'center',
+              z: 100,
+              style: {
+                text: `₽ ${total.toLocaleString('ru-RU')}`,
+                font: 'bold 32px \'Inter\', Arial',
+                fill: '#fff',
+                textAlign: 'center',
+                textVerticalAlign: 'middle',
+                shadowColor: '#181926',
+                shadowBlur: 8,
+              },
+            },
+          ],
+          series: [
+            {
+              name: 'Портфель',
+              type: 'pie',
+              radius: ['68%', '88%'],
+              center: ['50%', '50%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 8,
+                borderColor: '#181926',
+                borderWidth: 2,
+                shadowBlur: 0,
+                shadowColor: 'transparent',
+              },
+              label: {
+                show: true,
+                position: 'inside',
+                formatter: '{d}%',
+                color: '#fff',
+                fontSize: 17,
+                fontWeight: 700,
+                shadowColor: '#181926',
+                shadowBlur: 6,
+              },
+              labelLine: { show: false },
+              minAngle: 10,
+              startAngle: 90,
+              clockwise: true,
+              padAngle: 4,
+              data: assets.map((a, i) => ({
+                value: a.value,
+                name: a.symbol,
+                itemStyle: {
+                  color: {
+                    type: 'linear', x: 0, y: 0, x2: 1, y2: 1,
+                    colorStops: [
+                      { offset: 0, color: PIE_COLORS[i % PIE_COLORS.length][theme][0] },
+                      { offset: 1, color: PIE_COLORS[i % PIE_COLORS.length][theme][1] },
+                    ],
+                  },
+                  borderRadius: 8,
+                },
+              })),
+              emphasis: {
+                scale: true,
+                itemStyle: {
+                  shadowBlur: 14,
+                  shadowColor: theme === 'dark' ? 'rgba(52,211,153,0.18)' : 'rgba(16,185,129,0.12)',
+                  borderColor: accent,
+                  borderWidth: 3,
+                },
+              },
+            },
+          ],
+          // color убран, теперь цвета только через itemStyle
+        }}
+        opts={{ renderer: 'canvas' }}
+      />
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ModalEditProfile from './ui/ModalEditProfile';
-import ModalColorSettings from './ui/ModalColorSettings';
-import ModalTimezonePicker from './ui/ModalTimezonePicker';
-import ModalChartStyle from './ui/ModalChartStyle';
-import EditButton from './ui/EditButton';
-import ProfileFieldBlock from './ui/ProfileFieldBlock';
-import ProfileAvatarBlock from './ui/ProfileAvatarBlock';
-import CustomSwitch from './ui/CustomSwitch';
+import ModalEditProfile from './components/ModalEditProfile';
+import ModalColorSettings from './components/ModalColorSettings';
+import ModalTimezonePicker from './components/ModalTimezonePicker';
+import ModalChartStyle from './components/ModalChartStyle';
+import EditButton from './components/EditButton';
+import ProfileFieldBlock from './components/ProfileFieldBlock';
+import ProfileAvatarBlock from './components/ProfileAvatarBlock';
+import CustomSwitch from './components/CustomSwitch';
 import { useTheme } from '../../context/ThemeContext';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -48,16 +48,24 @@ export default function SettingsPanel() {
 
   useEffect(() => {
     const fetchUser = async () => {
+      // Заглушка для оффлайн-режима
       try {
-        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        });
-        setNickname(res.data.username || '');
-        setEmail(res.data.email || '');
-        setPhone(res.data.phone || '');
-        // setAvatar(res.data.avatar || avatar); // если появится поле avatar
+        // Попробуйте раскомментировать для реального запроса:
+        // const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+        //   headers: {
+        //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        //   },
+        // });
+        // setNickname(res.data.username || '');
+        // setEmail(res.data.email || '');
+        // setPhone(res.data.phone || '');
+        // setAvatar(res.data.avatar || avatar);
+        // ---
+        // Фейковые данные:
+        setNickname('demo_user');
+        setEmail('demo@example.com');
+        setPhone('+7 999 123-45-67');
+        // setAvatar('');
       } catch (err) {
         setError('Не удалось загрузить данные пользователя');
       } finally {
@@ -133,14 +141,20 @@ export default function SettingsPanel() {
     setError("");
     (async () => {
       try {
-        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        });
-        setNickname(res.data.username || '');
-        setEmail(res.data.email || '');
-        setPhone(res.data.phone || '');
+        // Попробуйте раскомментировать для реального запроса:
+        // const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+        //   headers: {
+        //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        //   },
+        // });
+        // setNickname(res.data.username || '');
+        // setEmail(res.data.email || '');
+        // setPhone(res.data.phone || '');
+        // ---
+        // Фейковые данные:
+        setNickname('demo_user');
+        setEmail('demo@example.com');
+        setPhone('+7 999 123-45-67');
       } catch (err) {
         setError('Не удалось загрузить данные пользователя');
       } finally {
