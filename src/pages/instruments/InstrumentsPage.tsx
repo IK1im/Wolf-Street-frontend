@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import InstrumentFilters from "./InstrumentFilters";
@@ -6,6 +6,7 @@ import btcIcon from "../../image/crypto/bitcoin.svg";
 import ethIcon from "../../image/crypto/ethereum.svg";
 import usdtIcon from "../../image/crypto/usdt.svg";
 import tonIcon from "../../image/crypto/ton.svg";
+import InstrumentsList from "./InstrumentsList";
 
 const instruments = [
   { name: "Bitcoin", symbol: "BTC", type: "crypto", description: "Криптовалюта №1 по капитализации.", price: 40000, icon: btcIcon },
@@ -31,6 +32,25 @@ export default function InstrumentsPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("alpha-asc");
+  const [show, setShow] = useState(false);
+  const [cardsVisible, setCardsVisible] = useState<number>(0);
+
+  useEffect(() => {
+    setShow(true);
+    // Определяем, первый ли это рендер
+    const isFirstRender = !show;
+    if (filtered.length > 0) {
+      if (isFirstRender) {
+        setCardsVisible(0);
+        filtered.forEach((_, i) => {
+          setTimeout(() => setCardsVisible(v => Math.max(v, i + 1)), 50 + i * 30);
+        });
+      } else {
+        setCardsVisible(filtered.length);
+      }
+    }
+    // eslint-disable-next-line
+  }, [filter, sort, search]);
 
   // Фильтрация
   let filtered = instruments.filter((item) => {
@@ -61,7 +81,7 @@ export default function InstrumentsPage() {
         setSearchOpen={() => {}}
         searchOpen={false}
       />
-      <main className="flex-1 w-full max-w-3xl mx-auto px-4 py-16">
+      <main className={`flex-1 w-full max-w-3xl mx-auto px-4 py-16 transition-all duration-700 ease-in-out ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} transform`}>
         <h1 className="text-4xl font-extrabold text-light-accent dark:text-dark-accent mb-10 text-center tracking-wide">
           Доступные инструменты
         </h1>
@@ -76,32 +96,7 @@ export default function InstrumentsPage() {
           sortOptions={SORT_OPTIONS}
         />
         {/* Список инструментов */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {filtered.length === 0 ? (
-            <div className="col-span-2 text-center text-lg opacity-60 py-12">Ничего не найдено</div>
-          ) : (
-            filtered.map((item) => (
-              <div
-                key={item.symbol}
-                className="bg-white dark:bg-dark-card rounded-2xl shadow-lg border border-light-border/40 dark:border-dark-border/40 p-6 flex flex-col gap-2 hover:scale-[1.03] transition-transform"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <img src={item.icon} alt={item.symbol} className="w-8 h-8 rounded-full bg-white border border-light-border dark:border-dark-border shadow-sm" />
-                  <span className="text-2xl font-bold text-light-accent dark:text-dark-accent">
-                    {item.symbol}
-                  </span>
-                  <span className="text-lg font-semibold">{item.name}</span>
-                </div>
-                <p className="text-sm opacity-80 mb-2">{item.description}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-xs font-medium opacity-60">Текущая цена:</span>
-                  <span className="text-base font-bold">{item.price ?? "—"}</span>
-                  <span className="text-xs opacity-40">(заглушка)</span>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+        <InstrumentsList instruments={filtered} cardsVisible={cardsVisible} />
       </main>
       <Footer />
     </div>
