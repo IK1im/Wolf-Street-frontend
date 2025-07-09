@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import AuthPromoBanner from "./components/AuthPromoBanner";
 import AuthSuccessMessage from "../../components/ui/AuthSuccessMessage";
+import ToastModal from '../../components/ui/ToastModal';
 
 const LoginPage: React.FC = () => {
   const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState<{open: boolean, message: string, type?: 'success'|'error'|'info', title?: string}>({open: false, message: ''});
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const profileUpdated = params.get('profileUpdated') === '1';
-  const passwordChanged = params.get('passwordChanged') === '1';
+  // const passwordChanged = params.get('passwordChanged') === '1';
 
   const promoFeatures = [
     { text: "Реальные котировки" },
@@ -17,6 +19,15 @@ const LoginPage: React.FC = () => {
     { text: "Низкие комиссии" },
     { text: "Безопасность средств" },
   ];
+
+  const showToast = (opts: {message: string, type?: 'success'|'error'|'info', title?: string}) => {
+    setToast({open: true, ...opts});
+  };
+
+  // Показывать toast при profileUpdated
+  useEffect(() => {
+    if (profileUpdated) setToast({open: true, message: "Профиль успешно обновлён. Войдите с новыми данными. Если не удаётся войти — попробуйте позже или обратитесь в поддержку.", type: "success"});
+  }, [profileUpdated]);
 
   if (success) {
     return (
@@ -29,6 +40,14 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-light-bg dark:bg-dark-bg">
+      <ToastModal
+        open={toast.open}
+        onClose={() => setToast({...toast, open: false})}
+        title={toast.title}
+        message={toast.message}
+        type={toast.type}
+        duration={3000}
+      />
       <div className="w-full max-w-5xl mb-4 flex justify-start">
         <Link
           to="/"
@@ -54,18 +73,14 @@ const LoginPage: React.FC = () => {
       <div className="w-full max-w-5xl rounded-2xl card-glow fade-in overflow-hidden border-2 border-light-accent dark:border-dark-accent shadow-2xl">
         <div className="grid lg:grid-cols-3 h-[600px]">
           <div className="lg:col-span-2 flex flex-col justify-center">
-            {profileUpdated && (
+            {profileUpdated && false && (
               <div className="mb-4 p-3 rounded bg-green-100 text-green-800 border border-green-300 text-center text-[15px] dark:bg-green-900 dark:text-green-200 dark:border-green-700">
                 Профиль успешно обновлён. Войдите с новыми данными.<br/>
                 Если не удаётся войти — попробуйте позже или обратитесь в поддержку.
               </div>
             )}
-            {passwordChanged && (
-              <div className="mb-4 p-3 rounded bg-green-100 text-green-800 border border-green-300 text-center text-[15px] dark:bg-green-900 dark:text-green-200 dark:border-green-700">
-                Пароль успешно изменён. Войдите с новым паролем.
-              </div>
-            )}
-            <LoginForm onSuccess={() => setSuccess(true)} />
+            {/* Уведомление о смене пароля убрано */}
+            <LoginForm onSuccess={() => setSuccess(true)} showToast={showToast} />
           </div>
 
           <AuthPromoBanner

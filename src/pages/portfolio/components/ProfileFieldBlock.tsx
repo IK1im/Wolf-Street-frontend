@@ -5,7 +5,7 @@ interface ProfileFieldBlockProps {
   label: string;
   value: string;
   editing?: boolean;
-  onEdit: () => void;
+  onEdit?: () => void;
   onSave?: (v: string) => void;
   onCancel?: () => void;
   onChange?: (v: string) => void;
@@ -80,7 +80,7 @@ const ProfileFieldBlock: React.FC<ProfileFieldBlockProps> = ({
           >Отмена</button>
         </div>
       ) : (
-        <EditButton onClick={onEdit} />
+        onEdit ? <EditButton onClick={onEdit} /> : null
       )}
     </div>
   );

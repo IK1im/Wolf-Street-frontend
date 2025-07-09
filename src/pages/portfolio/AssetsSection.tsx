@@ -136,16 +136,19 @@ export default function AssetsSection() {
 
   return (
     <div className="bg-gradient-to-br from-light-card/95 to-light-bg/80 dark:from-dark-card/95 dark:to-[#181926]/90 rounded-3xl shadow-2xl card-glow backdrop-blur-xl border border-light-border/40 dark:border-dark-border/40 p-8 flex flex-col gap-5 transition-all duration-300">
-      {/* Верхний блок: баланс + pie chart */}
-      <div className="flex flex-col md:flex-row md:items-stretch md:justify-between gap-10">
-        {/* Баланс и кнопки */}
-        <div className="flex-1 flex flex-col gap-5 min-w-[260px]">
-          <div className="text-[18px] text-light-accent dark:text-dark-accent font-bold mb-1">Общий баланс</div>
-          <div className="relative flex flex-col items-start gap-3">
-            <div className="text-[32px] font-extrabold text-white dark:text-dark-fg drop-shadow-xl bg-gradient-to-br from-light-accent/90 to-light-accent/60 dark:from-dark-accent/80 dark:to-dark-accent/60 px-6 py-3 rounded-2xl shadow-2xl ring-2 ring-light-accent/20 dark:ring-dark-accent/20 border border-light-accent/30 dark:border-dark-accent/30">
-              ₽ {formatNumber(total, 2)}
-            </div>
-            <span className="mt-1 text-[17px] text-light-fg/80 dark:text-dark-brown bg-white/60 dark:bg-[#23243a]/60 px-4 py-1 rounded-xl shadow-inner font-semibold border border-light-border/40 dark:border-dark-border/40">~ {formatNumber(totalUSDT, 2)} USDT</span>
+      {/* Верхний блок: поиск+кнопки слева, диаграмма справа */}
+      <div className="flex flex-col md:flex-row md:items-start md:gap-8">
+        {/* Левая колонка: поиск + кнопки */}
+        <div className="flex-1 flex flex-col gap-4 mb-6 md:mb-0 md:max-w-[340px]">
+          <div className="relative w-full">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-light-accent dark:text-dark-accent text-[16px] pointer-events-none"><FaSearch /></span>
+            <input
+              type="text"
+              placeholder="Поиск по инструментам..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="pl-10 pr-4 py-2 rounded-xl border border-light-border/40 dark:border-dark-border/40 bg-white/80 dark:bg-[#23243a]/90 text-[16px] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 w-full shadow-inner dark:shadow-inner placeholder:text-light-fg/60 dark:placeholder:text-[#888c94]"
+            />
           </div>
           <div className="flex flex-row gap-4 mt-2">
             <Button variant="gradient" size="md" iconLeft={<FaPlus />} className="shadow-md dark:shadow-lg">Пополнить</Button>
@@ -154,32 +157,19 @@ export default function AssetsSection() {
           </div>
         </div>
         {/* Диаграмма справа */}
-        <div className="flex items-center justify-end w-full md:w-[340px] ml-auto">
-          <Portfolio3DPie assets={instruments.map((a, i) => ({
-            symbol: a.symbol,
-            name: a.name,
-            percent: pie[i] * 100,
-            value: Math.round(a.total * a.price),
-            color: PIE_COLORS[i % PIE_COLORS.length],
-          }))} />
+        <div className="flex-1 flex justify-center md:justify-end mb-6 md:mb-0">
+          <div className="p-4 rounded-2xl flex items-center justify-center w-full max-w-[360px] transition-all">
+            <Portfolio3DPie assets={instruments.map((a, i) => ({
+              symbol: a.symbol,
+              name: a.name,
+              percent: pie[i] * 100,
+              value: Math.round(a.total * a.price),
+              color: PIE_COLORS[i % PIE_COLORS.length],
+            }))} />
+          </div>
         </div>
       </div>
-      {/* </div> */}
-      {/* Поиск */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="font-semibold text-[20px] text-light-accent dark:text-dark-accent tracking-tight">Ваши инструменты</div>
-        <div className="relative w-full max-w-[320px]">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-light-accent dark:text-dark-accent text-[16px] pointer-events-none"><FaSearch /></span>
-          <input
-            type="text"
-            placeholder="Поиск по инструментам..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 rounded-xl border border-light-border/40 dark:border-dark-border/40 bg-white/80 dark:bg-[#23243a]/90 text-[16px] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 w-full shadow-inner dark:shadow-inner placeholder:text-light-fg/60 dark:placeholder:text-[#888c94]"
-          />
-        </div>
-      </div>
-      {/* Таблица-«карточки» */}
+      {/* Список активов */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {filtered.map((a, i) => (
           <div key={a.symbol} className="p-6 bg-white/90 dark:bg-[#18191c] border border-light-border/30 dark:border-[#23243a] shadow-inner dark:shadow-[inset_0_2px_16px_0_rgba(0,0,0,0.25)] rounded-2xl flex flex-col gap-4 transition-all duration-300">

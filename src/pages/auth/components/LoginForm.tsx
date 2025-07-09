@@ -3,12 +3,14 @@ import LoadingButton from "../../../components/ui/LoadingButton";
 import ErrorAlert from "../../../components/ui/ErrorAlert";
 import RememberMeSection from "./RememberMeSection";
 import { useLoginForm } from "../../../hooks/useLoginForm";
+import { useEffect } from 'react';
 
 interface LoginFormProps {
   onSuccess: () => void;
+  showToast: (opts: {message: string, type?: 'success'|'error'|'info', title?: string}) => void;
 }
 
-export default function LoginForm({ onSuccess }: LoginFormProps) {
+export default function LoginForm({ onSuccess, showToast }: LoginFormProps) {
   const {
     formData,
     rememberMe,
@@ -19,6 +21,12 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     handleRememberMeChange,
     handleSubmit,
   } = useLoginForm({ onSuccess });
+
+  useEffect(() => {
+    if (error) {
+      showToast({message: error, type: 'error', title: 'Ошибка входа'});
+    }
+  }, [error, showToast]);
 
   return (
     <div className="lg:col-span-2 p-8 flex flex-col min-h-[600px] bg-light-card dark:bg-neutral-950 border-r border-light-border dark:border-dark-border">
@@ -32,8 +40,8 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         </p>
       </div>
 
-      {/* Компактная зона для ошибок */}
-      <ErrorAlert error={error} />
+      {/* Ошибки теперь через toast */}
+      {/* <ErrorAlert error={error} /> */}
 
       {/* Форма с кнопкой внутри */}
       <form onSubmit={handleSubmit} className="flex flex-col flex-1 max-w-md">

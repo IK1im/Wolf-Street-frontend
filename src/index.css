@@ -108,6 +108,19 @@
   background: linear-gradient(135deg, #81c784 60%, #81c784 100%);
 }
 
+:root {
+  --card-bg: #1a1918;
+  --card-fg: #f0f4f0;
+  --card-border: #3e3c3a;
+  --card-shadow: 0 6px 32px 0 rgba(24,25,38,0.28);
+}
+.dark {
+  --card-bg: #f9fafb;
+  --card-fg: #3a3a4d;
+  --card-border: #e0e6ed;
+  --card-shadow: 0 6px 32px 0 rgba(24,25,38,0.18);
+}
+
 
 
 

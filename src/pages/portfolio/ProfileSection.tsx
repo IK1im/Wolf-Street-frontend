@@ -272,22 +272,20 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
 
   useEffect(() => {
     const fetchUser = async () => {
-      // Заглушка для оффлайн-режима
       try {
-        // Попробуйте раскомментировать для реального запроса:
-        // const res = await axios.get(`${API_BASE}/user-service/user/me`, {
-        //   headers: {
-        //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        //   },
-        // });
-        // setUser(res.data);
+        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+        setUser(res.data);
         // ---
         // Фейковые данные:
-        setUser({
-          username: 'demo_user',
-          email: 'demo@example.com',
-          phone: '+7 999 123-45-67',
-        });
+        // setUser({
+        //   username: 'demo_user',
+        //   email: 'demo@example.com',
+        //   phone: '+7 999 123-45-67',
+        // });
       } catch (err) {
         setError("Не удалось загрузить данные пользователя");
       } finally {
@@ -302,20 +300,19 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
     setError("");
     (async () => {
       try {
-        // Попробуйте раскомментировать для реального запроса:
-        // const res = await axios.get(`${API_BASE}/user-service/user/me`, {
-        //   headers: {
-        //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        //   },
-        // });
-        // setUser(res.data);
+        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+        setUser(res.data);
         // ---
         // Фейковые данные:
-        setUser({
-          username: 'demo_user',
-          email: 'demo@example.com',
-          phone: '+7 999 123-45-67',
-        });
+        // setUser({
+        //   username: 'demo_user',
+        //   email: 'demo@example.com',
+        //   phone: '+7 999 123-45-67',
+        // });
       } catch (err) {
         setError("Не удалось загрузить данные пользователя");
       } finally {
@@ -461,14 +458,24 @@ function StepperModern({ steps, active, onStepClick }: { steps: Step[]; active: 
 export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: string; percent: number; value: number; color: string }[] }) {
   const { theme } = useTheme();
   const total = assets.reduce((sum, a) => sum + a.value, 0);
-  const accent = theme === 'dark' ? '#34d399' : '#059669'; // зелёный для dark, тёмно-зелёный для light
+  const accent = theme === 'dark' ? '#34d399' : '#059669';
   // Цвета для секторов (можно расширить)
   const PIE_COLORS = [
-    { light: ['#a78bfa', '#6366f1'], dark: ['#a78bfa', '#6366f1'] }, // фиолетовый
-    { light: ['#60a5fa', '#2563eb'], dark: ['#60a5fa', '#2563eb'] }, // синий
-    { light: ['#34d399', '#059669'], dark: ['#34d399', '#059669'] }, // зелёный
-    { light: ['#2dd4bf', '#0e7490'], dark: ['#2dd4bf', '#0e7490'] }, // бирюзовый
+    { light: ['#a78bfa', '#6366f1'], dark: ['#a78bfa', '#6366f1'] },
+    { light: ['#60a5fa', '#2563eb'], dark: ['#60a5fa', '#2563eb'] },
+    { light: ['#34d399', '#059669'], dark: ['#34d399', '#059669'] },
+    { light: ['#2dd4bf', '#0e7490'], dark: ['#2dd4bf', '#0e7490'] },
   ];
+  function getCardColors() {
+    const styles = typeof window !== 'undefined' ? getComputedStyle(document.documentElement) : { getPropertyValue: () => '' };
+    return {
+      bg: styles.getPropertyValue('--card-bg').trim() || '#fff',
+      fg: styles.getPropertyValue('--card-fg').trim() || '#23243a',
+      border: styles.getPropertyValue('--card-border').trim() || accent,
+      shadow: styles.getPropertyValue('--card-shadow').trim() || '0 6px 32px 0 rgba(24,25,38,0.18)',
+    };
+  }
+  const cardColors = getCardColors();
   return (
     <div style={{ width: 320, height: 320, background: 'transparent', borderRadius: 24, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <ReactECharts
@@ -477,21 +484,26 @@ export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: str
           backgroundColor: 'transparent',
           tooltip: {
             trigger: 'item',
-            backgroundColor: theme === 'dark' ? '#23243a' : '#fff',
-            borderColor: accent,
+            backgroundColor: cardColors.bg,
+            borderColor: cardColors.border,
             borderWidth: 2,
+            extraCssText: `
+              border-radius: 18px;
+              box-shadow: ${cardColors.shadow};
+              padding: 18px 22px;
+              min-width: 120px;
+              text-align: center;
+            `,
             textStyle: {
-              color: theme === 'dark' ? '#fff' : '#23243a',
+              color: cardColors.fg,
               fontSize: 16,
               fontWeight: 600,
               fontFamily: 'Inter, Arial',
             },
             formatter: (params: any) => (
-              `<div style="text-align:center;">
-                <div style="font-size:18px;font-weight:700;color:${accent};">${params.name}</div>
-                <div style="font-size:16px;">${params.percent}%</div>
-                <div style="font-size:15px;color:${theme === 'dark' ? '#aaa' : '#444'};">${params.value.toLocaleString('ru-RU')} ₽</div>
-              </div>`
+              `<div style="font-size:18px;font-weight:700;margin-bottom:2px;color:${theme === 'dark' ? '#34d399' : '#6c63ff'};">${params.name}</div>
+               <div style="font-size:16px;color:${cardColors.fg};">${params.percent}%</div>
+               <div style="font-size:15px;color:#888c94;">${params.value.toLocaleString('ru-RU')} ₽</div>`
             ),
           },
           legend: { show: false },
@@ -504,10 +516,10 @@ export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: str
               style: {
                 text: `₽ ${total.toLocaleString('ru-RU')}`,
                 font: 'bold 32px \'Inter\', Arial',
-                fill: '#fff',
+                fill: theme === 'dark' ? '#fff' : '#23243a',
                 textAlign: 'center',
                 textVerticalAlign: 'middle',
-                shadowColor: '#181926',
+                shadowColor: theme === 'dark' ? '#181926' : '#000',
                 shadowBlur: 8,
               },
             },
@@ -531,10 +543,17 @@ export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: str
                 position: 'inside',
                 formatter: '{d}%',
                 color: '#fff',
-                fontSize: 17,
-                fontWeight: 700,
+                fontSize: 19,
+                fontWeight: 800,
                 shadowColor: '#181926',
-                shadowBlur: 6,
+                shadowBlur: 8,
+                rich: {
+                  percent: {
+                    textShadow: '0 2px 8px rgba(24,25,38,0.25)',
+                    stroke: '#23243a',
+                    lineWidth: 2,
+                  }
+                },
               },
               labelLine: { show: false },
               minAngle: 10,

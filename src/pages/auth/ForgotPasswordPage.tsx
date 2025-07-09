@@ -65,8 +65,12 @@ const ForgotPasswordPage: React.FC = () => {
       return;
     }
     try {
-      // Отправка нового пароля (заглушка, заменить на реальный эндпоинт)
-      // await axios.post(`${API_BASE}/auth/change-password`, { email: emailFromQuery, token, newPassword });
+      // Отправка нового пароля на реальный эндпоинт
+      await axios.post(`${API_BASE}/user-service/auth/change-password`, {
+        email: emailFromQuery,
+        token,
+        newPassword,
+      });
       setChangeSuccess(true);
     } catch (err) {
       setChangeError("Ошибка при смене пароля");

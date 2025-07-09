@@ -4,9 +4,15 @@ import AuthFormHeader from "./components/AuthFormHeader";
 import AuthFormFooter from "./components/AuthFormFooter";
 import RegisterForm from "./components/RegisterForm";
 import AuthSuccessMessage from "../../components/ui/AuthSuccessMessage";
+import ToastModal from '../../components/ui/ToastModal';
 
 const RegisterPage: React.FC = () => {
   const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState<{open: boolean, message: string, type?: 'success'|'error'|'info', title?: string}>({open: false, message: ''});
+
+  const showToast = (opts: {message: string, type?: 'success'|'error'|'info', title?: string}) => {
+    setToast({open: true, ...opts});
+  };
 
   if (success) {
     return (
@@ -19,6 +25,14 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-light-bg dark:bg-dark-bg">
+      <ToastModal
+        open={toast.open}
+        onClose={() => setToast({...toast, open: false})}
+        title={toast.title}
+        message={toast.message}
+        type={toast.type}
+        duration={3000}
+      />
       {/* Кнопка возврата на главную */}
       <div className="w-full max-w-md mb-4 flex justify-start">
         <Link
@@ -51,7 +65,7 @@ const RegisterPage: React.FC = () => {
         />
 
         {/* Используем готовый RegisterForm */}
-        <RegisterForm onSuccess={() => setSuccess(true)} />
+        <RegisterForm onSuccess={() => setSuccess(true)} showToast={showToast} />
 
         {/* Используем готовый AuthFormFooter */}
         <AuthFormFooter
