@@ -5,6 +5,7 @@ import "./index.css";
 import MainPage from "./pages/main/MainPage";
 import PortfolioPage from "./pages/portfolio/PortfolioPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import InstrumentsPage from "./pages/instruments/InstrumentsPage";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/" element={<MainPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/instruments" element={<InstrumentsPage />} />
       </Routes>
     </Router>
   );
