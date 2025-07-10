@@ -248,6 +248,12 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
   const [user, setUser] = useState<{ email: string; phone: string; username: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    username: '',
+    email: '',
+    phone: '',
+  });
 
   // --- КУРСЫ ВАЛЮТ ---
   const [rates, setRates] = useState<{ [code: string]: number }>({});
@@ -270,30 +276,44 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
   }, []);
   useEffect(() => { fetchRates(); }, [fetchRates]);
 
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+  //         },
+  //       });
+  //       setUser(res.data);
+  //     } catch (err) {
+  //       setError("Не удалось загрузить данные пользователя");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchUser();
+  // }, []);
+  // Мок-данные пользователя:
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        });
-        setUser(res.data);
-        // ---
-        // Фейковые данные:
-        // setUser({
-        //   username: 'demo_user',
-        //   email: 'demo@example.com',
-        //   phone: '+7 999 123-45-67',
-        // });
-      } catch (err) {
-        setError("Не удалось загрузить данные пользователя");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
+    setTimeout(() => {
+      setUser({
+        username: 'demo_user',
+        email: 'demo@example.com',
+        phone: '+7 999 123-45-67',
+      });
+      setLoading(false);
+    }, 400);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        username: user.username || '',
+        email: user.email || '',
+        phone: user.phone || '',
+      });
+    }
+  }, [user]);
 
   const handleRetry = () => {
     setLoading(true);
@@ -321,6 +341,25 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
     })();
   };
 
+  // Функции для массового редактирования
+  const handleFieldChange = (field: keyof typeof form, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+  };
+  const handleSave = async () => {
+    // TODO: добавить валидацию и отправку запроса
+    setEditing(false);
+  };
+  const handleCancel = () => {
+    if (user) {
+      setForm({
+        username: user.username || '',
+        email: user.email || '',
+        phone: user.phone || '',
+      });
+    }
+    setEditing(false);
+  };
+
   if (loading) return <LoaderBlock text="Загружаем профиль..." />;
   if (error) return <ErrorBlock text={error} onRetry={handleRetry} />;
   if (!user) return null;
@@ -335,6 +374,7 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
         vipLabel="VIP Обычный пользователь"
         vip={true}
       />
+      {/* Остальной контент профиля */}
       <StepperPanel onDepositClick={onGoToDeposit} rates={rates} ratesLoading={ratesLoading} ratesError={ratesError} onRatesRefresh={fetchRates} />
       <div className="flex flex-col gap-4.5">
         <TradeSection />

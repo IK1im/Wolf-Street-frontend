@@ -106,19 +106,34 @@ export default function SettingsPanel() {
     }
   }, []);
 
+  // useEffect для загрузки пароля из cookie при монтировании и при изменении cookie
+  useEffect(() => {
+    const loadPasswordFromCookie = () => {
+      const encrypted = Cookies.get(PASSWORD_COOKIE_KEY);
+      if (encrypted) {
+        try {
+          const bytes = CryptoJS.AES.decrypt(encrypted, PASSWORD_ENCRYPT_KEY);
+          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+          if (decrypted) setPassword(decrypted);
+        } catch {}
+      }
+    };
+    loadPasswordFromCookie();
+  }, []);
+
   // Сброс showPassword и полей смены пароля при открытии редактирования пароля
   useEffect(() => {
     if (editingField === 'password') {
       setShowPassword(false);
-      setOldPassword('');
-      setNewPassword('');
+      setOldPassword(''); // всегда сбрасываем
+      setNewPassword(''); // всегда сбрасываем
       setPasswordError('');
     }
   }, [editingField]);
 
   const handleProfileSave = (data: { nickname: string; avatar: string; avatarFile: File | null }) => {
     setNickname(data.nickname);
-    setAvatar(data.avatar);
+    if (data.avatar) setAvatar(data.avatar); // обновляем аватар сразу!
     setEditProfileModal(false);
   };
 
@@ -127,6 +142,11 @@ export default function SettingsPanel() {
     setPasswordError('');
     if (!oldPassword || !newPassword) {
       setPasswordError('Заполните оба поля');
+      return;
+    }
+    // Сравниваем oldPassword с расшифрованным паролем из cookie
+    if (oldPassword !== password) {
+      setPasswordError('Старый пароль неверен');
       return;
     }
     try {
@@ -279,6 +299,8 @@ export default function SettingsPanel() {
   if (loading) return <LoaderBlock text="Загружаем настройки..." />;
   if (error) return <ErrorBlock text={error} onRetry={handleRetry} />;
 
+  // Логирование для диагностики
+  console.log('render editingField', editingField, 'showPassword', showPassword);
   return (
     <div className="w-full max-w-[1200px] ml-0 mr-auto mt-8 px-4">
       {/* Модалки */}
@@ -338,151 +360,154 @@ export default function SettingsPanel() {
       {/* Заголовок */}
       <h1 className="text-[28px] font-extrabold mb-8 text-light-accent dark:text-dark-accent text-center">Настройки</h1>
       {/* Никнейм и аватар + компактный блок данных */}
-      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-2xl card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border flex flex-col md:flex-row items-stretch gap-8 min-h-[220px]">
+      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-2xl card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-x-16 min-h-[220px]">
         {/* Данные профиля */}
-        <div className="flex-1 flex flex-col justify-center min-w-0">
-          <div className="text-[22px] font-bold mb-2 text-light-accent dark:text-dark-accent flex items-center gap-2">
-            <svg className="w-6 h-6 text-light-accent dark:text-dark-accent" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            Профиль
-          </div>
-          <div className="text-light-fg/80 dark:text-dark-nav-inactive text-[15px] mb-6 max-w-2xl">Изменяйте свои контактные данные. Никнейм можно изменить отдельно.</div>
-          <div className="w-full">
-            {editingProfileFields ? (
-              <form
-                className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end"
-                onSubmit={e => { e.preventDefault(); handleSaveProfileFields(); }}
-              >
-                <div>
-                  <label className="block text-xs mb-1 text-light-fg/70">Имя</label>
-                  <input
-                    className="w-full text-[15px] font-medium bg-light-bg dark:bg-dark-bg border-2 border-light-border dark:border-dark-border rounded-xl px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
-                    value={editFirstname}
-                    onChange={e => setEditFirstname(e.target.value)}
-                    placeholder="Имя"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs mb-1 text-light-fg/70">Фамилия</label>
-                  <input
-                    className="w-full text-[15px] font-medium bg-light-bg dark:bg-dark-bg border-2 border-light-border dark:border-dark-border rounded-xl px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
-                    value={editLastname}
-                    onChange={e => setEditLastname(e.target.value)}
-                    placeholder="Фамилия"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs mb-1 text-light-fg/70">Email</label>
-                  <input
-                    className="w-full text-[15px] font-medium bg-light-bg dark:bg-dark-bg border-2 border-light-border dark:border-dark-border rounded-xl px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
-                    value={editEmail}
-                    onChange={e => setEditEmail(e.target.value)}
-                    placeholder="Email"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs mb-1 text-light-fg/70">Телефон</label>
-                  <input
-                    className="w-full text-[15px] font-medium bg-light-bg dark:bg-dark-bg border-2 border-light-border dark:border-dark-border rounded-xl px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
-                    value={editPhone}
-                    onChange={e => setEditPhone(e.target.value)}
-                    placeholder="Телефон"
-                  />
-                </div>
-                <div className="col-span-1 md:col-span-2 flex gap-2 justify-end mt-2">
+        <div className="w-full flex flex-col justify-center min-w-0 md:pr-8">
+          {/* --- Контактные данные --- */}
+          <div className="w-full max-w-[520px] mx-auto mb-8">
+            <div className="flex items-center justify-between mb-1">
+              <div className="text-base font-semibold text-light-accent dark:text-dark-accent">Контактные данные</div>
+              {!editingProfileFields && (
+                <button
+                  className="p-2 rounded-full hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 transition"
+                  onClick={() => setEditingProfileFields(true)}
+                  aria-label="Редактировать контактные данные"
+                >
+                  <svg className="w-5 h-5 text-light-accent dark:text-dark-accent" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-1.414a2 2 0 01.586-1.414z" /></svg>
+                </button>
+              )}
+            </div>
+            <div className="bg-white/80 dark:bg-dark-bg/80 rounded-xl shadow-xl p-6 border border-light-border/40 dark:border-dark-border/40 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                {editingProfileFields ? (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-light-fg/80">Имя</label>
+                      <input
+                        className="w-full h-12 text-[16px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-3 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all placeholder:text-light-fg/40 dark:placeholder:text-dark-nav-inactive italic"
+                        value={editFirstname}
+                        onChange={e => setEditFirstname(e.target.value)}
+                        placeholder="Имя"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-light-fg/80">Фамилия</label>
+                      <input
+                        className="w-full h-12 text-[16px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-3 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all placeholder:text-light-fg/40 dark:placeholder:text-dark-nav-inactive italic"
+                        value={editLastname}
+                        onChange={e => setEditLastname(e.target.value)}
+                        placeholder="Фамилия"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-light-fg/80">Email</label>
+                      <input
+                        className="w-full h-12 text-[16px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-3 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all placeholder:text-light-fg/40 dark:placeholder:text-dark-nav-inactive italic"
+                        value={editEmail}
+                        onChange={e => setEditEmail(e.target.value)}
+                        placeholder="Email"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-light-fg/80">Телефон</label>
+                      <input
+                        className="w-full h-12 text-[16px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-3 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all placeholder:text-light-fg/40 dark:placeholder:text-dark-nav-inactive italic"
+                        value={editPhone}
+                        onChange={e => setEditPhone(e.target.value)}
+                        placeholder="Телефон"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <ProfileFieldBlock label="Имя" value={firstname} editing={false} placeholder="Имя не указано" />
+                    <ProfileFieldBlock label="Фамилия" value={lastname} editing={false} placeholder="Фамилия не указана" />
+                    <ProfileFieldBlock label="Email" value={email} editing={false} placeholder="Email не указан" />
+                    <ProfileFieldBlock label="Телефон" value={phone} editing={false} placeholder="Телефон не указан" />
+                  </>
+                )}
+              </div>
+              {editingProfileFields && (
+                <div className="flex flex-col md:flex-row gap-3 mt-6">
                   <button
-                    type="submit"
-                    className="flex items-center gap-2 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-8 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[16px] hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
+                    type="button"
+                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-lg px-6 py-2 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[15px] hover:scale-[1.04] hover:shadow-xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
+                    onClick={handleSaveProfileFields}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     Сохранить
                   </button>
                   <button
                     type="button"
-                    className="flex items-center gap-2 bg-gradient-to-r from-white/80 to-light-card/80 dark:from-dark-card/70 dark:to-[#181926]/80 text-light-accent dark:text-dark-accent font-semibold rounded-xl px-8 py-2.5 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[16px] hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-white hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30"
+                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-white/80 to-light-card/80 dark:from-dark-card/70 dark:to-[#181926]/80 text-light-accent dark:text-dark-accent font-semibold rounded-lg px-6 py-2 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[15px] hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-white hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30"
                     onClick={handleCancelEdit}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     Отмена
                   </button>
                 </div>
-              </form>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <ProfileFieldBlock label="Имя" value={firstname} editing={false} />
-                  <ProfileFieldBlock label="Фамилия" value={lastname} editing={false} />
-                  <ProfileFieldBlock label="Email" value={email} editing={false} />
-                  <ProfileFieldBlock label="Телефон" value={phone} editing={false} />
-                  <div className="col-span-1 md:col-span-2 flex justify-end mt-2">
-                    <button
-                      className="flex items-center gap-2 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-8 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[16px] hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
-                      onClick={() => setEditingProfileFields(true)}
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-                      Изменить
-                    </button>
-                  </div>
-                </div>
-                {/* Блок смены пароля */}
-                <div className="mt-6 p-4 rounded-xl bg-light-bg/80 dark:bg-dark-bg/80 border border-light-border dark:border-dark-border shadow-md flex flex-col md:flex-row items-center gap-4">
-                  {editingField === 'password' ? (
-                    <div className="flex-1 space-y-3">
-                      <input
-                        type="password"
-                        placeholder="Старый пароль"
-                        value={oldPassword}
-                        onChange={e => setOldPassword(e.target.value)}
-                        className="w-full text-[15px] font-medium bg-light-bg dark:bg-dark-bg border-2 border-light-border dark:border-dark-border rounded-xl px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
-                      />
-                      <input
-                        type="password"
-                        placeholder="Новый пароль"
-                        value={newPassword}
-                        onChange={e => setNewPassword(e.target.value)}
-                        className="w-full text-[15px] font-medium bg-light-bg dark:bg-dark-bg border-2 border-light-border dark:border-dark-border rounded-xl px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
-                      />
-                      {passwordError && <div className="text-red-500 text-[14px]">{passwordError}</div>}
-                      <div className="flex gap-2 mt-2 justify-end">
-                        <button
-                          className="flex items-center gap-2 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-7 py-2.5 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[16px] hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
-                          onClick={handlePasswordSave}
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                          Сохранить
-                        </button>
-                        <button
-                          className="flex items-center gap-2 bg-gradient-to-r from-white/80 to-light-card/80 dark:from-dark-card/70 dark:to-[#181926]/80 text-light-accent dark:text-dark-accent font-semibold rounded-xl px-7 py-2.5 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[16px] hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-white hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30"
-                          onClick={() => setEditingField(null)}
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                          Отмена
-                        </button>
-                      </div>
-                    </div>
+              )}
+            </div>
+          </div>
+          {/* --- Пароль --- */}
+          <div className="w-full max-w-[520px] mx-auto mb-8 border-t border-light-accent/15 dark:border-dark-accent/15 pt-8">
+            <div className="flex items-center justify-between mb-1">
+              <div className="text-base font-semibold text-light-accent dark:text-dark-accent">Пароль</div>
+              {editingField !== 'password' && (
+                <button
+                  className="p-2 rounded-full hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 transition"
+                  onClick={() => setEditingField('password')}
+                  aria-label="Изменить пароль"
+                >
+                  <svg className="w-5 h-5 text-light-accent dark:text-dark-accent" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-1.414a2 2 0 01.586-1.414z" /></svg>
+                </button>
+              )}
+            </div>
+            <div className="bg-white/80 dark:bg-dark-bg/80 rounded-xl shadow-xl p-2 border border-light-border/40 dark:border-dark-border/40 relative min-h-[44px]">
+              <div className="relative flex items-center text-[16px] text-light-fg dark:text-dark-fg font-medium min-h-[40px]">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  readOnly
+                  onFocus={e => e.target.select()}
+                  className="w-full h-10 text-[15px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-3 pr-12 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all select-all cursor-default"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-light-fg dark:text-dark-fg opacity-60 hover:opacity-100 transition-opacity duration-200 focus:outline-none focus:opacity-100"
+                  aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.94 17.94A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 012.519-3.568M6.343 6.343A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.97 9.97 0 01-2.519 3.568M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+                    </svg>
                   ) : (
-                    <div className="flex-1 flex items-center justify-between">
-                      <div className="text-[15px] text-light-fg dark:text-dark-fg font-medium">Пароль</div>
-                      <button
-                        className="flex items-center gap-2 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-xl px-6 py-2 shadow-xl border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[16px] hover:scale-[1.04] hover:shadow-2xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
-                        onClick={() => setEditingField('password')}
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-                        Изменить пароль
-                      </button>
-                    </div>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
                   )}
-                </div>
-              </>
-            )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         {/* Аватар и никнейм справа */}
-        <div className="flex flex-col items-center justify-center min-w-[220px]">
-          <ProfileAvatarBlock
-            avatar={avatar}
-            nickname={nickname}
-            onEdit={() => setEditProfileModal(true)}
+        <div className="flex flex-col items-center justify-center min-w-[260px] gap-6 mt-12">
+          <img
+            src={avatar}
+            alt="avatar"
+            className="w-40 h-40 rounded-full border-4 border-light-accent dark:border-dark-accent object-cover shadow-lg"
           />
+          <div className="font-bold text-2xl text-center mt-2 text-light-fg dark:text-dark-fg">{nickname}</div>
+          <button
+            className="w-full max-w-[180px] py-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/80 dark:hover:bg-dark-accent/80 text-white font-semibold rounded-xl shadow text-lg transition"
+            onClick={() => setEditProfileModal(true)}
+          >
+            Изменить
+          </button>
         </div>
       </div>
       {/* Уведомления */}
@@ -578,6 +603,89 @@ export default function SettingsPanel() {
               <span className="ml-1 text-[18px]">🌙</span>
             </div>
           </div>
+        </div>
+      </div>
+      {/* Модалка смены пароля */}
+      <ModalChangePassword
+        open={editingField === 'password'}
+        onClose={() => setEditingField(null)}
+        oldPassword={oldPassword}
+        newPassword={newPassword}
+        setOldPassword={setOldPassword}
+        setNewPassword={setNewPassword}
+        passwordError={passwordError}
+        onSave={handlePasswordSave}
+      />
+    </div>
+  );
+}
+
+// Вставка компонента модалки смены пароля
+function ModalChangePassword({
+  open,
+  onClose,
+  oldPassword,
+  newPassword,
+  setOldPassword,
+  setNewPassword,
+  passwordError,
+  onSave
+}: {
+  open: boolean;
+  onClose: () => void;
+  oldPassword: string;
+  newPassword: string;
+  setOldPassword: (v: string) => void;
+  setNewPassword: (v: string) => void;
+  passwordError: string;
+  onSave: () => void;
+}) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in">
+      <div className="bg-white dark:bg-dark-bg rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
+        <button
+          className="absolute top-4 right-4 text-light-fg/60 dark:text-dark-fg/60 hover:text-light-accent dark:hover:text-dark-accent text-2xl"
+          onClick={onClose}
+          aria-label="Закрыть"
+        >
+          &times;
+        </button>
+        <div className="text-xl font-bold mb-4 text-center text-light-accent dark:text-dark-accent">Смена пароля</div>
+        <div className="space-y-4">
+          <input
+            type="password"
+            placeholder="Старый пароль"
+            value={oldPassword}
+            onChange={e => setOldPassword(e.target.value)}
+            autoComplete="current-password"
+            className="w-full h-10 text-[15px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
+          />
+          <input
+            type="password"
+            placeholder="Новый пароль"
+            value={newPassword}
+            onChange={e => setNewPassword(e.target.value)}
+            autoComplete="new-password"
+            className="w-full h-10 text-[15px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
+          />
+          {passwordError && <div className="text-red-500 text-[14px]">{passwordError}</div>}
+        </div>
+        <div className="flex flex-col md:flex-row gap-3 mt-6">
+          <button
+            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-lg px-6 py-2 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[15px] hover:scale-[1.04] hover:shadow-xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
+            onClick={onSave}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+            Сохранить
+          </button>
+          <button
+            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-white/80 to-light-card/80 dark:from-dark-card/70 dark:to-[#181926]/80 text-light-accent dark:text-dark-accent font-semibold rounded-lg px-6 py-2 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[15px] hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 hover:text-white hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30"
+            onClick={onClose}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            Отмена
+          </button>
         </div>
       </div>
     </div>

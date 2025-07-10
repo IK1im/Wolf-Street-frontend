@@ -5,8 +5,10 @@ import "./index.css";
 import MainPage from "./pages/main/MainPage";
 import PortfolioPage from "./pages/portfolio/PortfolioPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import useAutoRefreshToken from './hooks/useAutoRefreshToken';
 
 export default function App() {
+  useAutoRefreshToken();
   return (
     <Router>
       <Routes>

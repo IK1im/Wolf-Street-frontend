@@ -58,7 +58,12 @@ api.interceptors.response.use(
       if (!refreshToken) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
+        // Не редиректим, если это попытка логина
+        const loginUrls = ["/auth/login", "/user-service/auth/login"];
+        const isLoginRequest = loginUrls.some(url => originalRequest.url && originalRequest.url.includes(url));
+        if (!isLoginRequest) {
+          window.location.href = "/login";
+        }
         return Promise.reject(error);
       }
       try {
@@ -76,7 +81,12 @@ api.interceptors.response.use(
         processQueue(err, null);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
+        // Не редиректим, если это попытка логина
+        const loginUrls = ["/auth/login", "/user-service/auth/login"];
+        const isLoginRequest = loginUrls.some(url => originalRequest.url && originalRequest.url.includes(url));
+        if (!isLoginRequest) {
+          window.location.href = "/login";
+        }
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

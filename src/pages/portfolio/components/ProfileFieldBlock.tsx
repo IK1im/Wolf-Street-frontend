@@ -10,6 +10,7 @@ interface ProfileFieldBlockProps {
   onCancel?: () => void;
   onChange?: (v: string) => void;
   type?: 'text' | 'password';
+  placeholder?: string;
 }
 
 const ProfileFieldBlock: React.FC<ProfileFieldBlockProps> = ({
@@ -21,6 +22,7 @@ const ProfileFieldBlock: React.FC<ProfileFieldBlockProps> = ({
   onCancel,
   onChange,
   type = 'text',
+  placeholder,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [editValue, setEditValue] = useState(value);
@@ -65,7 +67,11 @@ const ProfileFieldBlock: React.FC<ProfileFieldBlockProps> = ({
             )}
           </div>
         ) : (
-          <div className="text-[16px] text-light-fg dark:text-dark-fg truncate">{type === 'password' ? '********' : value}</div>
+          value ? (
+            <div className="text-[16px] text-light-fg dark:text-dark-fg truncate">{type === 'password' ? '********' : value}</div>
+          ) : (
+            <div className="text-[16px] text-light-fg/40 dark:text-dark-nav-inactive italic truncate">{placeholder || ''}</div>
+          )
         )}
       </div>
       {editing ? (
