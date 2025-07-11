@@ -64,9 +64,25 @@ export default function SettingsPanel() {
   // Для отслеживания, был ли 401 после успешного изменения
   const [pendingLogout, setPendingLogout] = useState(false);
 
+  const USE_FAKE_PROFILE = true; // Поставьте false для реальных данных
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        if (USE_FAKE_PROFILE) {
+          setNickname('demo_user');
+          setEmail('demo@example.com');
+          setPhone('+7 999 123-45-67');
+          setFirstname('Игорь');
+          setLastname('Климкин');
+          setAvatar('https://i.imgur.com/0y0y0y0.png');
+          setEditFirstname('Игорь');
+          setEditLastname('Климкин');
+          setEditEmail('demo@example.com');
+          setEditPhone('+7 999 123-45-67');
+          setLoading(false);
+          return;
+        }
         const res = await axios.get(`${API_BASE}/user-service/user/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -78,16 +94,10 @@ export default function SettingsPanel() {
         setFirstname(res.data.firstname || '');
         setLastname(res.data.lastname || '');
         setAvatar(res.data.avatar || avatar);
-        // Для массового редактирования:
         setEditFirstname(res.data.firstname || '');
         setEditLastname(res.data.lastname || '');
         setEditEmail(res.data.email || '');
         setEditPhone(res.data.phone || '');
-        // ---
-        // Фейковые данные:
-        // setNickname('demo_user');
-        // setEmail('demo@example.com');
-        // setPhone('+7 999 123-45-67');
       } catch (err) {
         setError('Не удалось загрузить данные пользователя');
       } finally {
@@ -285,9 +295,9 @@ export default function SettingsPanel() {
         setPhone(res.data.phone || '');
         // ---
         // Фейковые данные:
-        // setNickname('demo_user');
-        // setEmail('demo@example.com');
-        // setPhone('+7 999 123-45-67');
+        setNickname('demo_user');
+        setEmail('demo@example.com');
+        setPhone('+7 999 123-45-67');
       } catch (err) {
         setError('Не удалось загрузить данные пользователя');
       } finally {
@@ -302,7 +312,7 @@ export default function SettingsPanel() {
   // Логирование для диагностики
   console.log('render editingField', editingField, 'showPassword', showPassword);
   return (
-    <div className="w-full max-w-[1200px] ml-0 mr-auto mt-8 px-4">
+    <div className="w-full max-w-screen-lg mx-auto mt-8 px-2 sm:px-4">
       {/* Модалки */}
       <ModalEditProfile
         open={editProfileModal}
@@ -360,11 +370,11 @@ export default function SettingsPanel() {
       {/* Заголовок */}
       <h1 className="text-[28px] font-extrabold mb-8 text-light-accent dark:text-dark-accent text-center">Настройки</h1>
       {/* Никнейм и аватар + компактный блок данных */}
-      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-2xl card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-x-16 min-h-[220px]">
+      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-2xl card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-4 sm:p-6 md:p-8 mb-8 border border-light-border dark:border-dark-border flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12 min-h-[220px]">
         {/* Данные профиля */}
-        <div className="w-full flex flex-col justify-center min-w-0 md:pr-8">
+        <div className="flex-1 min-w-0 flex flex-col justify-center">
           {/* --- Контактные данные --- */}
-          <div className="w-full max-w-[520px] mx-auto mb-8">
+          <div className="w-full max-w-lg mx-auto mb-8">
             <div className="flex items-center justify-between mb-1">
               <div className="text-base font-semibold text-light-accent dark:text-dark-accent">Контактные данные</div>
               {!editingProfileFields && (
@@ -377,8 +387,8 @@ export default function SettingsPanel() {
                 </button>
               )}
             </div>
-            <div className="bg-white/80 dark:bg-dark-bg/80 rounded-xl shadow-xl p-6 border border-light-border/40 dark:border-dark-border/40 w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            <div className="bg-white/80 dark:bg-dark-bg/80 rounded-xl shadow-xl p-4 sm:p-6 border border-light-border/40 dark:border-dark-border/40 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 md:gap-x-8 md:gap-y-6">
                 {editingProfileFields ? (
                   <>
                     <div>
@@ -450,7 +460,7 @@ export default function SettingsPanel() {
             </div>
           </div>
           {/* --- Пароль --- */}
-          <div className="w-full max-w-[520px] mx-auto mb-8 border-t border-light-accent/15 dark:border-dark-accent/15 pt-8">
+          <div className="w-full max-w-lg mx-auto mb-8 border-t border-light-accent/15 dark:border-dark-accent/15 pt-8">
             <div className="flex items-center justify-between mb-1">
               <div className="text-base font-semibold text-light-accent dark:text-dark-accent">Пароль</div>
               {editingField !== 'password' && (
@@ -495,15 +505,15 @@ export default function SettingsPanel() {
           </div>
         </div>
         {/* Аватар и никнейм справа */}
-        <div className="flex flex-col items-center justify-center min-w-[260px] gap-6 mt-12">
+        <div className="flex flex-col items-center justify-center min-w-[140px] sm:min-w-[180px] md:min-w-[220px] max-w-[260px] w-full gap-4 sm:gap-6 mt-8 md:mt-12">
           <img
             src={avatar}
             alt="avatar"
-            className="w-40 h-40 rounded-full border-4 border-light-accent dark:border-dark-accent object-cover shadow-lg"
+            className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full border-4 border-light-accent dark:border-dark-accent object-cover shadow-lg"
           />
-          <div className="font-bold text-2xl text-center mt-2 text-light-fg dark:text-dark-fg">{nickname}</div>
+          <div className="font-bold text-lg sm:text-xl md:text-2xl text-center mt-2 text-light-fg dark:text-dark-fg break-words">{nickname}</div>
           <button
-            className="w-full max-w-[180px] py-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/80 dark:hover:bg-dark-accent/80 text-white font-semibold rounded-xl shadow text-lg transition"
+            className="w-full max-w-[180px] py-2 sm:py-2.5 md:py-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/80 dark:hover:bg-dark-accent/80 text-white font-semibold rounded-xl shadow text-base sm:text-lg transition"
             onClick={() => setEditProfileModal(true)}
           >
             Изменить
@@ -511,10 +521,10 @@ export default function SettingsPanel() {
         </div>
       </div>
       {/* Уведомления */}
-      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-lg card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border">
-        <div className="text-[20px] font-bold text-light-accent dark:text-dark-accent mb-1">Уведомления</div>
-        <div className="text-light-fg/80 dark:text-dark-nav-inactive text-[15px] mb-6 max-w-2xl">Управляйте своими уведомлениями — выберите, как мы можем держать вас в курсе самого важного. Мы ценим ваше доверие и никогда не будем злоупотреблять вашим вниманием.</div>
-        <div className="space-y-6">
+      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-lg card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-4 sm:p-6 md:p-8 mb-8 border border-light-border dark:border-dark-border max-w-full">
+        <div className="text-lg md:text-xl font-bold text-light-accent dark:text-dark-accent mb-1">Уведомления</div>
+        <div className="text-light-fg/80 dark:text-dark-nav-inactive text-base md:text-[15px] mb-6 max-w-2xl">Управляйте своими уведомлениями — выберите, как мы можем держать вас в курсе самого важного. Мы ценим ваше доверие и никогда не будем злоупотреблять вашим вниманием.</div>
+        <div className="space-y-4 md:space-y-6">
           {/* Email уведомления */}
           <div className="flex items-center gap-4">
             <div className="flex-1">
@@ -542,9 +552,9 @@ export default function SettingsPanel() {
         </div>
       </div>
       {/* Предпочитаемые настройки */}
-      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-lg card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-8 mb-8 border border-light-border dark:border-dark-border">
-        <div className="text-[20px] font-bold text-light-accent dark:text-dark-accent mb-1">Предпочитаемые настройки</div>
-        <div className="space-y-6 mt-6">
+      <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl shadow-lg card-glow backdrop-blur-md bg-opacity-90 hover:shadow-2xl transition-all p-4 sm:p-6 md:p-8 mb-8 border border-light-border dark:border-dark-border max-w-full">
+        <div className="text-lg md:text-xl font-bold text-light-accent dark:text-dark-accent mb-1">Предпочитаемые настройки</div>
+        <div className="space-y-4 md:space-y-6 mt-4 md:mt-6">
           {/* Цветовая схема */}
           <div className="flex items-center gap-4">
             <div className="flex-1">
