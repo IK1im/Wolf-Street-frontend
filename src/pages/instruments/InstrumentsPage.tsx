@@ -28,6 +28,58 @@ const SORT_OPTIONS = [
   { label: "По цене (сначала дорогие)", value: "price-desc" },
 ];
 
+function FloatingCurrenciesBackground() {
+  // Массив иконок и их параметров (позиция, размер, задержка, скорость)
+  const icons = [
+    { src: btcIcon, size: 64, top: '10%', left: '8%', duration: 18, delay: 0, opacity: 0.18 },
+    { src: ethIcon, size: 48, top: '30%', left: '80%', duration: 22, delay: 2, opacity: 0.15 },
+    { src: usdtIcon, size: 54, top: '65%', left: '15%', duration: 20, delay: 1, opacity: 0.13 },
+    { src: tonIcon, size: 60, top: '75%', left: '70%', duration: 25, delay: 3, opacity: 0.16 },
+    { src: btcIcon, size: 38, top: '55%', left: '55%', duration: 19, delay: 2.5, opacity: 0.11 },
+    { src: ethIcon, size: 36, top: '20%', left: '60%', duration: 21, delay: 1.5, opacity: 0.10 },
+  ];
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}
+      aria-hidden="true"
+    >
+      {icons.map((icon, i) => (
+        <img
+          key={i}
+          src={icon.src}
+          alt="currency"
+          style={{
+            position: 'absolute',
+            top: icon.top,
+            left: icon.left,
+            width: icon.size,
+            height: icon.size,
+            opacity: icon.opacity,
+            filter: 'blur(0.5px) drop-shadow(0 2px 8px rgba(0,0,0,0.08))',
+            animation: `floatY${i} ${icon.duration}s ease-in-out infinite alternate`,
+            animationDelay: `${icon.delay}s`,
+            transition: 'opacity 0.5s',
+          }}
+        />
+      ))}
+      <style>{`
+        ${icons.map((icon, i) => `
+          @keyframes floatY${i} {
+            0% { transform: translateY(0px) scale(1) rotate(0deg); }
+            100% { transform: translateY(-40px) scale(1.08) rotate(${i % 2 === 0 ? 8 : -8}deg); }
+          }
+        `).join('')}
+      `}</style>
+    </div>
+  );
+}
+
 export default function InstrumentsPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -72,6 +124,7 @@ export default function InstrumentsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-light-bg dark:bg-dark-bg text-light-fg dark:text-dark-fg font-sans">
+      <FloatingCurrenciesBackground />
       <Header
         scrolled={false}
         NAV={[]}

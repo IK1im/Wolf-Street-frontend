@@ -386,19 +386,65 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
 
 function StepperPanel({ onDepositClick, rates, ratesLoading, ratesError, onRatesRefresh }: { onDepositClick: () => void, rates: { [code: string]: number }, ratesLoading: boolean, ratesError: boolean, onRatesRefresh: () => void }) {
   const [active, setActive] = useState<string>('wallet');
+
+  // Баланс кошелька
+  const [walletLoading, setWalletLoading] = useState(true);
+  const [walletError, setWalletError] = useState('');
+  const [walletAmount, setWalletAmount] = useState<number>(0);
+  const [walletCurrency, setWalletCurrency] = useState<string>('₽');
+
+  useEffect(() => {
+    setWalletLoading(true);
+    setWalletError('');
+    fetch('http://89.169.183.192:8080/portfolio-service/api/v1/portfolio/cash', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+    })
+      .then(async res => {
+        if (res.status === 401) throw new Error('Пользователь не авторизован!');
+        if (res.status === 404) throw new Error('Портфель пользователя не найден!');
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setWalletAmount(typeof data[0].availableAmount === 'number' ? data[0].availableAmount : 0);
+          setWalletCurrency(data[0].currency || '₽');
+        } else {
+          setWalletAmount(0);
+          setWalletCurrency('₽');
+        }
+      })
+      .catch(err => setWalletError(err.message || 'Не удалось загрузить баланс'))
+      .finally(() => setWalletLoading(false));
+  }, []);
+
   const cards = [
     {
       key: 'wallet',
       title: 'Актуальный кошелёк',
-      icon: '💸',
+      // icon убран
       content: (
         <div className="flex flex-col items-start gap-1 w-full">
-          <span className="text-[32px] animate-pulse mb-1">💸</span>
-          <span className="text-[28px] font-extrabold text-light-accent dark:text-dark-accent mb-0.5">₽ 0.00</span>
+          {walletLoading ? (
+            <span className="text-[28px] font-extrabold text-light-accent dark:text-dark-accent mb-0.5">Загрузка...</span>
+          ) : walletError ? (
+            <span className="text-red-500 text-[16px] mb-0.5">{walletError}</span>
+          ) : (
+            <span className="text-[28px] font-extrabold text-light-accent dark:text-dark-accent mb-0.5">
+              {walletCurrency} {walletAmount.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+          )}
           <span className="text-light-fg/80 dark:text-dark-brown text-[15px]">Ваш баланс</span>
+          <div className="w-full flex justify-start pl-2">
+            <button
+              onClick={onDepositClick}
+              className="mt-4 w-auto px-5 py-2 rounded-lg bg-light-accent dark:bg-dark-accent text-white font-semibold shadow-md transition-all duration-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-light-accent/60 dark:focus:ring-dark-accent/60"
+              type="button"
+            >
+              Пополнить
+            </button>
+          </div>
         </div>
       ),
-      actions: <Button variant="gradient" size="md" onClick={onDepositClick}>Пополнить</Button>,
     },
     {
       key: 'empty',
@@ -438,16 +484,16 @@ function StepperPanel({ onDepositClick, rates, ratesLoading, ratesError, onRates
                 <div className="flex flex-col justify-between w-full h-full">
                   <div className="flex items-start justify-between w-full mb-4">
                     <div className="text-[22px] font-bold text-light-fg dark:text-dark-fg leading-tight">{card.title}</div>
-                    <span className="text-[38px] ml-4 flex-shrink-0">{card.icon}</span>
+                    {card.icon && <span className="text-[38px] ml-4 flex-shrink-0">{card.icon}</span>}
                   </div>
                   <div className="flex-1 flex flex-col justify-start w-full gap-4 overflow-y-auto">
                     {card.content}
-                    {card.actions && <div className="mt-4">{card.actions}</div>}
+                    {/* actions убраны */}
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center w-full h-full px-2">
-                  <span className="text-[28px] mb-2">{card.icon}</span>
+                  {card.icon && <span className="text-[28px] mb-2">{card.icon}</span>}
                   <div className="text-[15px] font-semibold text-light-fg dark:text-dark-fg leading-tight">{card.title}</div>
                 </div>
               )}
