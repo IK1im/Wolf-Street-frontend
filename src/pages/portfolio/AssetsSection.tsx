@@ -253,13 +253,16 @@ export default function AssetsSection() {
           </div>
           {/* Кастомный современный выбор инструмента для удаления */}
           <div className="flex flex-col gap-3 mt-4 items-stretch max-w-xs">
-            <button
+            <Button
               onClick={handleAdd}
               disabled={actionLoading}
-              className="w-full px-4 py-2 rounded-xl bg-gradient-to-r from-light-accent to-indigo-500 dark:from-dark-accent dark:to-emerald-400 text-white font-semibold shadow transition-all duration-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-light-accent/60 dark:focus:ring-dark-accent/60 disabled:opacity-60"
+              variant="gradient"
+              size="md"
+              iconLeft={<FaPlus />}
+              className="shadow-md dark:shadow-lg w-full justify-center"
             >
               Добавить инструмент
-            </button>
+            </Button>
             <div className="relative w-full">
               <button
                 type="button"

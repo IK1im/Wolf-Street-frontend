@@ -3,7 +3,7 @@ import VerificationSection from './VerificationSection';
 import DepositSection from './DepositSection';
 import TradeSection from './TradeSection';
 import BalanceSection from './BalanceSection';
-import AssetsSection from './AssetsSection';
+// import AssetsSection from './AssetsSection';
 import HistorySection from './HistorySection';
 import { getCurrencyRates } from '../../services/Api';
 import clsx from 'clsx';
@@ -22,6 +22,18 @@ import ReactECharts from 'echarts-for-react';
 import { useTheme } from '../../context/ThemeContext';
 import DEFAULT_AVATAR_SVG from '../../components/ui/defaultAvatar';
 import { getUserAvatarUrl } from '../../services/AvatarService';
+// Локальное определение типа Instrument для аналитики
+type Instrument = {
+  instrumentId: number;
+  availableAmount: number;
+  blockedAmount: number;
+  totalAmount: number;
+  symbol?: string;
+  name?: string;
+  type?: string;
+  price?: number;
+  iconUrl?: string;
+};
 
 // Мок-история операций
 const mockHistory = [
@@ -361,6 +373,30 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
     setEditing(false);
   };
 
+  // --- Состояние инструментов для всего портфеля ---
+  const [instruments, setInstruments] = useState<Instrument[]>([]);
+  const [instrumentsLoading, setInstrumentsLoading] = useState(true);
+  const [instrumentsError, setInstrumentsError] = useState('');
+
+  useEffect(() => {
+    setInstrumentsLoading(true);
+    setInstrumentsError('');
+    fetch('http://89.169.183.192:8080/portfolio-service/api/v1/portfolio/instruments', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+    })
+      .then(async res => {
+        if (res.status === 401) throw new Error('Пользователь не авторизован!');
+        if (res.status === 404) throw new Error('Портфель пользователя не найден!');
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) setInstruments(data);
+        else setInstruments([]);
+      })
+      .catch(err => setInstrumentsError(err.message || 'Ошибка загрузки инструментов'))
+      .finally(() => setInstrumentsLoading(false));
+  }, []);
+
   if (loading) return <LoaderBlock text="Загружаем профиль..." />;
   if (error) return <ErrorBlock text={error} onRetry={handleRetry} />;
   if (!user) return null;
@@ -374,17 +410,33 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
         status={status}
       />
       {/* Остальной контент профиля */}
-      <StepperPanel onDepositClick={onGoToDeposit} rates={rates} ratesLoading={ratesLoading} ratesError={ratesError} onRatesRefresh={fetchRates} />
+      <StepperPanel onDepositClick={onGoToDeposit} rates={rates} ratesLoading={ratesLoading} ratesError={ratesError} onRatesRefresh={fetchRates}
+        instruments={instruments}
+        instrumentsLoading={instrumentsLoading}
+        instrumentsError={instrumentsError}
+      />
       <div className="flex flex-col gap-4.5">
         <TradeSection />
-        <AssetsSection />
+        <PortfolioInstrumentsList instruments={instruments} loading={instrumentsLoading} error={instrumentsError} />
         {/* ...и всё, что было раньше */}
       </div>
     </div>
   );
 }
 
-function StepperPanel({ onDepositClick, rates, ratesLoading, ratesError, onRatesRefresh }: { onDepositClick: () => void, rates: { [code: string]: number }, ratesLoading: boolean, ratesError: boolean, onRatesRefresh: () => void }) {
+function StepperPanel({
+  onDepositClick, rates, ratesLoading, ratesError, onRatesRefresh,
+  instruments, instrumentsLoading, instrumentsError
+}: {
+  onDepositClick: () => void,
+  rates: { [code: string]: number },
+  ratesLoading: boolean,
+  ratesError: boolean,
+  onRatesRefresh: () => void,
+  instruments: Instrument[],
+  instrumentsLoading: boolean,
+  instrumentsError: string
+}) {
   const [active, setActive] = useState<string>('wallet');
 
   // Баланс кошелька
@@ -450,7 +502,7 @@ function StepperPanel({ onDepositClick, rates, ratesLoading, ratesError, onRates
       key: 'empty',
       title: 'Анализ портфеля',
       icon: '💹',
-      content: <div className="w-full flex flex-col items-start"><PortfolioMiniAnalytics /></div>,
+      content: <div className="w-full flex flex-col items-start"><PortfolioMiniAnalytics instruments={instruments} loading={instrumentsLoading} error={instrumentsError} /></div>,
     },
   ];
   if (active === 'deposit') {
@@ -650,15 +702,32 @@ export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: str
   );
 }
 
-function PortfolioMiniAnalytics() {
-  const assets = [
-    { symbol: 'BTC', name: 'Bitcoin', percent: 73.1, value: 2730000, color: 'bg-gradient-to-r from-yellow-400 to-yellow-500' },
-    { symbol: 'ETH', name: 'Ethereum', percent: 23.1, value: 864000, color: 'bg-gradient-to-r from-blue-400 to-blue-600' },
-    { symbol: 'USDT', name: 'Tether', percent: 3.0, value: 110400, color: 'bg-gradient-to-r from-emerald-400 to-emerald-600' },
-    { symbol: 'TON', name: 'Toncoin', percent: 0.8, value: 31500, color: 'bg-gradient-to-r from-cyan-400 to-cyan-600' },
-  ];
+// Аналитика портфеля на основе реальных инструментов
+function PortfolioMiniAnalytics({ instruments, loading, error }: { instruments: Instrument[], loading: boolean, error: string }) {
+  if (loading) return <div className="text-light-fg/70 dark:text-dark-fg/70">Загрузка...</div>;
+  if (error) return <div className="text-red-500 dark:text-red-400">{error}</div>;
+  if (!instruments || instruments.length === 0) return <div className="text-light-fg/70 dark:text-dark-fg/70">Нет инструментов</div>;
+
+  // Считаем стоимость каждого актива
+  const assets = instruments.map(a => ({
+    symbol: a.symbol || String(a.instrumentId),
+    name: a.name || '',
+    value: (a.totalAmount || 0) * (a.price || 1),
+  }));
   const total = assets.reduce((sum, a) => sum + a.value, 0);
-  const topAssets = assets.slice(0, 3);
+  // Сортируем по стоимости
+  const sorted = [...assets].sort((a, b) => b.value - a.value);
+  // Топ-3 актива с вычисленной долей
+  const topAssets = sorted.slice(0, 3).map((a, i) => ({
+    ...a,
+    percent: total ? +(a.value / total * 100).toFixed(1) : 0,
+    color: [
+      'bg-gradient-to-r from-yellow-400 to-yellow-500',
+      'bg-gradient-to-r from-blue-400 to-blue-600',
+      'bg-gradient-to-r from-emerald-400 to-emerald-600',
+      'bg-gradient-to-r from-cyan-400 to-cyan-600',
+    ][i % 4],
+  }));
   return (
     <div className="flex flex-col gap-2 items-center justify-center w-full">
       <span className="text-[22px] font-extrabold text-light-accent dark:text-dark-accent mb-0.5">💹</span>
@@ -678,9 +747,43 @@ function PortfolioMiniAnalytics() {
         ))}
       </div>
       <div className="mt-1 text-[12px] text-light-fg/80 dark:text-dark-brown flex flex-row gap-2 items-center">
-        <span>Доля BTC: <span className="font-bold text-light-accent dark:text-dark-accent">{assets[0].percent}%</span></span>
+        {topAssets[0] && <span>Доля {topAssets[0].symbol}: <span className="font-bold text-light-accent dark:text-dark-accent">{topAssets[0].percent}%</span></span>}
         <span className="mx-1">/</span>
-        <span>Диверсификация: <span className="font-bold text-light-accent dark:text-dark-accent">низкая</span></span>
+        <span>Диверсификация: <span className="font-bold text-light-accent dark:text-dark-accent">{topAssets.length > 1 ? 'средняя' : 'низкая'}</span></span>
+      </div>
+    </div>
+  );
+}
+
+// Простой компонент для отображения списка инструментов
+function PortfolioInstrumentsList({ instruments, loading, error }: { instruments: Instrument[], loading: boolean, error: string }) {
+  if (loading) return <div className="text-light-fg/70 dark:text-dark-fg/70">Загрузка...</div>;
+  if (error) return <div className="text-red-500 dark:text-red-400">{error}</div>;
+  if (!instruments || instruments.length === 0) return <div className="text-light-fg/70 dark:text-dark-fg/70">Нет инструментов</div>;
+  return (
+    <div className="bg-white/90 dark:bg-[#18191c] border border-light-border/30 dark:border-[#23243a] shadow-inner dark:shadow-[inset_0_2px_16px_0_rgba(0,0,0,0.25)] rounded-2xl p-6 mt-2">
+      <div className="text-[18px] font-bold text-light-accent dark:text-dark-accent mb-4">Ваши инструменты</div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-left text-[15px]">
+          <thead>
+            <tr className="text-light-fg/80 dark:text-dark-brown font-semibold">
+              <th className="py-2 px-3">Символ</th>
+              <th className="py-2 px-3">Название</th>
+              <th className="py-2 px-3">Количество</th>
+              <th className="py-2 px-3">Стоимость</th>
+            </tr>
+          </thead>
+          <tbody>
+            {instruments.map(inst => (
+              <tr key={inst.instrumentId} className="hover:bg-light-accent/10 dark:hover:bg-dark-accent/10 transition-all">
+                <td className="py-2 px-3 font-mono font-bold text-light-accent dark:text-dark-accent">{inst.symbol || inst.instrumentId}</td>
+                <td className="py-2 px-3">{inst.name || '-'}</td>
+                <td className="py-2 px-3 font-mono">{inst.totalAmount}</td>
+                <td className="py-2 px-3 font-mono">₽ {(inst.price && inst.totalAmount) ? (inst.price * inst.totalAmount).toLocaleString('ru-RU', { maximumFractionDigits: 2 }) : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
