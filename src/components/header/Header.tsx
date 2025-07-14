@@ -60,6 +60,7 @@ export default function Header({
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.setItem('logout', 'true'); // Ставим флаг logout
     setIsAuth(false);
     setMenuOpen(false);
     navigate("/login");

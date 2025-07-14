@@ -135,11 +135,11 @@ export function useMultiStepRegister({ onSuccess }: UseMultiStepRegisterProps) {
           navigate("/login");
         }, 2000);
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Произошла ошибка при регистрации"
-        );
+        let msg = err instanceof Error ? err.message : "Произошла ошибка при регистрации";
+        if (/invalid token|jwt|token|Unauthorized|401|403/i.test(msg)) {
+          msg = "Ошибка регистрации. Проверьте данные и попробуйте снова.";
+        }
+        setError(msg);
       } finally {
         setIsLoading(false);
       }

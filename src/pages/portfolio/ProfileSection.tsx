@@ -510,9 +510,9 @@ export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: str
   }
   const cardColors = getCardColors();
   return (
-    <div style={{ width: 320, height: 320, background: 'transparent', borderRadius: 24, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ width: 420, height: 420, background: 'transparent', borderRadius: 24, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <ReactECharts
-        style={{ width: '100%', height: 320 }}
+        style={{ width: '100%', height: 420 }}
         option={{
           backgroundColor: 'transparent',
           tooltip: {
@@ -552,7 +552,7 @@ export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: str
                 fill: theme === 'dark' ? '#fff' : '#23243a',
                 textAlign: 'center',
                 textVerticalAlign: 'middle',
-                shadowColor: theme === 'dark' ? '#181926' : '#000',
+                shadowColor: theme === 'dark' ? '#181926' : 'transparent',
                 shadowBlur: 8,
               },
             },
@@ -572,23 +572,11 @@ export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: str
                 shadowColor: 'transparent',
               },
               label: {
-                show: true,
-                position: 'inside',
-                formatter: '{d}%',
-                color: '#fff',
-                fontSize: 19,
-                fontWeight: 800,
-                shadowColor: '#181926',
-                shadowBlur: 8,
-                rich: {
-                  percent: {
-                    textShadow: '0 2px 8px rgba(24,25,38,0.25)',
-                    stroke: '#23243a',
-                    lineWidth: 2,
-                  }
-                },
+                show: false,
               },
-              labelLine: { show: false },
+              labelLine: {
+                show: false,
+              },
               minAngle: 10,
               startAngle: 90,
               clockwise: true,
@@ -606,19 +594,9 @@ export function Portfolio3DPie({ assets }: { assets: { symbol: string; name: str
                   },
                   borderRadius: 8,
                 },
-              })),
-              emphasis: {
-                scale: true,
-                itemStyle: {
-                  shadowBlur: 14,
-                  shadowColor: theme === 'dark' ? 'rgba(52,211,153,0.18)' : 'rgba(16,185,129,0.12)',
-                  borderColor: accent,
-                  borderWidth: 3,
-                },
-              },
+              }))
             },
           ],
-          // color убран, теперь цвета только через itemStyle
         }}
         opts={{ renderer: 'canvas' }}
       />

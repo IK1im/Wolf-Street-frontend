@@ -130,16 +130,46 @@ export default function SettingsPanel() {
   useEffect(() => {
     if (editingField === 'password') {
       setShowPassword(false);
-      setOldPassword(''); // всегда сбрасываем
+      // Автозаполнение старого пароля, если он есть и не '********'
+      setOldPassword(password && password !== '********' ? password : '');
       setNewPassword(''); // всегда сбрасываем
       setPasswordError('');
     }
   }, [editingField]);
 
   const handleProfileSave = async (data: { nickname: string; avatar: string; avatarFile: File | null }) => {
-    setNickname(data.nickname);
+    let nicknameChanged = false;
+    try {
+      const res = await axios.get(`${API_BASE}/user/me`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+      if (res.data.username && res.data.username !== nickname) {
+        nicknameChanged = true;
+      }
+      setNickname(res.data.username || '');
+      setEmail(res.data.email || '');
+      setPhone(res.data.phone || '');
+      setFirstname(res.data.firstname || '');
+      setLastname(res.data.lastname || '');
+      setEditFirstname(res.data.firstname || '');
+      setEditLastname(res.data.lastname || '');
+      setEditEmail(res.data.email || '');
+      setEditPhone(res.data.phone || '');
+      // Если включено "запомнить меня" — обновить куку с новым никнеймом
+      if (Cookies.get('rememberMe') === 'true') {
+        Cookies.set('rememberedUsername', res.data.username || '', { expires: 30 });
+        // Если есть rememberedUsername input на странице логина — обновить его значение
+        if (typeof window !== 'undefined') {
+          const loginInput = document.querySelector('input[name="username"]') as HTMLInputElement | null;
+          if (loginInput) loginInput.value = res.data.username || '';
+        }
+      }
+    } catch {
+      setNickname(data.nickname);
+    }
     if (data.avatar) {
-      // Получить новый аватар с сервера
       try {
         const url = await getUserAvatarUrl();
         setAvatar(url);
@@ -148,6 +178,13 @@ export default function SettingsPanel() {
       }
     }
     setEditProfileModal(false);
+    if (data.nickname && data.nickname !== nickname) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      Cookies.remove(PASSWORD_COOKIE_KEY);
+      window.location.href = "/login?profileUpdated=1";
+      return;
+    }
   };
 
   // Обработчик смены пароля
@@ -174,7 +211,13 @@ export default function SettingsPanel() {
       setModalTitle('Пароль изменён');
       setModalMessage('Пароль успешно изменён. Войдите с новым паролем.');
       setModalOpen(true);
-      // После закрытия модалки будет редирект
+      setEditingField(null); // Закрываем модалку смены пароля
+      // Если включено "запомнить меня" — обновить куку с новым паролем
+      if (Cookies.get('rememberMe') === 'true') {
+        const encrypted = CryptoJS.AES.encrypt(newPassword, PASSWORD_ENCRYPT_KEY).toString();
+        Cookies.set(PASSWORD_COOKIE_KEY, encrypted, { expires: 30 });
+      }
+      setPassword(newPassword); // обновляем password в state для автозаполнения
     } catch (err: any) {
       let msg = 'Ошибка при смене пароля';
       if (axios.isAxiosError(err) && err.response) {
@@ -653,10 +696,15 @@ function ModalChangePassword({
   passwordError: string;
   onSave: () => void;
 }) {
+  const [showOld, setShowOld] = React.useState(false);
+  const [showNew, setShowNew] = React.useState(false);
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in">
       <div className="bg-white dark:bg-dark-bg rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
+        {/* Скрытые фейковые поля для борьбы с автозаполнением браузера */}
+        <input type="text" name="fakeusernameremembered" style={{display: 'none'}} autoComplete="username" tabIndex={-1} />
+        <input type="password" name="fakepasswordremembered" style={{display: 'none'}} autoComplete="new-password" tabIndex={-1} />
         <button
           className="absolute top-4 right-4 text-light-fg/60 dark:text-dark-fg/60 hover:text-light-accent dark:hover:text-dark-accent text-2xl"
           onClick={onClose}
@@ -666,25 +714,67 @@ function ModalChangePassword({
         </button>
         <div className="text-xl font-bold mb-4 text-center text-light-accent dark:text-dark-accent">Смена пароля</div>
         <div className="space-y-4">
-          <input
-            type="password"
-            placeholder="Старый пароль"
-            value={oldPassword}
-            onChange={e => setOldPassword(e.target.value)}
-            autoComplete="current-password"
-            className="w-full h-10 text-[15px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
-          />
-          <input
-            type="password"
-            placeholder="Новый пароль"
-            value={newPassword}
-            onChange={e => setNewPassword(e.target.value)}
-            autoComplete="new-password"
-            className="w-full h-10 text-[15px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-3 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all"
-          />
+          <div className="relative">
+            <input
+              type={showOld ? 'text' : 'password'}
+              placeholder="Старый пароль"
+              value={oldPassword}
+              onChange={e => setOldPassword(e.target.value)}
+              name="oldPassCustom"
+              autoComplete="current-password-fake"
+              className="w-full h-10 text-[15px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-3 pr-12 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all select-all"
+            />
+            <button
+              type="button"
+              onClick={() => setShowOld(v => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-light-fg dark:text-dark-fg opacity-60 hover:opacity-100 transition-opacity duration-200 focus:outline-none focus:opacity-100"
+              aria-label={showOld ? 'Скрыть пароль' : 'Показать пароль'}
+            >
+              {showOld ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.94 17.94A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 012.519-3.568M6.343 6.343A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.97 9.97 0 01-2.519 3.568M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268-2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              )}
+            </button>
+          </div>
+          <div className="relative">
+            <input
+              type={showNew ? 'text' : 'password'}
+              placeholder="Новый пароль"
+              value={newPassword}
+              onChange={e => setNewPassword(e.target.value)}
+              name="newPassCustom"
+              autoComplete="new-password"
+              className="w-full h-10 text-[15px] font-medium bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-3 pr-12 py-2 outline-none focus:border-light-accent dark:focus:border-dark-accent focus:ring-1 focus:ring-light-accent/30 dark:focus:ring-dark-accent/30 transition-all select-all"
+            />
+            <button
+              type="button"
+              onClick={() => setShowNew(v => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-light-fg dark:text-dark-fg opacity-60 hover:opacity-100 transition-opacity duration-200 focus:outline-none focus:opacity-100"
+              aria-label={showNew ? 'Скрыть пароль' : 'Показать пароль'}
+            >
+              {showNew ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.94 17.94A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 012.519-3.568M6.343 6.343A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.97 9.97 0 01-2.519 3.568M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268-2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              )}
+            </button>
+          </div>
           {passwordError && <div className="text-red-500 text-[14px]">{passwordError}</div>}
         </div>
-        <div className="flex flex-col md:flex-row gap-3 mt-6">
+        <div className="flex gap-3 mt-6">
           <button
             className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-light-accent/90 to-light-accent/70 dark:from-dark-accent/90 dark:to-dark-accent/70 text-white font-semibold rounded-lg px-6 py-2 shadow border border-light-accent/30 dark:border-dark-accent/30 backdrop-blur-sm transition-all duration-200 text-[15px] hover:scale-[1.04] hover:shadow-xl hover:ring-2 hover:ring-light-accent/30 dark:hover:ring-dark-accent/30 focus:outline-none focus:ring-2 focus:ring-light-accent/40 dark:focus:ring-dark-accent/40"
             onClick={onSave}
