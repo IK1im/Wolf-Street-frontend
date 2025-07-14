@@ -137,6 +137,13 @@ export default function Header({
           Торговля
         </button>
 
+        <button
+          onClick={() => navigate("/instruments")}
+          className="ml-4 py-1.5 px-4 bg-light-accent dark:bg-dark-accent text-light-nav-text dark:text-dark-nav-text rounded-full font-bold text-sm border-none cursor-pointer shadow-[0_2px_8px_rgba(197,107,98,0.33)] dark:shadow-[0_2px_8px_rgba(129,199,132,0.33)] hover:scale-105 transition-transform"
+        >
+          Инструменты
+        </button>
+
         <div className="flex items-center gap-2">
           <button
             ref={searchBtnRef}
