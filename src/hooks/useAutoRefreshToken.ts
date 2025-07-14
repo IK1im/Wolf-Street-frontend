@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import axios from 'axios';
 
-const API_BASE = 'http://89.169.183.192:8080';
+const API_BASE = 'http://89.169.183.192:8080/user-service/api/v1';
 
 export default function useAutoRefreshToken() {
   useEffect(() => {
@@ -10,7 +10,7 @@ export default function useAutoRefreshToken() {
       if (!refreshToken) return;
       try {
         const res = await axios.post(
-          `${API_BASE}/user-service/auth/refresh_token`,
+          `${API_BASE}/auth/refresh_token`,
           {},
           {
             headers: { Authorization: `Bearer ${refreshToken}` },

@@ -13,8 +13,10 @@ import Cookies from 'js-cookie';
 import CryptoJS from 'crypto-js';
 import { LoaderBlock, ErrorBlock } from '../../components/ui/LoadingButton';
 import Modal from '../../components/ui/Modal';
+import DEFAULT_AVATAR_SVG from '../../components/ui/defaultAvatar';
+import { getUserAvatarUrl } from '../../services/AvatarService';
 
-const API_BASE = "http://89.169.183.192:8080";
+const API_BASE = "http://89.169.183.192:8080/user-service/api/v1";
 const PASSWORD_COOKIE_KEY = "password";
 const PASSWORD_ENCRYPT_KEY = "demo-key";
 
@@ -24,7 +26,7 @@ export default function SettingsPanel() {
   const [timezoneModal, setTimezoneModal] = useState(false);
   const [chartStyleModal, setChartStyleModal] = useState(false);
   const [nickname, setNickname] = useState('');
-  const [avatar, setAvatar] = useState('https://i.imgur.com/0y0y0y0.png');
+  const [avatar, setAvatar] = useState(DEFAULT_AVATAR_SVG);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('********');
@@ -64,26 +66,10 @@ export default function SettingsPanel() {
   // Для отслеживания, был ли 401 после успешного изменения
   const [pendingLogout, setPendingLogout] = useState(false);
 
-  const USE_FAKE_PROFILE = true; // Поставьте false для реальных данных
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if (USE_FAKE_PROFILE) {
-          setNickname('demo_user');
-          setEmail('demo@example.com');
-          setPhone('+7 999 123-45-67');
-          setFirstname('Игорь');
-          setLastname('Климкин');
-          setAvatar('https://i.imgur.com/0y0y0y0.png');
-          setEditFirstname('Игорь');
-          setEditLastname('Климкин');
-          setEditEmail('demo@example.com');
-          setEditPhone('+7 999 123-45-67');
-          setLoading(false);
-          return;
-        }
-        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+        const res = await axios.get(`${API_BASE}/user/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
@@ -93,7 +79,7 @@ export default function SettingsPanel() {
         setPhone(res.data.phone || '');
         setFirstname(res.data.firstname || '');
         setLastname(res.data.lastname || '');
-        setAvatar(res.data.avatar || avatar);
+        // setAvatar(res.data.avatar || avatar); // УДАЛЕНО!
         setEditFirstname(res.data.firstname || '');
         setEditLastname(res.data.lastname || '');
         setEditEmail(res.data.email || '');
@@ -115,6 +101,15 @@ export default function SettingsPanel() {
       } catch {}
     }
   }, []);
+
+  // --- Новый useEffect для аватара ---
+  useEffect(() => {
+    const updateAvatar = async () => {
+      const url = await getUserAvatarUrl();
+      setAvatar(url);
+    };
+    updateAvatar();
+  }, [nickname, email, phone]);
 
   // useEffect для загрузки пароля из cookie при монтировании и при изменении cookie
   useEffect(() => {
@@ -141,9 +136,17 @@ export default function SettingsPanel() {
     }
   }, [editingField]);
 
-  const handleProfileSave = (data: { nickname: string; avatar: string; avatarFile: File | null }) => {
+  const handleProfileSave = async (data: { nickname: string; avatar: string; avatarFile: File | null }) => {
     setNickname(data.nickname);
-    if (data.avatar) setAvatar(data.avatar); // обновляем аватар сразу!
+    if (data.avatar) {
+      // Получить новый аватар с сервера
+      try {
+        const url = await getUserAvatarUrl();
+        setAvatar(url);
+      } catch {
+        setAvatar(DEFAULT_AVATAR_SVG);
+      }
+    }
     setEditProfileModal(false);
   };
 
@@ -160,7 +163,7 @@ export default function SettingsPanel() {
       return;
     }
     try {
-      await axios.post(`${API_BASE}/user-service/auth/change-password`, {
+      await axios.post(`${API_BASE}/auth/change-password`, {
         newPassword,
         currentPassword: oldPassword,
       }, {
@@ -198,7 +201,7 @@ export default function SettingsPanel() {
       lastname: field === 'lastname' ? value : lastname,
     };
     try {
-      await axios.put(`${API_BASE}/user-service/user/me`, updated, {
+      await axios.put(`${API_BASE}/user/me`, updated, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -239,7 +242,7 @@ export default function SettingsPanel() {
       lastname: editLastname,
     };
     try {
-      await axios.put(`${API_BASE}/user-service/user/me`, updated, {
+      await axios.put(`${API_BASE}/user/me`, updated, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -285,7 +288,7 @@ export default function SettingsPanel() {
     setError("");
     (async () => {
       try {
-        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+        const res = await axios.get(`${API_BASE}/user/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },

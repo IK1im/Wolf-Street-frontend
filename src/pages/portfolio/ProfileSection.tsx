@@ -20,6 +20,8 @@ import { createPortal } from "react-dom";
 import ReactDOM from 'react-dom';
 import ReactECharts from 'echarts-for-react';
 import { useTheme } from '../../context/ThemeContext';
+import DEFAULT_AVATAR_SVG from '../../components/ui/defaultAvatar';
+import { getUserAvatarUrl } from '../../services/AvatarService';
 
 // Мок-история операций
 const mockHistory = [
@@ -32,7 +34,6 @@ const mockHistory = [
 const STEPS: Step[] = [
   { key: 'wallet', label: 'Актуальный кошелёк' },
   { key: 'empty', label: 'Анализ' },
-  { key: 'rates', label: 'Курс валют' },
 ];
 
 function OperationHistoryBlock({ compact = false, maxRows }: { compact?: boolean, maxRows?: number }) {
@@ -241,11 +242,13 @@ function CurrencyRatesCard({ rates, loading, error, onRefresh, compact = false }
   );
 }
 
-const API_BASE = "http://89.169.183.192:8080";
+const API_BASE = "http://89.169.183.192:8080/user-service/api/v1";
 
 export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () => void }) {
   // Все хуки должны быть до любых return/if!
   const [user, setUser] = useState<{ email: string; phone: string; username: string } | null>(null);
+  const [status, setStatus] = useState<'Обычный' | 'VIP'>('Обычный');
+  const [avatarUrl, setAvatarUrl] = useState<string>(DEFAULT_AVATAR_SVG);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editing, setEditing] = useState(false);
@@ -276,33 +279,22 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
   }, []);
   useEffect(() => { fetchRates(); }, [fetchRates]);
 
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const res = await axios.get(`${API_BASE}/user-service/user/me`, {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-  //         },
-  //       });
-  //       setUser(res.data);
-  //     } catch (err) {
-  //       setError("Не удалось загрузить данные пользователя");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchUser();
-  // }, []);
-  // Мок-данные пользователя:
   useEffect(() => {
-    setTimeout(() => {
-      setUser({
-        username: 'demo_user',
-        email: 'demo@example.com',
-        phone: '+7 999 123-45-67',
-      });
-      setLoading(false);
-    }, 400);
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/user/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+        setUser(res.data);
+      } catch (err) {
+        setError("Не удалось загрузить данные пользователя");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
   }, []);
 
   useEffect(() => {
@@ -315,12 +307,21 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
     }
   }, [user]);
 
+  // Получение аватара пользователя
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const url = await getUserAvatarUrl();
+      setAvatarUrl(url);
+    };
+    fetchAvatar();
+  }, []);
+
   const handleRetry = () => {
     setLoading(true);
     setError("");
     (async () => {
       try {
-        const res = await axios.get(`${API_BASE}/user-service/user/me`, {
+        const res = await axios.get(`${API_BASE}/user/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
@@ -368,11 +369,9 @@ export default function ProfileSection({ onGoToDeposit }: { onGoToDeposit: () =>
     <div className="bg-gradient-to-br from-light-card to-light-bg dark:from-dark-card dark:to-[#181926] rounded-2xl p-8 shadow-2xl card-glow backdrop-blur-md border border-light-border/40 dark:border-dark-border/40 text-light-fg dark:text-dark-fg mt-6 transition-all duration-300">
       {/* Шапка пользователя */}
       <ProfileHeader
-        avatar="https://i.imgur.com/0y0y0y0.png"
+        avatar={avatarUrl}
         nickname={user.username}
-        uid="1125773083"
-        vipLabel="VIP Обычный пользователь"
-        vip={true}
+        status={status}
       />
       {/* Остальной контент профиля */}
       <StepperPanel onDepositClick={onGoToDeposit} rates={rates} ratesLoading={ratesLoading} ratesError={ratesError} onRatesRefresh={fetchRates} />
@@ -406,12 +405,6 @@ function StepperPanel({ onDepositClick, rates, ratesLoading, ratesError, onRates
       title: 'Анализ портфеля',
       icon: '💹',
       content: <div className="w-full flex flex-col items-start"><PortfolioMiniAnalytics /></div>,
-    },
-    {
-      key: 'rates',
-      title: 'Курс валют',
-      icon: '💱',
-      content: <CurrencyRatesCard rates={rates} loading={ratesLoading} error={ratesError} onRefresh={onRatesRefresh} />,
     },
   ];
   if (active === 'deposit') {

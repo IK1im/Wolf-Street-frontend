@@ -6,6 +6,7 @@ import MainPage from "./pages/main/MainPage";
 import PortfolioPage from "./pages/portfolio/PortfolioPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import useAutoRefreshToken from './hooks/useAutoRefreshToken';
+import TradePage from "./pages/trade/TradePage";
 
 export default function App() {
   useAutoRefreshToken();
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/" element={<MainPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/trade" element={<TradePage />} />
       </Routes>
     </Router>
   );

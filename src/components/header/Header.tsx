@@ -129,6 +129,12 @@ export default function Header({
             </button>
           ))}
         </nav>
+        <button
+          onClick={() => navigate('/trade')}
+          className="ml-4 py-1.5 px-4 bg-gradient-to-r from-light-accent to-light-accent/90 dark:from-dark-accent dark:to-dark-accent/90 text-white rounded-full font-bold text-sm border-none cursor-pointer shadow hover:scale-105 transition-transform"
+        >
+          Торговля
+        </button>
 
         <div className="flex items-center gap-2">
           <button

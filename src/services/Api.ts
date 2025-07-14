@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://89.169.183.192:8080",
+  baseURL: "http://89.169.183.192:8080/user-service/api/v1",
   timeout: 15000,
   headers: {
     "Content-Type": "application/json",
@@ -59,15 +59,14 @@ api.interceptors.response.use(
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         // Не редиректим, если это попытка логина
-        const loginUrls = ["/auth/login", "/user-service/auth/login"];
+        const loginUrls = ["/user-service/v1/auth/login"];
         const isLoginRequest = loginUrls.some(url => originalRequest.url && originalRequest.url.includes(url));
         if (!isLoginRequest) {
-          window.location.href = "/login";
         }
         return Promise.reject(error);
       }
       try {
-        const res = await axios.post("http://89.169.183.192:8080/user-service/auth/refresh_token", { refreshToken });
+        const res = await axios.post("http://89.169.183.192:8080/user-service/api/v1/auth/refresh_token", { refreshToken });
         const newAccessToken = res.data.accessToken;
         const newRefreshToken = res.data.refreshToken;
         localStorage.setItem("accessToken", newAccessToken);
@@ -82,10 +81,9 @@ api.interceptors.response.use(
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         // Не редиректим, если это попытка логина
-        const loginUrls = ["/auth/login", "/user-service/auth/login"];
+        const loginUrls = ["/api/v1/auth/login"];
         const isLoginRequest = loginUrls.some(url => originalRequest.url && originalRequest.url.includes(url));
         if (!isLoginRequest) {
-          window.location.href = "/login";
         }
         return Promise.reject(err);
       } finally {
